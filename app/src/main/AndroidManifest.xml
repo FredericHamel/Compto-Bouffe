@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".FicheB"
+            android:label="@string/title_activity_fiche_b" >
+        </activity>
+        <activity
+            android:name=".FicheC"
+            android:label="@string/title_activity_fiche_c" >
+        </activity>
     </application>
 
 </manifest>
