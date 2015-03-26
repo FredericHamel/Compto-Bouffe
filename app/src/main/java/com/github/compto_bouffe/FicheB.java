@@ -1,19 +1,29 @@
 package com.github.compto_bouffe;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+
+import static android.support.v4.app.ActivityCompat.startActivity;
 
 
 public class FicheB extends ActionBarActivity {
+
+    Button today;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_b);
+        // Créer un listener
+        today = (Button)findViewById(R.id.versC);
+        MyOnClickListener listener = new MyOnClickListener();
+        today.setOnClickListener(listener);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
