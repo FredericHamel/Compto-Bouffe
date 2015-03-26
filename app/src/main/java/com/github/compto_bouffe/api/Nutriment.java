@@ -1,4 +1,4 @@
-package com.github.compte_bouffe.api;
+package com.github.compto_bouffe.api;
 
 /**
  * Created by adkuser on 3/14/15.

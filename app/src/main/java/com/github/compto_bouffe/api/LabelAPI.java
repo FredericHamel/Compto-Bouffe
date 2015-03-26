@@ -1,4 +1,4 @@
-package com.github.compte_bouffe.api;
+package com.github.compto_bouffe.api;
 
 import android.util.Log;
 
@@ -30,11 +30,9 @@ public class LabelAPI {
     private static final String SEARCH_PRODUCT = "searchprods";
     private static final String PRODUCT_SCORE = "productscore";
 
-    private String sessionKey;
-
     private LabelAPI()
     {
-        sessionKey = "56887da7-0c5e-43f9-a969-761dd153b379";
+
     }
 
     private HttpEntity getHttp(String url) throws IOException
@@ -58,7 +56,7 @@ public class LabelAPI {
     /**
      * Cherche les produits a partir des mots clefs.
      * @param query la recherche.
-     * @return la liste des Product.
+     * @return la liste des Product ou null si la liste est vide.
      */
     public ArrayList<Product> searchProduct(String query)
     {
@@ -66,7 +64,7 @@ public class LabelAPI {
         query = query.replaceAll("( )+", "+");
         try
         {
-            String url = BASE_URL + SEARCH_PRODUCT + "?q=" + query + "&sid=" + sessionKey + "&s=0&n=300&f=json&v=2.00&api_key=" + Constantes.API_KEY;
+            String url = BASE_URL + SEARCH_PRODUCT + "?q=" + query + "&sid=" + Constantes.SESSION_KEY + "&s=0&n=300&f=json&v=2.00&api_key=" + Constantes.API_KEY;
             HttpEntity entity = getHttp(url);
             JSONObject obj = new JSONObject(EntityUtils.toString(entity,HTTP.UTF_8));
             int size = obj.getInt("resultSize");
@@ -91,17 +89,18 @@ public class LabelAPI {
     /**
      * Retourne la liste des nutriments associer au produit.
      * @param p le produit.
-     * @return La liste des nutriments.
+     * @return La liste des nutriments ou null si la liste est vide.
      */
     public ArrayList<Nutriment> searchScore(Product p)
     {
-        ArrayList<Nutriment> nutriments = new ArrayList<>();
+        ArrayList<Nutriment> nutriments = null;
         try
         {
-            String url = BASE_URL + PRODUCT_SCORE + "?u="+ p.getUpc() +"&sid=" + sessionKey + "&f=json&api_key=" + Constantes.API_KEY;
+            String url = BASE_URL + PRODUCT_SCORE + "?u="+ p.getUpc() +"&sid=" + Constantes.SESSION_KEY + "&f=json&api_key=" + Constantes.API_KEY;
             HttpEntity entity = getHttp(url);
             JSONObject obj = new JSONObject(EntityUtils.toString(entity,HTTP.UTF_8));
             JSONArray array = obj.getJSONArray("nutrients");
+            nutriments = new ArrayList<>(array.length());
             for (int i = 0; i < array.length(); ++i) {
                 obj = (JSONObject) array.get(i);
                 nutriments.add(new Nutriment(obj.getString("nutrient_name"), obj.getString("nutrient_value"), obj.getString("nutrient_uom")));

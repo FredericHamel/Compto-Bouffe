@@ -1,4 +1,4 @@
-package com.github.compte_bouffe.api;
+package com.github.compto_bouffe.api;
 
 /**
  * Created by Frederic Hamel on 3/13/15.
@@ -50,7 +50,7 @@ public class Product {
      * Getter du upc.
      * @return le upc code associer au produit.
      */
-    public String getUpc()
+    String getUpc()
     {
         return upc;
     }
