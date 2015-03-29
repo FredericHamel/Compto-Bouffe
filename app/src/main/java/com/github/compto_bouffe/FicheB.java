@@ -19,10 +19,11 @@ public class FicheB extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_b);
-        // Créer un listener
-        today = (Button)findViewById(R.id.versC);
-        MyOnClickListener listener = new MyOnClickListener();
-        today.setOnClickListener(listener);
+    }
+
+    public void buttonTodayOnClick(View v){
+        Button versC = (Button) v;
+        startActivity(new Intent(getApplicationContext(), FicheC.class));
     }
 
     @Override

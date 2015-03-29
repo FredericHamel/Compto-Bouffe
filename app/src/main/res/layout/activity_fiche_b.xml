@@ -77,6 +77,7 @@
                 android:id="@+id/versC"
                 android:layout_marginTop="45dp"
                 android:gravity="center"
+                android:onClick="buttonTodayOnClick"
                 android:layout_below="@+id/textView2"
                 android:layout_alignStart="@+id/textView2" />
 
