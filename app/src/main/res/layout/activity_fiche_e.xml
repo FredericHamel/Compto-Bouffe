@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    android:weightSum="1"
+    tools:context="com.github.compto_bouffe.FicheE">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="MODIFIER MA LISTE"
+        android:id="@+id/titreModifierListe"
+        android:layout_gravity="center_horizontal" />
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayoutE1"
+        android:layout_alignParentStart="true"
+        android:background="#ff000000"
+        android:gravity="center"
+        android:layout_alignParentEnd="false"
+        android:paddingBottom="2dp"
+        android:id="@+id/linearLayoutE2"></LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="199dp"
+        android:layout_alignParentStart="true"
+        android:baselineAligned="false"
+        android:padding="10dp"
+        android:outlineProvider="paddedBounds"
+        android:id="@+id/linearLayoutE3"
+        android:layout_below="@+id/linearLayoutE2"
+        android:focusable="false"
+        android:layout_weight="0.93"
+        android:weightSum="1">
+
+
+        <LinearLayout
+            android:id="@+id/linearLayoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:background="@color/grisTitre">
+
+            <TextView
+                android:id="@+id/titreDescription"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="Description"
+                android:layout_weight="2"
+                android:layout_gravity="center_horizontal"
+                android:textStyle="bold"
+                android:paddingLeft="5dp" />
+
+            <TextView
+                android:id="@+id/titreQuantité"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Quantité"
+                android:layout_weight="1.29"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/titreSupprimer"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="À supprimer"
+                android:layout_weight="0.39"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+
+        <ListView
+            android:id="@+id/listeRepas"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="0dp"></ListView>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="109dp"
+        android:layout_height="wrap_content"
+        android:text="Valider"
+        android:id="@+id/boutonValider"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/linearLayoutE3"
+        android:layout_gravity="right" />
+
+</LinearLayout>
