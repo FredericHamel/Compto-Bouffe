@@ -9,27 +9,12 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleInstance"
-            android:noHistory="true"
-            android:label="@string/app_name"
-            android:screenOrientation="landscape">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".FicheB"
-            android:label="@string/title_activity_fiche_b" >
-        </activity>
-        <activity
-            android:name=".FicheC"
-            android:label="@string/title_activity_fiche_c" >
-        </activity>
-        <activity
-            android:name=".FicheE"
-            android:label="FicheE">
         </activity>
     </application>
 
