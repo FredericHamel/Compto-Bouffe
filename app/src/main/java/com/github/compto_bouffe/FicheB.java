@@ -22,11 +22,11 @@ public class FicheB extends ActionBarActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_b);
 
-        bton1 = (Button)findViewById(R.id.button);
+        //bton1 = (Button)findViewById(R.id.button);
         bton2 = (Button)findViewById(R.id.button2);
         bton3 = (Button)findViewById(R.id.button3);
 
-        bton1.setOnClickListener(this);
+        //bton1.setOnClickListener(this);
         bton2.setOnClickListener(this);
         bton3.setOnClickListener(this);
     }
