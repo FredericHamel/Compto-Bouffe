@@ -354,7 +354,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="AJOUTER UN PLAT"
-                    android:id="@+id/button5"
+                    android:id="@+id/add_plat"
                     android:layout_alignParentTop="false"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true" />
@@ -363,7 +363,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="MODIFIER MA LISTE"
-                    android:id="@+id/button4"
+                    android:id="@+id/modify"
                     android:layout_alignParentTop="false"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"

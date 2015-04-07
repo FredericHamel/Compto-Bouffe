@@ -1,19 +1,48 @@
 package com.github.compto_bouffe;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 
 public class FicheC extends Activity {
 
+    private View.OnClickListener listener;
+    private Button modifier, addPlat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_c);
+        initClickListener();
+        modifier = (Button)findViewById(R.id.modify);
+        addPlat = (Button)findViewById(R.id.add_plat);
+
+        modifier.setOnClickListener(listener);
+        addPlat.setOnClickListener(listener);
     }
 
+    private void initClickListener()
+    {
+        listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch(view.getId())
+                {
+                    case R.id.modify:
+                        startActivity(new Intent(FicheC.this, FicheE.class));
+                        break;
+                    case R.id.add_plat:
+                        //startActivity(new Intent(FicheC.this, FicheD.class));
+                        break;
+
+                }
+            }
+        };
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
