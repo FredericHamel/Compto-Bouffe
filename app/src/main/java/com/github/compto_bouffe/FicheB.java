@@ -1,7 +1,7 @@
 package com.github.compto_bouffe;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.Button;
 
 
-public class FicheB extends ActionBarActivity implements View.OnClickListener {
+public class FicheB extends Activity implements View.OnClickListener {
 
     Button today;
     Button bton1;          //bouton "Aujourd'hui"
