@@ -1,8 +1,8 @@
 package com.github.compto_bouffe;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 
 
-public class FicheA extends ActionBarActivity implements View.OnClickListener {
+public class FicheA extends Activity implements View.OnClickListener {
 
     EditText ed_name;    // le nom du l'utilisateur
     EditText ed_cal;     //le nombre de calories entrées
