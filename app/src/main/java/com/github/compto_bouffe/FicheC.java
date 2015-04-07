@@ -36,7 +36,7 @@ public class FicheC extends Activity {
                         startActivity(new Intent(FicheC.this, FicheE.class));
                         break;
                     case R.id.add_plat:
-                        //startActivity(new Intent(FicheC.this, FicheD.class));
+                        startActivity(new Intent(FicheC.this, RecherchePlats.class));
                         break;
 
                 }
