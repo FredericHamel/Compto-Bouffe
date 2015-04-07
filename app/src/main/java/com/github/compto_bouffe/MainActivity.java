@@ -16,7 +16,7 @@ public class MainActivity extends Activity {
         String name = sharePrefs.getString("name", "");
         Class<?> obj;
         if(name.equals(""))
-            obj = FicheB.class; //FicheA.class;
+            obj = FicheA.class; //FicheA.class;
         else
             obj = FicheB.class;
         Log.d(MainActivity.class.getName(), "Start " + obj.getName());
