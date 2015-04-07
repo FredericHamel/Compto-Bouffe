@@ -8,22 +8,58 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import static android.support.v4.app.ActivityCompat.startActivity;
 
-
-public class FicheB extends ActionBarActivity {
+public class FicheB extends ActionBarActivity implements View.OnClickListener {
 
     Button today;
+    Button bton1;          //bouton "Aujourd'hui"
+    Button bton2;          //bouton "Récapitulatif"
+    Button bton3;          //bouton "Modifier les infos"
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_b);
+
+        bton1 = (Button)findViewById(R.id.button);
+        bton2 = (Button)findViewById(R.id.button2);
+        bton3 = (Button)findViewById(R.id.button3);
+
+        bton1.setOnClickListener(this);
+        bton2.setOnClickListener(this);
+        bton3.setOnClickListener(this);
     }
 
     public void buttonTodayOnClick(View v){
         Button versC = (Button) v;
         startActivity(new Intent(getApplicationContext(), FicheC.class));
+    }
+
+    public void onClick(View v) {
+
+        if(v.getId()==R.id.button){
+
+
+            //code pour passer de la fiche b à la fiche c
+
+            Button button = (Button) v;
+            startActivity(new Intent(getApplicationContext(), FicheC.class));
+
+
+        }
+
+
+        //code pour retourner à la fiche a pour modifier les informations
+
+        if(v.getId()==R.id.button3){
+
+            Button button = (Button) v;
+            startActivity(new Intent(getApplicationContext(), FicheA.class));
+
+        }
+
+
     }
 
     @Override

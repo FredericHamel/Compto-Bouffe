@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 
 
-public class Fiche_a extends ActionBarActivity implements View.OnClickListener {
+public class FicheA extends ActionBarActivity implements View.OnClickListener {
 
     EditText ed_name;    // le nom du l'utilisateur
     EditText ed_cal;     //le nombre de calories entrées
@@ -85,7 +85,7 @@ public class Fiche_a extends ActionBarActivity implements View.OnClickListener {
             //code pour passer de la fiche a à la fiche b
 
             Button button = (Button) v;
-            startActivity(new Intent(getApplicationContext(), Fiche_b.class));
+            startActivity(new Intent(getApplicationContext(), FicheB.class));
 
 
         }
