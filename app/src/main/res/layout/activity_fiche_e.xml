@@ -19,7 +19,6 @@
         android:id="@+id/titreModifierListe"
         android:layout_gravity="center_horizontal" />
 
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -56,31 +55,31 @@
 
             <TextView
                 android:id="@+id/titreDescription"
-                android:layout_width="100dp"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:text="Description"
-                android:layout_weight="2"
+                android:layout_weight="3"
                 android:layout_gravity="center_horizontal"
                 android:textStyle="bold"
                 android:paddingLeft="5dp" />
 
             <TextView
                 android:id="@+id/titreQuantité"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:text="Quantité"
-                android:layout_weight="1.29"
+                android:layout_weight="1.5"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center" />
 
             <TextView
                 android:id="@+id/titreSupprimer"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:text="À supprimer"
-                android:layout_weight="0.39"
+                android:layout_weight="1"
                 android:textStyle="bold"
                 android:gravity="center" />
 

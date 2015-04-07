@@ -19,9 +19,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-/**
- * Created by sabrinaouaret on 04/04/15.
- */
+
 public class FicheE extends Activity {
 
     ListView listeView;
@@ -29,7 +27,6 @@ public class FicheE extends Activity {
     LinearLayout titreLayout;
     ArrayAdapter<Plats> adapter;
     ArrayList<Plats> plats;
-    private View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +54,13 @@ public class FicheE extends Activity {
     }
 
     public ArrayList<Plats> getPlat(){
-        plats.add(new Plats("Soupe"));
-        plats.add(new Plats("Fruits"));
-        plats.add(new Plats("Croissants"));
-        plats.add(new Plats("Big Mac"));
-        plats.add(new Plats("Woopie Burger"));
-        plats.add(new Plats("Sushi"));
-        plats.add(new Plats("Salade"));
+        plats.add(new Plats("Soupe", "1"));
+        plats.add(new Plats("Fruits", "1"));
+        plats.add(new Plats("Croissants", "1"));
+        plats.add(new Plats("Big Mac", "1"));
+        plats.add(new Plats("Woopie Burger", "1"));
+        plats.add(new Plats("Sushi", "1"));
+        plats.add(new Plats("Salade", "1"));
         return plats;
     }
 
@@ -89,8 +86,7 @@ public class FicheE extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-
-    class Fiche_e_myAdapter extends ArrayAdapter<Plats> {
+    private class Fiche_e_myAdapter extends ArrayAdapter<Plats> {
 
         private final ArrayList<Plats> plats;
         private final Activity context;
@@ -135,33 +131,6 @@ public class FicheE extends Activity {
                     }
                 });
 
-
-                holder.boutonMoins.setTag(holder);
-                holder.boutonMoins.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        ViewHolder holder_b = (ViewHolder)v.getTag();
-                        int qte = Integer.parseInt(holder_b.textViewQte.getText().toString());
-
-                        //if(qte==1){
-                        //Toast.makeText(Fiche_e_myAdapter.this, "La quantité ira à zéro...à supprimer", Toast.LENGTH_SHORT).show();
-                        //}else{
-                        holder_b.textViewQte.setText(Integer.toString(qte-1));
-                        //}
-                    }
-                });
-
-                holder.boutonPlus.setTag(holder);
-                holder.boutonPlus.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View v) {
-                        ViewHolder holder_b = (ViewHolder)v.getTag();
-                        int qte = Integer.parseInt(holder_b.textViewQte.getText().toString());
-                        holder_b.textViewQte.setText(Integer.toString(qte+1));
-                    }
-                });
-
                 viewRow.setTag(holder);
                 viewRow.setTag(R.id.textView1, holder.theTextView);
                 viewRow.setTag(R.id.checkBoxSupprimer, holder.checkBoxView);
@@ -174,11 +143,40 @@ public class FicheE extends Activity {
                 holder=(ViewHolder) viewRow.getTag();
             }
 
-            holder.checkBoxView.setTag(position);
-            //holder.textViewQte.setText(plats.get(position).getNom());
 
+            holder.boutonMoins.setTag(holder);
+            holder.boutonMoins.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ViewHolder holder_b = (ViewHolder)v.getTag();
+                    int qte = Integer.parseInt(holder_b.textViewQte.getText().toString());
+                    if(qte<=1){
+                        holder_b.textViewQte.setText("0");
+                        plats.get(position).setQte("0");
+                    }else{
+                        String quantite = Integer.toString(qte-1);
+                        holder_b.textViewQte.setText(quantite);
+                        plats.get(position).setQte(quantite);
+                    }
+                }
+            });
+
+            holder.boutonPlus.setTag(holder);
+            holder.boutonPlus.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    ViewHolder holder_b = (ViewHolder)v.getTag();
+                    int qte = Integer.parseInt(holder_b.textViewQte.getText().toString());
+                    String quantite = Integer.toString(qte+1);
+                    holder_b.textViewQte.setText(quantite);
+                    plats.get(position).setQte(quantite);
+                }
+            });
+
+            holder.checkBoxView.setTag(position);
             holder.checkBoxView.setChecked(plats.get(position).isSelected());
             holder.theTextView.setText(plats.get(position).getNom());
+            holder.textViewQte.setText(plats.get(position).getQte());
 
             //Couleur alternative des rangées
             if (position % 2 == 1) {
@@ -190,4 +188,3 @@ public class FicheE extends Activity {
         }
     }
 }
-
