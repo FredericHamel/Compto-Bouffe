@@ -16,7 +16,7 @@
             android:maxLines="1"
             android:layout_weight="3"
             android:hint="@string/search_hint_en"/>
-        <Button android:id="@+id/send_request"
+        <Button android:id="@+id/search_btn"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="2"
@@ -28,11 +28,33 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
-        <ListView
-            android:id="@+id/result_list"
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:padding="2dp"
+            android:background="#000000">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="#FFFFFF">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/list_resultats_header"
+                    android:gravity="center"
+                    android:textSize="32sp"
+                    android:background="#000000"
+                    android:textColor="#FFFFFF" />
+                <ListView
+                    android:id="@+id/result_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
@@ -44,36 +66,43 @@
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:contentDescription="@string/add_selection_desc"
                     android:src="@drawable/slider_next"/>
                 <ImageButton
                     android:id="@+id/sub_element_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:contentDescription="@string/sub_selection_desc"
                     android:src="@drawable/slider_prev" />
 
         </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
+        <RelativeLayout
             android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="1">
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/my_list_header"
-                android:gravity="center"
-                android:textSize="32sp"
-                android:background="#000000"
-                android:textColor="#FFFFFF"
-                />
-            <ListView
-                android:id="@+id/my_list"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:padding="2dp">
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-        </LinearLayout>
+                android:layout_height="fill_parent"
+                android:background="#FFFFFF">
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/my_list_header"
+                    android:gravity="center"
+                    android:textSize="32sp"
+                    android:background="#000000"
+                    android:textColor="#FFFFFF"
+                    />
+                <ListView
+                    android:id="@+id/my_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
     <Button
         android:layout_width="fill_parent"

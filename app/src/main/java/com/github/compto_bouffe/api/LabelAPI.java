@@ -56,26 +56,27 @@ public class LabelAPI {
     /**
      * Cherche les produits a partir des mots clefs.
      * @param query la recherche.
-     * @return la liste des Product ou null si la liste est vide.
+     * @return la liste des Product, null si il y a un erreur lie au serveur ou liste vide..
      */
     public ArrayList<Product> searchProduct(String query)
     {
         ArrayList<Product> products = null;
         query = query.replaceAll("( )+", "+");
+        query = query.toLowerCase();
         try
         {
             String url = BASE_URL + SEARCH_PRODUCT + "?q=" + query + "&sid=" + Constantes.SESSION_KEY + "&s=0&n=300&f=json&v=2.00&api_key=" + Constantes.API_KEY;
             HttpEntity entity = getHttp(url);
             JSONObject obj = new JSONObject(EntityUtils.toString(entity,HTTP.UTF_8));
             int size = obj.getInt("resultSize");
+            Log.d("JSON", "Result size: " + size);
 
             products = new ArrayList<>(size);
             JSONArray array = obj.getJSONArray("productsArray");
             for (int i = 0; i < array.length(); ++i) {
-               obj = (JSONObject) array.get(i);
-               products.add(new Product(obj.getString("product_name"), obj.getString("product_description"), obj.getString("upc"), obj.getString("product_size")));
+                obj = (JSONObject) array.get(i);
+                products.add(new Product(obj.getString("product_name"), obj.getString("product_description"), obj.getString("upc"), obj.getString("product_size")));
             }
-
         }catch(JSONException e)
         {
             Log.d("JSON", e.getMessage());

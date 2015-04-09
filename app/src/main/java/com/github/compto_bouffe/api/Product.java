@@ -63,4 +63,14 @@ public class Product {
     {
         return size;
     }
+
+    @Override
+    public int hashCode() {
+        return upc.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Product && upc.equals(((Product) o).upc);
+    }
 }
