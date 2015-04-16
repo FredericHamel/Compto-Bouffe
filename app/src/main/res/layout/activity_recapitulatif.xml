@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    android:weightSum="1"
+    tools:context="com.github.compto_bouffe.Recapitulatif">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="284dp"
+        android:layout_alignParentStart="true"
+        android:baselineAligned="false"
+        android:padding="10dp"
+        android:outlineProvider="paddedBounds"
+        android:id="@+id/linearLayoutE3"
+        android:layout_below="@+id/linearLayoutF2"
+        android:focusable="false"
+        android:weightSum="1"
+        android:layout_weight="0.35">
+
+        <TextView
+            android:id="@+id/phrases"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sébastien: votre objectif quotidien actuel est de 1500kcal."
+            android:gravity="center" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:text="Période du"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:textStyle="bold" />
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:id="@+id/editDate1"
+                android:focusable="false"
+                android:clickable="true"/>
+
+            <TextView
+                android:text="au "
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:gravity="center"
+                android:textStyle="bold" />
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:id="@+id/editDate2"
+                android:focusable="false"
+                android:clickable="true"/>
+
+            <Button
+                android:id="@+id/boutonPeriode"
+                android:text="Valider"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5" />
+        </LinearLayout>
+
+
+        <ListView
+            android:id="@+id/listViewPeriode"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"></ListView>
+
+    </LinearLayout>
+
+</LinearLayout>

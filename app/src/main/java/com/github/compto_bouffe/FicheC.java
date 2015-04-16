@@ -33,7 +33,7 @@ public class FicheC extends Activity {
                 switch(view.getId())
                 {
                     case R.id.modify:
-                        startActivity(new Intent(FicheC.this, FicheE.class));
+                        startActivity(new Intent(FicheC.this, ModifierMaListe.class));
                         break;
                     case R.id.add_plat:
                         startActivity(new Intent(FicheC.this, RecherchePlats.class));

@@ -10,14 +10,14 @@ public class Product {
     private String desc;
     private String upc;
 
-    // Chaine contenant le format avec unite et est egal a none lorsque le produit vient a l'unite.
+    // Chaine contenant le format avec unite et est egale a none lorsque le produit vient a l'unite.
     private String size;
 
     /**
      * Construit un produit.
      * @param name Le nom du produit
      * @param desc La description du produit.
-     * @param upc Le code upc utilise pour cherche les informations sur les nutriments.
+     * @param upc Le code upc est utilise pour chercher les informations sur les nutriments.
      * @param size La taille du produit. (ex. 16 oz)
      */
     public Product(String name, String desc, String upc, String size)

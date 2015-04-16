@@ -9,7 +9,7 @@ public class Nutriment {
     private String uom;
 
     /**
-     * Construit un nutiments.
+     * Construit un nutriments.
      * @param n le nom du nitriment.
      * @param v la quantite du nutriment.
      * @param u l'unite qu'il dans laquel v est fournit.
@@ -22,7 +22,7 @@ public class Nutriment {
     }
 
     /**
-     * Getter pour le nom du nutiment.
+     * Getter pour le nom du nutriment.
      * @return le nom.
      */
     public String getName()
@@ -40,7 +40,7 @@ public class Nutriment {
     }
 
     /**
-     * Getter pour l'unite dans laquel la valeur est fournie.
+     * Getter pour l'unite dans laquelle la valeur est fournie.
      * @return l'unite.
      */
     public String getUOM()

@@ -36,7 +36,7 @@
             android:screenOrientation="landscape" >
         </activity>
         <activity
-            android:name=".FicheE"
+            android:name=".ModifierMaListe"
             android:label="FicheE"
             android:screenOrientation="landscape" >
         </activity>

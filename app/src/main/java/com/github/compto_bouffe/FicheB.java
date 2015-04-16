@@ -58,8 +58,6 @@ public class FicheB extends Activity implements View.OnClickListener {
             startActivity(new Intent(getApplicationContext(), FicheA.class));
 
         }
-
-
     }
 
     @Override

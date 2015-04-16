@@ -20,7 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 
-public class FicheE extends Activity {
+public class ModifierMaListe extends Activity {
 
     ListView listeView;
     Button valider;
@@ -32,7 +32,7 @@ public class FicheE extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fiche_e);
+        setContentView(R.layout.activity_modifier_ma_liste);
 
         //Titre Description, Quantité et A supprimer
         titreLayout = (LinearLayout) findViewById(R.id.linearLayoutHeader);
@@ -48,7 +48,7 @@ public class FicheE extends Activity {
         valider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(FicheE.this, "Simulation de modification de la liste", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ModifierMaListe.this, "Simulation de modification de la liste", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -67,7 +67,7 @@ public class FicheE extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_fiche_e, menu);
+        getMenuInflater().inflate(R.menu.menu_modifier_ma_liste, menu);
         return true;
     }
 
@@ -93,7 +93,7 @@ public class FicheE extends Activity {
         ViewHolder holder;
 
         public Fiche_e_myAdapter(Context context, ArrayList<Plats> plats) {
-            super(context, R.layout.fiche_e_row, plats);
+            super(context, R.layout.modifier_ma_liste_row, plats);
             this.context = (Activity) context;
             this.plats= plats;
         }
@@ -112,7 +112,7 @@ public class FicheE extends Activity {
 
             if (viewRow == null) {
                 LayoutInflater myInflater = LayoutInflater.from(getContext());
-                viewRow = myInflater.inflate(R.layout.fiche_e_row, null);
+                viewRow = myInflater.inflate(R.layout.modifier_ma_liste_row, null);
 
                 holder = new ViewHolder();
                 holder.theTextView = (TextView)viewRow.findViewById(R.id.textView1);

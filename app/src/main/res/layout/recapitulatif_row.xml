@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rowLayoutF">
+
+    <ImageView
+        android:id="@+id/imageResultat"
+        android:src="@drawable/vert"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.4"/>
+
+    <TextView
+        android:id="@+id/textDate"
+        android:text="21 Décembre"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.9"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/textObjectif"
+        android:text="OBJECTIF: 1500kcal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/textResultat"
+        android:text="RESULTAT:1400kcal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:id="@+id/imageDetails"
+        android:src="@drawable/arrow"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.4"/>
+
+</LinearLayout>
