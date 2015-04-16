@@ -16,14 +16,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
     static final String DB_NAME = "comptoBouffe.db";
     static final int DB_VERSION = 1;
+    static int userId = 0;
 
-    // Table des emissions
+    // Table des profils
     static final String TABLE_PROFILS = "Profils";
-    static final String TABLE_LISTEPLATS = "ListePlats";
-    static final String TABLE_RESULTATS = "Resultats";
     static final String P_ID = "ID";
     static final String P_PRENOM ="Prenom";
     static final String P_OBJECTIF ="Objectif";
+
+    // Table de listes des plats
+    static final String TABLE_LISTEPLATS = "ListePlats";
     static final String L_ID ="ID";
     static final String L_OBJECTIF ="Objectif";
     static final String L_QUANTITE ="Quantite";
@@ -35,7 +37,9 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String L_TOTALFAT ="TotalFat";
     static final String L_SUGARS ="Sugars";
     static final String L_PROTEIN ="Protein";
-    static final String L_SODIUM ="Sodium";
+
+    // Table des resultats
+    static final String TABLE_RESULTATS = "Resultats";
     static final String R_ID = "ID";
     static final String R_OBJECTIF_INIT = "Objectif_initial";
     static final String R_OBJECTIF_RES = "Objectif_resultant";
@@ -63,10 +67,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 +L_DESC+" TEXT, "
                 +L_DATEENTREE+" TEXT, "
                 +L_CALORIES+" TEXT NOT NULL, "
-                +L_TOTALFAT+" TEXT NOT NULL, "
                 +L_SUGARS+" TEXT NOT NULL, "
+                +L_TOTALFAT+" TEXT NOT NULL, "
                 +L_PROTEIN+" TEXT NOT NULL, "
-                +L_SODIUM+" TEXT NOT NULL, "
                 +"FOREIGN KEY("+L_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"),"
                 +"PRIMARY KEY("+L_ID+","+L_DATEENTREE+"));";
 
@@ -100,10 +103,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
 
-        String requete = "SELECT "+L_NOM+", "+L_CALORIES+", "+L_PROTEIN+", "+L_SODIUM+", "
-                +L_SUGARS+", "+L_TOTALFAT+" FROM "+TABLE_LISTEPLATS
-                +" WHERE "+L_ID+"="+id
-                +" AND "+L_DATEENTREE+"="+dateCourante+";";
+        String requete = "SELECT "+L_QUANTITE+", "+L_NOM+", "+L_CALORIES+", "+L_SUGARS+", "
+                        +L_TOTALFAT+", "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
+                        +" WHERE "+L_ID+"="+id
+                        +" AND "+L_DATEENTREE+"="+dateCourante+";";
         Cursor c = db.rawQuery(requete, null);
         return c;
     }
@@ -124,8 +127,8 @@ public class DBHelper extends SQLiteOpenHelper {
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
 
         String requete = "SELECT "+L_QUANTITE+" FROM "+TABLE_LISTEPLATS
-                +" WHERE "+L_UPC+"="+upc
-                +" AND "+L_DATEENTREE+"="+dateCourante+";";
+                        +" WHERE "+L_UPC+"="+upc
+                        +" AND "+L_DATEENTREE+"="+dateCourante+";";
         Cursor c= db.rawQuery(requete, null);
         return c;
     }
@@ -169,10 +172,10 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return c le curseur
      */
     public static Cursor listePeriode(SQLiteDatabase db, int id, String date){
-        String requete = "SELECT "+L_NOM+", "+L_CALORIES+", "+L_PROTEIN+", "+L_SODIUM+", "
-                +L_SUGARS+", "+L_TOTALFAT+" FROM "+TABLE_LISTEPLATS
-                +" WHERE "+L_ID+"="+id
-                +" AND "+L_DATEENTREE+"="+date+";";
+        String requete = "SELECT "+L_QUANTITE+", "+L_NOM+", "+L_CALORIES+", "+L_SUGARS+", "
+                        +L_TOTALFAT+", "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
+                        +" WHERE "+L_ID+"="+id
+                        +" AND "+L_DATEENTREE+"="+date+";";
         Cursor c = db.rawQuery(requete, null);
         return c;
     }
@@ -217,6 +220,27 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      *Insertions
      */
+
+    /**
+     * Methode qui insert dans la base de donnees les informations concernant l'utilisateur
+     * @param db la base de donnees
+     * @param prenom le prenom de l'utilisateur
+     * @param objectif l'objectif quotidien
+     */
+    public static void insererProfil(SQLiteDatabase db, String prenom, int objectif){
+        ContentValues values = new ContentValues();
+        userId+=1;
+        values.put(P_ID, userId);
+        values.put(P_PRENOM, prenom);
+        values.put(P_OBJECTIF, objectif);
+
+        db.insert(TABLE_PROFILS, null, values);
+    }
+
+    public static void insererListePlats(SQLiteDatabase db, int id, int qte, String upc, String nom,
+                                         String desc,String calories, String sucre, String fat, String proteine){
+
+    }
 
 
     @Override

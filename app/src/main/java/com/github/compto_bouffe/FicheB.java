@@ -48,7 +48,11 @@ public class FicheB extends Activity implements View.OnClickListener {
 
 
         }
-
+        
+        if(v.getId()==R.id.button2){
+            Button button = (Button) v;
+            startActivity(new Intent(getApplicationContext(), Recapitulatif.class));
+        }
 
         //code pour retourner à la fiche a pour modifier les informations
 
