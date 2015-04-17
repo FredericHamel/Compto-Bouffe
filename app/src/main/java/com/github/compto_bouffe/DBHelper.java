@@ -271,6 +271,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(L_SUGARS, sucre);
         values.put(L_TOTALFAT, fat);
         values.put(L_PROTEIN, proteine);
+        values.put(L_DATEENTREE, dateCourante);
 
         db.insert(TABLE_PROFILS, null, values);
     }
