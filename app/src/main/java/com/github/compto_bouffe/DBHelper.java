@@ -16,7 +16,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     static final String DB_NAME = "comptoBouffe.db";
     static final int DB_VERSION = 1;
-    static int userId = 0;
+    static final int USER_ID = 1;
 
     // Table des profils
     static final String TABLE_PROFILS = "Profils";
@@ -108,6 +108,19 @@ public class DBHelper extends SQLiteOpenHelper {
                         +" WHERE "+L_ID+"="+id
                         +" AND "+L_DATEENTREE+"="+dateCourante+";";
         Cursor c = db.rawQuery(requete, null);
+        return c;
+    }
+
+    /**
+     * Methode qui permet d'afficher la liste des element deja mange
+     * @param db la base de donnees
+     * @return c le cursor
+     */
+    public static Cursor afficherHistorique (SQLiteDatabase db){
+        String requete = "SELECT DISTINCT "+L_NOM+", "+L_DESC+" FROM "+TABLE_LISTEPLATS
+                          +" ORDER BY "+L_DATEENTREE
+                          +" LIMIT 15;";
+        Cursor c=db.rawQuery(requete, null);
         return c;
     }
 
@@ -217,6 +230,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 +" AND "+L_ID+"="+id, null);
     }
 
+
     /**
      *Insertions
      */
@@ -229,17 +243,36 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     public static void insererProfil(SQLiteDatabase db, String prenom, int objectif){
         ContentValues values = new ContentValues();
-        userId+=1;
-        values.put(P_ID, userId);
+        values.put(P_ID, USER_ID);
         values.put(P_PRENOM, prenom);
         values.put(P_OBJECTIF, objectif);
 
         db.insert(TABLE_PROFILS, null, values);
     }
 
-    public static void insererListePlats(SQLiteDatabase db, int id, int qte, String upc, String nom,
+    public static void insererListePlats(SQLiteDatabase db, int qte, String upc, String nom,
                                          String desc,String calories, String sucre, String fat, String proteine){
+        Calendar mcurrentDate=Calendar.getInstance();
+        int mYear = mcurrentDate.get(Calendar.YEAR);
+        int mMonth=mcurrentDate.get(Calendar.MONTH);
+        int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
 
+        String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
+
+        ContentValues values = new ContentValues();
+        values.put(L_NOM, nom);
+        values.put(L_QUANTITE, qte);
+        values.put(L_UPC, upc);
+        values.put(L_DESC, desc);
+        values.put(L_CALORIES, calories);
+        values.put(L_UPC, upc);
+        values.put(L_DESC, desc);
+        values.put(L_CALORIES, calories);
+        values.put(L_SUGARS, sucre);
+        values.put(L_TOTALFAT, fat);
+        values.put(L_PROTEIN, proteine);
+
+        db.insert(TABLE_PROFILS, null, values);
     }
 
 
