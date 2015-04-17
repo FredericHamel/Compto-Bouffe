@@ -60,7 +60,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String creerTableListe = "CREATE TABLE IF NOT EXISTS "+TABLE_LISTEPLATS+" ("
                 +L_ID+" INT, "
-                +L_OBJECTIF+"INT NOT NULL,"
+                +L_OBJECTIF+" INT NOT NULL,"
                 +L_QUANTITE+" INT, "
                 +L_UPC+" TEXT NOT NULL, "
                 +L_NOM+" TEXT NOT NULL, "
@@ -77,7 +77,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 +R_ID+" INT, "
                 +R_OBJECTIF_INIT+" TEXT NOT NULL,"
                 +R_OBJECTIF_RES+" INT,"
-                +R_DATE+"TEXT NOT NULL,"
+                +R_DATE+" TEXT NOT NULL,"
                 +"FOREIGN KEY("+R_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"),"
                 +"FOREIGN KEY("+R_OBJECTIF_INIT+") REFERENCES "+TABLE_LISTEPLATS+"("+L_OBJECTIF+"),"
                 +"PRIMARY KEY("+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+"));";
