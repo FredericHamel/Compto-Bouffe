@@ -80,12 +80,31 @@ public class FicheA extends Activity implements View.OnClickListener {
             //on crée un toast
             String letter_name = ed_name.getText().toString();
             String number_cal = ed_cal.getText().toString();
-            Toast.makeText(this, "Bonjour " + letter_name + " votre objectif de ce jour est de " + number_cal + " calories" , Toast.LENGTH_LONG).show();
+
+            int obCal = Integer.parseInt(number_cal);
+            //Toast.makeText(this, "Bonjour " + letter_name + " votre objectif de ce jour est de " + number_cal + " calories" , Toast.LENGTH_LONG).show();
+
+            //code pour passer de la fiche a à la fiche b si l,utilisateur rente des objectifs compris entre 1200 et 6000 calories
+
+
+            if(obCal >= 1200 && obCal <= 6000 ){
+
+                Button button = (Button) v;
+                startActivity(new Intent(getApplicationContext(), FicheB.class));
+
+            }
+            else{
+                Toast.makeText(this, "Bonjour " + letter_name + " veuillez entrer un objectif entre 1200 et 6000 calories "  , Toast.LENGTH_LONG).show();
+
+
+            }
+
+            //Toast.makeText(this, "Bonjour " + letter_name + " votre objectif de ce jour est de " + number_cal + " calories" , Toast.LENGTH_LONG).show();
 
             //code pour passer de la fiche a à la fiche b
 
-            Button button = (Button) v;
-            startActivity(new Intent(getApplicationContext(), FicheB.class));
+            //Button button = (Button) v;
+            //startActivity(new Intent(getApplicationContext(), FicheB.class));
 
 
         }
