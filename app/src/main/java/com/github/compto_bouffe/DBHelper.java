@@ -159,8 +159,6 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor c= db.rawQuery(requete, null);
         return c;
     }
-
-
 /*
     public static void changerQuantite(SQLiteDatabase db, String nom, String upc, int qte){
         Cursor c;
