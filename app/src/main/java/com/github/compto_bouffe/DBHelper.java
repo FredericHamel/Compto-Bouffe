@@ -161,7 +161,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-
+/*
     public static void changerQuantite(SQLiteDatabase db, String nom, String upc, int qte){
         Cursor c;
 
@@ -189,6 +189,15 @@ public class DBHelper extends SQLiteOpenHelper {
         String sugars = c.getString(c.getColumnIndex(L_SUGARS));
         String totalFat = c.getString(c.getColumnIndex(L_TOTALFAT));
 
+
+        ArrayList<String> n = new ArrayList<String> ();
+        n.add(calories);
+        n.add(protein);
+        n.add(sugars);
+        n.add(totalFat);
+
+        for(ArrayList<String> )
+
         //Split de chacune des Strings pour distinguer les valeurs des unites
         String[] cal = calories.split(" ");
         String cal1 = cal[0]; // 1500
@@ -206,21 +215,27 @@ public class DBHelper extends SQLiteOpenHelper {
         String fat1 = fat[0]; // 3.2
         String fat2 = fat[1]; // unite
 
+
+        //Déclarations des nouvelles values des nutriments
         String newCalorie;
         String newProtein;
         String newSugars;
         String newTotalFat;
 
 
+
+
+        //Insert dans le contentValue des nouvelles valeurs
         values.put(L_QUANTITE, qte);
         values.put(L_CALORIES, newCalorie);
         values.put(L_PROTEIN, newProtein);
         values.put(L_SUGARS, newSugars);
         values.put(L_TOTALFAT, newTotalFat);
 
+        //Mise a jour de la base de donnees
         db.update(TABLE_LISTEPLATS, values ," WHERE "+L_NOM+"="+nom, null);
     }
-
+*/
     /**
      * Methode qui renvoie la liste des plats d'une journee donnee d'un utilisateur
      * @param db la base de donnees
