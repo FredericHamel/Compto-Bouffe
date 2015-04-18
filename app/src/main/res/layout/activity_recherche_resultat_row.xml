@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:id="@+id/column1"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentStart="false"
     android:background="@color/black"
     android:padding="1dp">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <TextView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="false"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingStart="2dp"
+        android:paddingEnd="0dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/text1"
+        android:gravity="bottom|start"
         android:background="@color/white"
-        android:gravity="center_vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="2dp"
-            android:paddingEnd="0dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/text1"
-            tools:ignore="HardcodedText"/>
+        tools:ignore="HardcodedText"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="2dp"
-            android:paddingEnd="0dp"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Small Text"
-            android:id="@+id/text2"
-            tools:ignore="HardcodedText"/>
-    </LinearLayout>
-</RelativeLayout>
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingStart="2dp"
+        android:paddingEnd="0dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/text2"
+        android:gravity="top|start"
+        android:background="@color/white"
+
+        tools:ignore="HardcodedText"/>
+</LinearLayout>
