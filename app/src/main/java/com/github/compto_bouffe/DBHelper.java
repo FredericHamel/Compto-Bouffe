@@ -98,7 +98,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param prenom le nouveau prenom
      * @param objectif le nouvel objectif
      */
-    public static void changerInformations(SQLiteDatabase db, String prenom, int objectif){
+    public static void changerInformations(SQLiteDatabase db, String prenom, String objectif){
         String requete = "INSERT OR REPLACE INTO "+TABLE_PROFILS+"("+P_PRENOM+", "+P_OBJECTIF
                 +") VALUES ("+prenom+", "+objectif+");";
         db.execSQL(requete);
@@ -295,7 +295,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param prenom le prenom de l'utilisateur
      * @param objectif l'objectif quotidien
      */
-    public static void insererProfil(SQLiteDatabase db, String prenom, int objectif){
+    public static void insererProfil(SQLiteDatabase db, String prenom, String objectif){
         ContentValues values = new ContentValues();
         values.put(P_ID, USER_ID);
         values.put(P_PRENOM, prenom);
@@ -304,6 +304,12 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_PROFILS, null, values);
     }
 
+    public static Cursor getObjectif(SQLiteDatabase db){
+        String requete = "SELECT "+P_OBJECTIF+" FROM "+TABLE_PROFILS+";";
+
+        Cursor c = db.rawQuery(requete, null);
+        return c;
+    }
 
     /**
      * Methode qui insert les plats selectionnes dans la base de donnees
@@ -323,12 +329,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
 
+
         ContentValues values = new ContentValues();
         values.put(L_NOM, nom);
         values.put(L_QUANTITE, qte);
         values.put(L_UPC, upc);
         values.put(L_DESC, desc);
         values.put(L_DATEENTREE, dateCourante);
+
+        Cursor cObj = getObjectif(db);
+        String obj = cObj.getString(cObj.getColumnIndex(P_OBJECTIF));
+        values.put(L_OBJECTIF, obj);
 
         for(Nutriment n: nutriment){
 
@@ -347,9 +358,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     break;
             }
         }
-
         db.insert(TABLE_LISTEPLATS, null, values);
-
     }
 
 
