@@ -69,10 +69,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 +L_NOM+" TEXT NOT NULL, "
                 +L_DESC+" TEXT, "
                 +L_DATEENTREE+" TEXT, "
-                +L_CALORIES+" TEXT NOT NULL, "
-                +L_SUGARS+" TEXT NOT NULL, "
-                +L_TOTALFAT+" TEXT NOT NULL, "
-                +L_PROTEIN+" TEXT NOT NULL, "
+                +L_CALORIES+" TEXT, "
+                +L_SUGARS+" TEXT, "
+                +L_TOTALFAT+" TEXT, "
+                +L_PROTEIN+" TEXT, "
                 +"FOREIGN KEY("+L_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"),"
                 +"PRIMARY KEY("+L_ID+","+L_DATEENTREE+"));";
 
