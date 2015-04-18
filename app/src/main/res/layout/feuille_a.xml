@@ -115,7 +115,7 @@
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="CONNAÎTRE LES RECOMMENDATIONS DU GOUVERNEMENT CONCERNANT LES APPORTS JOURNALIERS"
+                    android:text="CONNAÎTRE LES RECOMMENDATIONS DU GOUVERNEMENT SUR LES APPORTS JOURNALIERS"
                     android:id="@+id/button2"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"

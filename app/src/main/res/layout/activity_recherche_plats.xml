@@ -40,18 +40,36 @@
                 android:layout_height="fill_parent"
                 android:background="#FFFFFF">
 
-                <TextView
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/list_resultats_header"
-                    android:gravity="center"
-                    android:textSize="32sp"
-                    android:background="#000000"
-                    android:textColor="#FFFFFF" />
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/black">
+                    <Button
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:padding="0dp"
+                        android:text="@string/list_recents_header"
+                        android:textColor="@color/white"
+                        android:textSize="25sp"
+                        android:textAllCaps="false"/>
+                    <Button
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:padding="0dp"
+                        android:text="@string/list_resultats_header"
+                        android:textColor="@color/white"
+                        android:textSize="25sp"
+                        android:textAllCaps="false"/>
+                </LinearLayout>
                 <ListView
                     android:id="@+id/result_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3"
                     />
             </LinearLayout>
         </RelativeLayout>
@@ -90,21 +108,24 @@
                 android:background="#FFFFFF">
                 <TextView
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
                     android:text="@string/my_list_header"
                     android:gravity="center"
-                    android:textSize="32sp"
+                    android:textSize="@dimen/liste_view_header_text_size"
                     android:background="#000000"
                     android:textColor="#FFFFFF"
                     />
                 <ListView
                     android:id="@+id/my_list"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="0dp"
+                    android:layout_weight="3"/>
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
     <Button
+        android:id="@+id/btn_confirm"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/confirm_btn"
