@@ -194,9 +194,9 @@ public class Recapitulatif extends Activity{
 
             //Couleur alternative des rangées
             if (position % 2 == 1) {
-                viewRow.setBackgroundColor(context.getResources().getColor(R.color.grisColonne1));
+                viewRow.setBackgroundColor(context.getResources().getColor(R.color.grisRangee1));
             } else {
-                viewRow.setBackgroundColor(context.getResources().getColor(R.color.grisColonne2));
+                viewRow.setBackgroundColor(context.getResources().getColor(R.color.grisRangee2));
             }
             return viewRow;
         }

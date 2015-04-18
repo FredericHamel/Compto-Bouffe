@@ -2,7 +2,6 @@ package com.github.compto_bouffe;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -48,7 +47,7 @@ public class ModifierMaListe extends Activity {
         valider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ModifierMaListe.this, FicheC.class));
+                finish();
             }
         });
     }
@@ -180,9 +179,9 @@ public class ModifierMaListe extends Activity {
 
             //Couleur alternative des rangées
             if (position % 2 == 1) {
-                viewRow.setBackgroundColor(context.getResources().getColor(R.color.grisColonne1));
+                viewRow.setBackgroundColor(context.getResources().getColor(R.color.grisRangee1));
             } else {
-                viewRow.setBackgroundColor(context.getResources().getColor(R.color.grisColonne2));
+                viewRow.setBackgroundColor(context.getResources().getColor(R.color.grisRangee2));
             }
             return viewRow;
         }

@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.github.compto_bouffe.api.Nutriment;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -34,7 +37,7 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String L_DESC ="Desc";
     static final String L_DATEENTREE ="DateEntree";
     static final String L_CALORIES ="Calories";
-    static final String L_TOTALFAT ="TotalFat";
+    static final String L_TOTALFAT ="Total Fat";
     static final String L_SUGARS ="Sugars";
     static final String L_PROTEIN ="Protein";
 
@@ -86,6 +89,19 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(creerTableListe);
         db.execSQL(creerTableResultats);
         Log.d("DB", "DB created");
+    }
+
+
+    /**
+     * Methode qui permet d'inserer pour la premiere fois ou d'updater les informations du profil
+     * @param db la base de donnees
+     * @param prenom le nouveau prenom
+     * @param objectif le nouvel objectif
+     */
+    public static void changerInformations(SQLiteDatabase db, String prenom, int objectif){
+        String requete = "INSERT OR REPLACE INTO "+TABLE_PROFILS+"("+P_PRENOM+", "+P_OBJECTIF
+                +") VALUES ("+prenom+", "+objectif+");";
+        db.execSQL(requete);
     }
 
 
@@ -147,30 +163,6 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    /**
-     * Methode qui fait la mise a jour des objectifs quotidien d'un utilisateur
-     * @param db la base de donnees
-     * @param id l'id unique de l'utilisateur
-     * @param obj le nouvel objectif de l'utilisateur
-     */
-    public static void changerObjectif(SQLiteDatabase db, int id, int obj){
-        ContentValues values = new ContentValues();
-        values.put(P_OBJECTIF, obj);
-        db.update(TABLE_PROFILS, values,P_ID+" = "+id,null);
-    }
-
-
-    /**
-     * Methode qui fait la mise a jour du prenom de l'utilisateur
-     * @param db
-     * @param id
-     * @param prenom
-     */
-    public static void changerPrenom(SQLiteDatabase db, int id, int prenom){
-        ContentValues values = new ContentValues();
-        values.put(P_PRENOM, prenom);
-        db.update(TABLE_PROFILS, values, P_ID+" = "+id, null);
-    }
 
     /*public static void changerQuantite(SQLiteDatabase db, int id, String nom, int qte){
         ContentValues values = new ContentValues();
@@ -250,8 +242,18 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_PROFILS, null, values);
     }
 
+
+    /**
+     * Methode qui insert les plats selectionnes dans la base de donnees
+     * @param db la base de donnees
+     * @param qte la quantite du produit
+     * @param upc le code du produit
+     * @param nom le nom du produit
+     * @param desc la description du produit
+     * @param nutriment le arraylist de type nutriment correspondant au produit
+     */
     public static void insererListePlats(SQLiteDatabase db, int qte, String upc, String nom,
-                                         String desc,String calories, String sucre, String fat, String proteine){
+                                    String desc, ArrayList<Nutriment> nutriment){
         Calendar mcurrentDate=Calendar.getInstance();
         int mYear = mcurrentDate.get(Calendar.YEAR);
         int mMonth=mcurrentDate.get(Calendar.MONTH);
@@ -264,16 +266,28 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(L_QUANTITE, qte);
         values.put(L_UPC, upc);
         values.put(L_DESC, desc);
-        values.put(L_CALORIES, calories);
-        values.put(L_UPC, upc);
-        values.put(L_DESC, desc);
-        values.put(L_CALORIES, calories);
-        values.put(L_SUGARS, sucre);
-        values.put(L_TOTALFAT, fat);
-        values.put(L_PROTEIN, proteine);
         values.put(L_DATEENTREE, dateCourante);
 
+        for(Nutriment n: nutriment){
+
+            switch(n.getName()){
+                case L_CALORIES:
+                    values.put(L_CALORIES, n.getValue()+" "+n.getUOM());
+                    break;
+                case L_PROTEIN:
+                    values.put(L_PROTEIN, n.getValue()+" "+n.getUOM());
+                    break;
+                case L_SUGARS:
+                    values.put(L_SUGARS, n.getValue()+" "+n.getUOM());
+                    break;
+                case L_TOTALFAT:
+                    values.put(L_TOTALFAT, n.getValue()+" "+n.getUOM());
+                    break;
+            }
+        }
+
         db.insert(TABLE_PROFILS, null, values);
+
     }
 
 
