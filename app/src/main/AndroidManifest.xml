@@ -44,6 +44,9 @@
             android:name=".RecherchePlats"
             android:label="@string/title_activity_recherche_plats" >
         </activity>
+        <activity
+            android:name=".Recapitulatif"
+            android:label="Recapitulatif"/>
     </application>
 
 </manifest>

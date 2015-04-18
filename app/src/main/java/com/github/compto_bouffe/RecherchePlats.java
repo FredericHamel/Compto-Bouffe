@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -293,79 +292,6 @@ public class RecherchePlats extends Activity {
             }
             RecherchePlats.this.listProducts =  products;
             searchProductAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private class ListTypeHeaderType implements SpinnerAdapter {
-        private final int[] LISTES_HEADER = new int[]{R.string.list_recents_header, R.string.list_resultats_header};
-        private LayoutInflater inflater;
-
-        private int currentListId;
-
-        public ListTypeHeaderType()
-        {
-            inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            currentListId = 0;
-        }
-
-        @Override
-        public View getDropDownView(int i, View view, ViewGroup viewGroup) {
-            return null;
-        }
-
-        @Override
-        public void registerDataSetObserver(DataSetObserver dataSetObserver) {
-
-        }
-
-        @Override
-        public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {
-
-        }
-
-        @Override
-        public int getCount() {
-            return LISTES_HEADER.length;
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return LISTES_HEADER[i];
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return false;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            if(view == null) {
-                view = inflater.inflate(R.layout.activity_recherche_type_list,viewGroup, false);
-            }
-            TextView tv1 = (TextView)view.findViewById(R.id.text1);
-            tv1.setText(LISTES_HEADER[i]);
-            return view;
-        }
-
-        @Override
-        public int getItemViewType(int i) {
-            return 0;
-        }
-
-        @Override
-        public int getViewTypeCount() {
-            return 0;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
         }
     }
 
