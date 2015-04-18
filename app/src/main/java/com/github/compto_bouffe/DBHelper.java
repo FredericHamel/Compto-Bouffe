@@ -37,7 +37,7 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String L_DESC ="Desc";
     static final String L_DATEENTREE ="DateEntree";
     static final String L_CALORIES ="Calories";
-    static final String L_TOTALFAT ="Total Fat";
+    static final String L_TOTALFAT ="\'Total Fat\'";
     static final String L_SUGARS ="Sugars";
     static final String L_PROTEIN ="Protein";
 
@@ -95,6 +95,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String requete = "SELECT"+P_PRENOM+" FROM "+TABLE_PROFILS+";";
         Cursor c = db.rawQuery(requete, null);
         String prenom = c.toString();
+        c.close();
         return prenom;
     }
 
@@ -335,6 +336,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String requete = "SELECT "+P_OBJECTIF+" FROM "+TABLE_PROFILS+";";
         Cursor c = db.rawQuery(requete, null);
         String obj = c.toString();
+        c.close();
         return obj;
     }
 
