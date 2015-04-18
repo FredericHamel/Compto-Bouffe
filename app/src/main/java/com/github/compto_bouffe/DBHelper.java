@@ -37,7 +37,7 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String L_DESC ="Desc";
     static final String L_DATEENTREE ="DateEntree";
     static final String L_CALORIES ="Calories";
-    static final String L_TOTALFAT ="\'Total Fat\'";
+    static final String L_TOTALFAT ="Total Fat";
     static final String L_SUGARS ="Sugars";
     static final String L_PROTEIN ="Protein";
 
@@ -79,8 +79,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 +L_DESC+" TEXT, "
                 +L_DATEENTREE+" TEXT, "
                 +L_CALORIES+" TEXT, "
-                +L_SUGARS+" TEXT, "
-                +L_TOTALFAT+" TEXT, "
+                +L_SUGARS+" TEXT, '"
+                +L_TOTALFAT+"' TEXT, "
                 +L_PROTEIN+" TEXT, "
                 +"FOREIGN KEY("+L_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"),"
                 +"PRIMARY KEY("+L_ID+","+L_DATEENTREE+"));";
@@ -141,7 +141,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
 
         String requete = "SELECT "+L_QUANTITE+", "+L_NOM+", "+L_CALORIES+", "+L_SUGARS+", "
-                        +"\'"+L_TOTALFAT+"\', "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
+                        +"" +"'"+L_TOTALFAT+"', "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
                         +" WHERE "+L_DATEENTREE+"="+dateCourante+";";
         Cursor c = db.rawQuery(requete, null);
         return c;
@@ -406,10 +406,10 @@ public class DBHelper extends SQLiteOpenHelper {
                     nouvelleValeur = Double.toString(valeur * qte);
                     values.put(L_SUGARS, n.getValue() + " " + n.getUOM());
                     break;
-                case "'"+ L_TOTALFAT +"'":
+                case L_TOTALFAT:
                     valeur = Double.parseDouble(n.getValue());
                     nouvelleValeur = Double.toString(valeur * qte);
-                    values.put(L_TOTALFAT, n.getValue() + " " + n.getUOM());
+                    values.put("\'" + L_TOTALFAT + "\'", n.getValue() + " " + n.getUOM());
                     break;
             }
         }
