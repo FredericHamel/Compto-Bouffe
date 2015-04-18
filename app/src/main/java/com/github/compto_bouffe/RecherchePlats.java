@@ -103,14 +103,8 @@ public class RecherchePlats extends Activity {
 
                         for(ProductQty productQty : p[0]) {
                             nutriments = labelAPI1.searchScore(productQty.getProduct());
-                            if (nutriments == null) {
-                                Toast.makeText(getApplicationContext(), "Nutriment is null", Toast.LENGTH_LONG).show();
-                                Log.d("Nutriment", "Null Nutriment");
-                            } else {
-                                Product pf = productQty.getProduct();
-                                Log.d("Nutriment", "Null Nutriment");
-                                DBHelper.insererListePlats(db, productQty.getQte(), pf.getUpc(), pf.getName(), pf.getDesc(), nutriments);
-                            }
+                            Product pf = productQty.getProduct();
+                            DBHelper.insererListePlats(db, productQty.getQte(), pf.getUpc(), pf.getName(), pf.getDesc(), nutriments);
                         }
 
                         return 0L;
@@ -143,6 +137,7 @@ public class RecherchePlats extends Activity {
             @Override
             public void onClick(View view) {
                 String text = queryText.getText().toString();
+                searchProductAdapter.setSelectedIndex(-1);
                 if(!text.equals("")) {
                     Toast.makeText(getApplicationContext(), "Recherche en cours...", Toast.LENGTH_SHORT).show();
                     new SearchProduct().execute(text);

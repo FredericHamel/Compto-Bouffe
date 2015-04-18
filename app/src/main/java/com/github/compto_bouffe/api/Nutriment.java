@@ -17,7 +17,7 @@ public class Nutriment {
     public Nutriment(String n, String v, String u)
     {
         this.name = n;
-        this.value = v;
+        this.value = v.equals("") ? "0.0": v;
         this.uom = u;
     }
 
