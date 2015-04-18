@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="[name goes here (once entered in &apos;Fiche_a&apos;), followed by # of days]"
+        android:text=""
         android:id="@+id/textView2"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"

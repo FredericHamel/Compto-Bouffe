@@ -2,11 +2,15 @@ package com.github.compto_bouffe;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+
+import static com.github.compto_bouffe.DBHelper.*;
 
 
 public class FicheB extends Activity implements View.OnClickListener {
@@ -21,6 +25,14 @@ public class FicheB extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_b);
+
+        DBHelper dbh = new DBHelper(this);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+        String nom = getPrenom(db);
+        db.close();
+
+        TextView prenom = (TextView)findViewById(R.id.textView2);
+        prenom.setText(nom);
 
         //bton1 = (Button)findViewById(R.id.button);
         bton2 = (Button)findViewById(R.id.button2);
