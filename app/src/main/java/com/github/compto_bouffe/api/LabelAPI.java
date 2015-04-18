@@ -100,6 +100,7 @@ public class LabelAPI {
             String url = BASE_URL + PRODUCT_SCORE + "?u="+ p.getUpc() +"&sid=" + Constantes.SESSION_KEY + "&f=json&api_key=" + Constantes.API_KEY;
             HttpEntity entity = getHttp(url);
             JSONObject obj = new JSONObject(EntityUtils.toString(entity,HTTP.UTF_8));
+            obj = obj.getJSONObject("product");
             JSONArray array = obj.getJSONArray("nutrients");
             nutriments = new ArrayList<>(array.length());
             for (int i = 0; i < array.length(); ++i) {
