@@ -58,12 +58,12 @@ public class DBHelper extends SQLiteOpenHelper {
         String creerTableProfils = "CREATE TABLE IF NOT EXISTS "+TABLE_PROFILS+" ("
                 +P_ID+" INT, "
                 +P_PRENOM+" TEXT NOT NULL,"
-                +P_OBJECTIF+" INT NOT NULL,"
+                +P_OBJECTIF+" TEXT NOT NULL,"
                 +"PRIMARY KEY("+P_ID+"));";
 
         String creerTableListe = "CREATE TABLE IF NOT EXISTS "+TABLE_LISTEPLATS+" ("
                 +L_ID+" INT, "
-                +L_OBJECTIF+" INT NOT NULL,"
+                +L_OBJECTIF+" TEXT NOT NULL,"
                 +L_QUANTITE+" INT, "
                 +L_UPC+" TEXT NOT NULL, "
                 +L_NOM+" TEXT NOT NULL, "
@@ -79,7 +79,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String creerTableResultats = "CREATE TABLE IF NOT EXISTS "+TABLE_RESULTATS+" ("
                 +R_ID+" INT, "
                 +R_OBJECTIF_INIT+" TEXT NOT NULL,"
-                +R_OBJECTIF_RES+" INT,"
+                +R_OBJECTIF_RES+" TEXT,"
                 +R_DATE+" TEXT NOT NULL,"
                 +"FOREIGN KEY("+R_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"),"
                 +"FOREIGN KEY("+R_OBJECTIF_INIT+") REFERENCES "+TABLE_LISTEPLATS+"("+L_OBJECTIF+"),"
@@ -159,7 +159,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor c= db.rawQuery(requete, null);
         return c;
     }
-/*
+
     public static void changerQuantite(SQLiteDatabase db, String nom, String upc, int qte){
         Cursor c;
 
@@ -194,7 +194,15 @@ public class DBHelper extends SQLiteOpenHelper {
         n.add(sugars);
         n.add(totalFat);
 
-        for(ArrayList<String> )
+        for(String nutr : n ){
+
+            String[] info = nutr.split(" ");
+            String info1 = info[0]; // valeur
+            String info2 = info[1]; // unite
+
+
+
+        }
 
         //Split de chacune des Strings pour distinguer les valeurs des unites
         String[] cal = calories.split(" ");
@@ -220,7 +228,8 @@ public class DBHelper extends SQLiteOpenHelper {
         String newSugars;
         String newTotalFat;
 
-
+        Cursor cObj = getObjectif(db);
+        String obj = cObj.getString(cObj.getColumnIndex(P_OBJECTIF));
 
 
         //Insert dans le contentValue des nouvelles valeurs
@@ -233,7 +242,7 @@ public class DBHelper extends SQLiteOpenHelper {
         //Mise a jour de la base de donnees
         db.update(TABLE_LISTEPLATS, values ," WHERE "+L_NOM+"="+nom, null);
     }
-*/
+
     /**
      * Methode qui renvoie la liste des plats d'une journee donnee d'un utilisateur
      * @param db la base de donnees
