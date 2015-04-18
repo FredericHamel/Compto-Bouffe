@@ -4,8 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
-import android.graphics.Color;
-import android.media.Image;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,12 +20,12 @@ import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.compto_bouffe.api.LabelAPI;
+import com.github.compto_bouffe.api.Nutriment;
 import com.github.compto_bouffe.api.Product;
 
 import java.util.ArrayList;
@@ -34,11 +33,10 @@ import java.util.ArrayList;
 public class RecherchePlats extends Activity {
 
     // Composantes graphiques
-    private Button searchBtn;
-    private ImageButton addBtn, subBtn;//, confirm;
+    private Button searchBtn, confirm;
+    private ImageButton addBtn, subBtn;
     private TextView queryText;
     private ListView resultList, myList;
-    private Spinner spinner;
 
     // Composantes Logiques
     private LabelAPI labelAPI;
@@ -53,17 +51,14 @@ public class RecherchePlats extends Activity {
 
     // Les listeners
     private AdapterView.OnItemClickListener itemClickListener;
-    private View.OnClickListener btnAddSubClickListener;
+    private View.OnClickListener btnClickListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recherche_plats);
         listProducts = new ArrayList<>();
-        listProducts.add(new Product("Green Apple", "Fruit", "", "1 lb"));
         myChoice = new ArrayList<>();
-        myChoice.add(new ProductQty(new Product("Red Apple", "Fruit", "", "1 lb"), 50));
-        myChoice.add(new ProductQty(new Product("Green Apple", "Fruit", "", "1 lb"), 50));
         init();
         initAdapter();
         initOnItemClickListener();
@@ -87,69 +82,51 @@ public class RecherchePlats extends Activity {
         myList = (ListView)findViewById(R.id.my_list);
         addBtn = (ImageButton)findViewById(R.id.add_element_btn);
         subBtn = (ImageButton)findViewById(R.id.sub_element_btn);
-        spinner = (Spinner)findViewById(R.id.type_list);
-        spinner.setAdapter(new SpinnerAdapter() {
-            private LayoutInflater inflater;
-            public SpinnerAdapter() {
-                inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            }
+        confirm = (Button)findViewById(R.id.btn_confirm);
+        confirm.setOnClickListener(new View.OnClickListener() {
             @Override
-            public View getDropDownView(int i, View view, ViewGroup viewGroup) {
-                return null;
-            }
+            public void onClick(View view) {
+                AsyncTask<ArrayList<ProductQty>, Void, Long> task = new AsyncTask<ArrayList<ProductQty>, Void, Long>() {
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
 
-            @Override
-            public void registerDataSetObserver(DataSetObserver dataSetObserver) {
+                    }
 
-            }
+                    // Insert dans la base de donnees les produits choisit par l'usager.
 
-            @Override
-            public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {
+                    @Override
+                    protected Long doInBackground(ArrayList<ProductQty>... p) {
+                        LabelAPI labelAPI1 = LabelAPI.getInstance();
+                        ArrayList<Nutriment> nutriments;
+                        DBHelper dbH = new DBHelper(getApplicationContext());
+                        SQLiteDatabase db = dbH.getWritableDatabase();
 
-            }
+                        for(ProductQty productQty : p[0]) {
+                            nutriments = labelAPI1.searchScore(productQty.getProduct());
+                            if (nutriments == null) {
+                                Toast.makeText(getApplicationContext(), "Nutriment is null", Toast.LENGTH_LONG);
+                                Log.d("Nutriment", "Null Nutriment");
+                            } else {
+                                Product pf = productQty.getProduct();
+                                DBHelper.insererListePlats(db, productQty.getQte(), pf.getUpc(), pf.getName(), pf.getDesc(), nutriments);
+                            }
+                        }
 
-            @Override
-            public int getCount() {
-                return 0;
-            }
+                        return 0L;
+                    }
 
-            @Override
-            public Object getItem(int i) {
-                return null;
-            }
+                    @Override
+                    protected void onPostExecute(Long aLong) {
+                        super.onPostExecute(aLong);
+                        finish();
+                    }
+                };
 
-            @Override
-            public long getItemId(int i) {
-                return 0;
-            }
+                task.execute(myChoice);
 
-            @Override
-            public boolean hasStableIds() {
-                return false;
-            }
-
-            @Override
-            public View getView(int i, View view, ViewGroup viewGroup) {
-
-                return null;
-            }
-
-            @Override
-            public int getItemViewType(int i) {
-                return 0;
-            }
-
-            @Override
-            public int getViewTypeCount() {
-                return 0;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
             }
         });
-
     }
 
     // Initiailise les Adapter
@@ -177,7 +154,7 @@ public class RecherchePlats extends Activity {
 
     private void initClickListener()
     {
-        btnAddSubClickListener = new View.OnClickListener() {
+        btnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int i;
@@ -238,8 +215,8 @@ public class RecherchePlats extends Activity {
         };
     }
     private void initAddSubBtn() {
-        addBtn.setOnClickListener(btnAddSubClickListener);
-        subBtn.setOnClickListener(btnAddSubClickListener);
+        addBtn.setOnClickListener(btnClickListener);
+        subBtn.setOnClickListener(btnClickListener);
     }
 
     @Override
@@ -316,6 +293,79 @@ public class RecherchePlats extends Activity {
             }
             RecherchePlats.this.listProducts =  products;
             searchProductAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private class ListTypeHeaderType implements SpinnerAdapter {
+        private final int[] LISTES_HEADER = new int[]{R.string.list_recents_header, R.string.list_resultats_header};
+        private LayoutInflater inflater;
+
+        private int currentListId;
+
+        public ListTypeHeaderType()
+        {
+            inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            currentListId = 0;
+        }
+
+        @Override
+        public View getDropDownView(int i, View view, ViewGroup viewGroup) {
+            return null;
+        }
+
+        @Override
+        public void registerDataSetObserver(DataSetObserver dataSetObserver) {
+
+        }
+
+        @Override
+        public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {
+
+        }
+
+        @Override
+        public int getCount() {
+            return LISTES_HEADER.length;
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return LISTES_HEADER[i];
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return false;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            if(view == null) {
+                view = inflater.inflate(R.layout.activity_recherche_type_list,viewGroup, false);
+            }
+            TextView tv1 = (TextView)view.findViewById(R.id.text1);
+            tv1.setText(LISTES_HEADER[i]);
+            return view;
+        }
+
+        @Override
+        public int getItemViewType(int i) {
+            return 0;
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 0;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
         }
     }
 
@@ -398,7 +448,7 @@ public class RecherchePlats extends Activity {
         public void setSelectedIndex(int i)
         {
             if(i < myChoice.size())
-                selectedIndex = i;
+                selectedIndex = myChoice.size()- i - 1;
         }
 
         public int getSelectedIndex()
@@ -428,17 +478,18 @@ public class RecherchePlats extends Activity {
                 view = inflater.inflate(R.layout.activity_recherche_my_list_row, parent, false);
 
             }
-            i = myChoice.size() - i - 1;
+            int reverseOrder = myChoice.size() - i - 1;
 
             Log.d("MyListAdapter", "getView(" + i + ")");
             TextView tv1 = (TextView)view.findViewById(R.id.text1);
             TextView tv2 = (TextView)view.findViewById(R.id.text2);
             TextView tv3 = (TextView)view.findViewById(R.id.text3);
-            ProductQty productQty = myChoice.get(i);
+            ProductQty productQty = myChoice.get(reverseOrder);
             tv1.setText(String.valueOf(productQty.getQte()));
             tv2.setText(productQty.getProduct().getName());
             tv3.setText(productQty.getProduct().getSize());
-            int color = i == selectedIndex ? R.color.light_blue: R.color.white;
+            int color = reverseOrder == selectedIndex ? R.color.light_blue:
+                    reverseOrder % 2 == 1 ? R.color.grisRangee1 : R.color.grisRangee2;
 
             tv1.setBackgroundResource(color);
             tv2.setBackgroundResource(color);

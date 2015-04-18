@@ -16,7 +16,9 @@
     <string name="add_selection_desc">Ajoute 1 élément</string>
     <string name="sub_selection_desc">Supprime 1 élément</string>
     <string name="confirm_btn">Confirmer</string>
+    <string name="list_recents_header">Récents</string>
     <string name="list_resultats_header">Résultats</string>
+
     <string name="my_list_header">Ma Liste</string>
     <string name="search_hint_en">Rechercher (ANGLAIS)…</string>
 </resources>
