@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
- * Created by sabrinaouaret on 16/04/15.
+ * Created by Sabrina Ouaret on 16/04/15.
  */
 public class DBHelper extends SQLiteOpenHelper {
 
     static final String DB_NAME = "comptoBouffe.db";
-    static final int DB_VERSION = 1;
+    static final int DB_VERSION = 4;
     static final int USER_ID = 1;
 
     // Table des profils
@@ -55,6 +55,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
+        /*String dropper1="DROP TABLE "+TABLE_PROFILS+";";
+        String dropper2="DROP TABLE "+TABLE_LISTEPLATS+";";
+        String dropper3="DROP TABLE "+TABLE_RESULTATS+";";
+
+        db.execSQL(dropper1);
+        db.execSQL(dropper2);
+        db.execSQL(dropper3);*/
+
         String creerTableProfils = "CREATE TABLE IF NOT EXISTS "+TABLE_PROFILS+" ("
                 +P_ID+" INT, "
                 +P_PRENOM+" TEXT NOT NULL,"
@@ -84,7 +93,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 +"FOREIGN KEY("+R_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"),"
                 +"FOREIGN KEY("+R_OBJECTIF_INIT+") REFERENCES "+TABLE_LISTEPLATS+"("+L_OBJECTIF+"),"
                 +"PRIMARY KEY("+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+"));";
-
         db.execSQL(creerTableProfils);
         db.execSQL(creerTableListe);
         db.execSQL(creerTableResultats);
@@ -133,7 +141,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
 
         String requete = "SELECT "+L_QUANTITE+", "+L_NOM+", "+L_CALORIES+", "+L_SUGARS+", "
-                        +L_TOTALFAT+", "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
+                        +"\'"+L_TOTALFAT+"\', "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
                         +" WHERE "+L_DATEENTREE+"="+dateCourante+";";
         Cursor c = db.rawQuery(requete, null);
         return c;
@@ -277,7 +285,7 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     public static Cursor listePeriode(SQLiteDatabase db, String date){
         String requete = "SELECT "+L_QUANTITE+", "+L_NOM+", "+L_CALORIES+", "+L_SUGARS+", "
-                        +L_TOTALFAT+", "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
+                        +"\'"+L_TOTALFAT+"\', "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
                         +" WHERE "+L_DATEENTREE+"="+date+";";
         Cursor c = db.rawQuery(requete, null);
         return c;
@@ -368,6 +376,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
 
         ContentValues values = new ContentValues();
+        values.put(L_ID, USER_ID);
         values.put(L_NOM, nom);
         values.put(L_QUANTITE, qte);
         values.put(L_UPC, upc);
@@ -377,20 +386,30 @@ public class DBHelper extends SQLiteOpenHelper {
         String obj = getObjectif(db);
         values.put(L_OBJECTIF, obj);
 
-        for(Nutriment n: nutriments){
-
-            switch(n.getName()){
+        //Si la quantite initiale est à 1, on recupere les valeurs initiales des nutriments
+        for (Nutriment n : nutriments) {
+            double valeur;
+            String nouvelleValeur = " ";
+            switch (n.getName()) {
                 case L_CALORIES:
-                    values.put(L_CALORIES, n.getValue()+" "+n.getUOM());
+                    valeur = Double.parseDouble(n.getValue());
+                    nouvelleValeur = Double.toString(valeur * qte);
+                    values.put(L_CALORIES, n.getValue() + " " + n.getUOM());
                     break;
                 case L_PROTEIN:
-                    values.put(L_PROTEIN, n.getValue()+" "+n.getUOM());
+                    valeur = Double.parseDouble(n.getValue());
+                    nouvelleValeur = Double.toString(valeur * qte);
+                    values.put(L_PROTEIN, n.getValue() + " " + n.getUOM());
                     break;
                 case L_SUGARS:
-                    values.put(L_SUGARS, n.getValue()+" "+n.getUOM());
+                    valeur = Double.parseDouble(n.getValue());
+                    nouvelleValeur = Double.toString(valeur * qte);
+                    values.put(L_SUGARS, n.getValue() + " " + n.getUOM());
                     break;
-                case L_TOTALFAT:
-                    values.put(L_TOTALFAT, n.getValue()+" "+n.getUOM());
+                case "'"+ L_TOTALFAT +"'":
+                    valeur = Double.parseDouble(n.getValue());
+                    nouvelleValeur = Double.toString(valeur * qte);
+                    values.put(L_TOTALFAT, n.getValue() + " " + n.getUOM());
                     break;
             }
         }
