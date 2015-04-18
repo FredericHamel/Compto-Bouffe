@@ -37,7 +37,7 @@
         </activity>
         <activity
             android:name=".ModifierMaListe"
-            android:label="FicheE"
+            android:label="ModifierMaListe"
             android:screenOrientation="landscape" >
         </activity>
         <activity
