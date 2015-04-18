@@ -56,4 +56,10 @@ public class Nutriment {
     public boolean equals(Nutriment o) {
         return name.equals(o.name);
     }
+
+    @Override
+    public String toString()
+    {
+        return getName() + ": " + getValue() + " " + getUOM();
+    }
 }

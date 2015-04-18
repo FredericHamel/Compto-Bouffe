@@ -99,13 +99,18 @@ public class LabelAPI {
         {
             String url = BASE_URL + PRODUCT_SCORE + "?u="+ p.getUpc() +"&sid=" + Constantes.SESSION_KEY + "&f=json&api_key=" + Constantes.API_KEY;
             HttpEntity entity = getHttp(url);
-            JSONObject obj = new JSONObject(EntityUtils.toString(entity,HTTP.UTF_8));
+            String webPage = EntityUtils.toString(entity,HTTP.UTF_8);
+            Log.d("WebPage", webPage);
+            JSONObject obj = new JSONObject(webPage);
             obj = obj.getJSONObject("product");
             JSONArray array = obj.getJSONArray("nutrients");
             nutriments = new ArrayList<>(array.length());
             for (int i = 0; i < array.length(); ++i) {
                 obj = (JSONObject) array.get(i);
-                nutriments.add(new Nutriment(obj.getString("nutrient_name"), obj.getString("nutrient_value"), obj.getString("nutrient_uom")));
+                Nutriment n = new Nutriment(obj.getString("nutrient_name"), obj.getString("nutrient_value"), obj.getString("nutrient_uom"));
+                nutriments.add(n);
+                Log.d("LabelAPI", n.toString());
+
             }
         }catch(JSONException e)
         {

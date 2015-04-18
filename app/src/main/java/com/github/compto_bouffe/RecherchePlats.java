@@ -104,10 +104,11 @@ public class RecherchePlats extends Activity {
                         for(ProductQty productQty : p[0]) {
                             nutriments = labelAPI1.searchScore(productQty.getProduct());
                             if (nutriments == null) {
-                                Toast.makeText(getApplicationContext(), "Nutriment is null", Toast.LENGTH_LONG);
+                                Toast.makeText(getApplicationContext(), "Nutriment is null", Toast.LENGTH_LONG).show();
                                 Log.d("Nutriment", "Null Nutriment");
                             } else {
                                 Product pf = productQty.getProduct();
+                                Log.d("Nutriment", "Null Nutriment");
                                 DBHelper.insererListePlats(db, productQty.getQte(), pf.getUpc(), pf.getName(), pf.getDesc(), nutriments);
                             }
                         }

@@ -91,11 +91,16 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d("DB", "DB created");
     }
 
+    // SELECT Prenom FROM Profils;
     public static String getPrenom(SQLiteDatabase db){
-        String requete = "SELECT"+P_PRENOM+" FROM "+TABLE_PROFILS+";";
+        String requete = "SELECT "+P_PRENOM+" FROM "+TABLE_PROFILS+";";
         Cursor c = db.rawQuery(requete, null);
-        String prenom = c.toString();
-        c.close();
+        String prenom = "";
+        if(c != null) {
+            c.moveToFirst();
+            prenom=c.getString(c.getColumnIndex(P_PRENOM));
+            c.close();
+        }
         return prenom;
     }
 
@@ -335,8 +340,12 @@ public class DBHelper extends SQLiteOpenHelper {
     public static String getObjectif(SQLiteDatabase db){
         String requete = "SELECT "+P_OBJECTIF+" FROM "+TABLE_PROFILS+";";
         Cursor c = db.rawQuery(requete, null);
-        String obj = c.toString();
-        c.close();
+        String obj = "";
+        if(c != null) {
+            c.moveToNext();
+            obj = c.getString(c.getColumnIndex(P_OBJECTIF));
+            c.close();
+        }
         return obj;
     }
 
