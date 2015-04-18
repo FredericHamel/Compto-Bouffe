@@ -98,7 +98,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param prenom le nouveau prenom
      * @param objectif le nouvel objectif
      */
-    public static void changerInformations(SQLiteDatabase db, String prenom, int objectif){
+    public static void changerInformations(SQLiteDatabase db, String prenom, String objectif){
         String requete = "INSERT OR REPLACE INTO "+TABLE_PROFILS+"("+P_PRENOM+", "+P_OBJECTIF
                 +") VALUES ("+prenom+", "+objectif+");";
         db.execSQL(requete);
@@ -159,9 +159,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor c= db.rawQuery(requete, null);
         return c;
     }
-
-
-
+/*
     public static void changerQuantite(SQLiteDatabase db, String nom, String upc, int qte){
         Cursor c;
 
@@ -189,6 +187,15 @@ public class DBHelper extends SQLiteOpenHelper {
         String sugars = c.getString(c.getColumnIndex(L_SUGARS));
         String totalFat = c.getString(c.getColumnIndex(L_TOTALFAT));
 
+
+        ArrayList<String> n = new ArrayList<String> ();
+        n.add(calories);
+        n.add(protein);
+        n.add(sugars);
+        n.add(totalFat);
+
+        for(ArrayList<String> )
+
         //Split de chacune des Strings pour distinguer les valeurs des unites
         String[] cal = calories.split(" ");
         String cal1 = cal[0]; // 1500
@@ -206,21 +213,27 @@ public class DBHelper extends SQLiteOpenHelper {
         String fat1 = fat[0]; // 3.2
         String fat2 = fat[1]; // unite
 
+
+        //Déclarations des nouvelles values des nutriments
         String newCalorie;
         String newProtein;
         String newSugars;
         String newTotalFat;
 
 
+
+
+        //Insert dans le contentValue des nouvelles valeurs
         values.put(L_QUANTITE, qte);
         values.put(L_CALORIES, newCalorie);
         values.put(L_PROTEIN, newProtein);
         values.put(L_SUGARS, newSugars);
         values.put(L_TOTALFAT, newTotalFat);
 
+        //Mise a jour de la base de donnees
         db.update(TABLE_LISTEPLATS, values ," WHERE "+L_NOM+"="+nom, null);
     }
-
+*/
     /**
      * Methode qui renvoie la liste des plats d'une journee donnee d'un utilisateur
      * @param db la base de donnees
@@ -280,7 +293,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param prenom le prenom de l'utilisateur
      * @param objectif l'objectif quotidien
      */
-    public static void insererProfil(SQLiteDatabase db, String prenom, int objectif){
+    public static void insererProfil(SQLiteDatabase db, String prenom, String objectif){
         ContentValues values = new ContentValues();
         values.put(P_ID, USER_ID);
         values.put(P_PRENOM, prenom);
@@ -289,6 +302,12 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_PROFILS, null, values);
     }
 
+    public static Cursor getObjectif(SQLiteDatabase db){
+        String requete = "SELECT "+P_OBJECTIF+" FROM "+TABLE_PROFILS+";";
+
+        Cursor c = db.rawQuery(requete, null);
+        return c;
+    }
 
     /**
      * Methode qui insert les plats selectionnes dans la base de donnees
@@ -308,12 +327,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
 
+
         ContentValues values = new ContentValues();
         values.put(L_NOM, nom);
         values.put(L_QUANTITE, qte);
         values.put(L_UPC, upc);
         values.put(L_DESC, desc);
         values.put(L_DATEENTREE, dateCourante);
+
+        Cursor cObj = getObjectif(db);
+        String obj = cObj.getString(cObj.getColumnIndex(P_OBJECTIF));
+        values.put(L_OBJECTIF, obj);
 
         for(Nutriment n: nutriment){
 
@@ -332,9 +356,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     break;
             }
         }
-
         db.insert(TABLE_LISTEPLATS, null, values);
-
     }
 
 
