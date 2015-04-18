@@ -93,7 +93,7 @@ public class FicheA extends Activity implements View.OnClickListener {
                 protected Long doInBackground(String... strings) {
                     DBHelper dbH = new DBHelper(getApplicationContext());
                     SQLiteDatabase db = dbH.getWritableDatabase();
-                    DBHelper.insererProfil(db, strings[0], Integer.parseInt(strings[1]));
+                    DBHelper.insererProfil(db, strings[0], strings[1]);
                     db.close();
                     return null;
                 }

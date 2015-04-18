@@ -91,6 +91,16 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d("DB", "DB created");
     }
 
+    public static String getPrenom(SQLiteDatabase db){
+        String requete = "SELECT"+P_PRENOM+" FROM "+TABLE_PROFILS+";";
+        Cursor c = db.rawQuery(requete, null);
+
+        String prenom = c.getString(c.getColumnIndex(P_PRENOM));
+
+        return prenom;
+    }
+
+
 
     /**
      * Methode qui permet d'inserer pour la premiere fois ou d'updater les informations du profil
@@ -160,88 +170,100 @@ public class DBHelper extends SQLiteOpenHelper {
         return c;
     }
 
+/*
     public static void changerQuantite(SQLiteDatabase db, String nom, String upc, int qte){
-        Cursor c;
-
-        Calendar mcurrentDate=Calendar.getInstance();
-        int mYear = mcurrentDate.get(Calendar.YEAR);
-        int mMonth=mcurrentDate.get(Calendar.MONTH);
-        int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
-        String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
-        ContentValues values = new ContentValues();
-
 
         // On va chercher la quantite initiale pour pouvoir la comparer avec la nouvelle
         Cursor qteC = getQuantite(db, upc);
         String quantiteAvantChgt = qteC.getString(qteC.getColumnIndex(L_QUANTITE));
+        int ancienneQte = Integer.parseInt(quantiteAvantChgt);
+
+        if(ancienneQte!=qte) {
+            Cursor c;
+
+            Calendar mcurrentDate = Calendar.getInstance();
+            int mYear = mcurrentDate.get(Calendar.YEAR);
+            int mMonth = mcurrentDate.get(Calendar.MONTH);
+            int mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
+            String dateCourante = Integer.toString(mYear) + "-" + Integer.toString(mMonth) + "-" + Integer.toString(mDay);
+
+            ContentValues values = new ContentValues();
 
 
-        String nutriments = "SELECT * FROM "+TABLE_LISTEPLATS
-                          +" WHERE "+L_DATEENTREE+"="+dateCourante
-                          +" AND "+L_NOM+"="+nom+";";
-        c =db.rawQuery(nutriments, null);
+            String nutriments = "SELECT * FROM " + TABLE_LISTEPLATS
+                    + " WHERE " + L_DATEENTREE + "=" + dateCourante
+                    + " AND " + L_NOM + "=" + nom + ";";
+            c = db.rawQuery(nutriments, null);
 
-        //String recevant les donnees des requetes suivants les colonnes de la base de donnees
-        String calories = c.getString(c.getColumnIndex(L_CALORIES));
-        String protein =c.getString(c.getColumnIndex(L_PROTEIN));
-        String sugars = c.getString(c.getColumnIndex(L_SUGARS));
-        String totalFat = c.getString(c.getColumnIndex(L_TOTALFAT));
-
-
-        ArrayList<String> n = new ArrayList<String> ();
-        n.add(calories);
-        n.add(protein);
-        n.add(sugars);
-        n.add(totalFat);
-
-        for(String nutr : n ){
-
-            String[] info = nutr.split(" ");
-            String info1 = info[0]; // valeur
-            String info2 = info[1]; // unite
+            //String recevant les donnees des requetes suivants les colonnes de la base de donnees
+            String calories = c.getString(c.getColumnIndex(L_CALORIES));
+            String protein = c.getString(c.getColumnIndex(L_PROTEIN));
+            String sugars = c.getString(c.getColumnIndex(L_SUGARS));
+            String totalFat = c.getString(c.getColumnIndex(L_TOTALFAT));
 
 
+            ArrayList<String> n = new ArrayList<String>();
+            n.add(calories);
+            n.add(protein);
+            n.add(sugars);
+            n.add(totalFat);
 
+            for (String nutr : n) {
+
+                String[] info = nutr.split(" ");
+                double info1 = Double.parseDouble(info[0]); // valeur
+                String info2 = info[1]; // unite
+
+                if (ancienneQte < qte) {
+                    info1 = (qte*info1)/ancienneQte;
+
+                } else if (ancienneQte > qte) {
+
+                }else{ //qte==0
+
+                }
+            }
+
+            //Split de chacune des Strings pour distinguer les valeurs des unites
+            String[] cal = calories.split(" ");
+            String cal1 = cal[0]; // 1500
+            String cal2 = cal[1]; // kcal
+
+            String[] prot = protein.split(" ");
+            String prot1 = prot[0]; // 12
+            String prot2 = prot[1]; // unites
+
+            String[] sug = sugars.split(" ");
+            String sug1 = sug[0]; // 150
+            String sug2 = sug[1]; // unites
+
+            String[] fat = totalFat.split(" ");
+            String fat1 = fat[0]; // 3.2
+            String fat2 = fat[1]; // unite
+
+
+            //Déclarations des nouvelles values des nutriments
+            String newCalorie;
+            String newProtein;
+            String newSugars;
+            String newTotalFat;
+
+            Cursor cObj = getObjectif(db);
+            String obj = cObj.getString(cObj.getColumnIndex(P_OBJECTIF));
+
+
+            //Insert dans le contentValue des nouvelles valeurs
+            values.put(L_QUANTITE, qte);
+            values.put(L_CALORIES, newCalorie);
+            values.put(L_PROTEIN, newProtein);
+            values.put(L_SUGARS, newSugars);
+            values.put(L_TOTALFAT, newTotalFat);
+
+            //Mise a jour de la base de donnees
+            db.update(TABLE_LISTEPLATS, values, " WHERE " + L_NOM + "=" + nom, null);
         }
+    }*/
 
-        //Split de chacune des Strings pour distinguer les valeurs des unites
-        String[] cal = calories.split(" ");
-        String cal1 = cal[0]; // 1500
-        String cal2 = cal[1]; // kcal
-
-        String[] prot = protein.split(" ");
-        String prot1 = prot[0]; // 12
-        String prot2 = prot[1]; // unites
-
-        String[] sug = sugars.split(" ");
-        String sug1 = sug[0]; // 150
-        String sug2 = sug[1]; // unites
-
-        String[] fat = totalFat.split(" ");
-        String fat1 = fat[0]; // 3.2
-        String fat2 = fat[1]; // unite
-
-
-        //Déclarations des nouvelles values des nutriments
-        String newCalorie;
-        String newProtein;
-        String newSugars;
-        String newTotalFat;
-
-        Cursor cObj = getObjectif(db);
-        String obj = cObj.getString(cObj.getColumnIndex(P_OBJECTIF));
-
-
-        //Insert dans le contentValue des nouvelles valeurs
-        values.put(L_QUANTITE, qte);
-        values.put(L_CALORIES, newCalorie);
-        values.put(L_PROTEIN, newProtein);
-        values.put(L_SUGARS, newSugars);
-        values.put(L_TOTALFAT, newTotalFat);
-
-        //Mise a jour de la base de donnees
-        db.update(TABLE_LISTEPLATS, values ," WHERE "+L_NOM+"="+nom, null);
-    }
 
     /**
      * Methode qui renvoie la liste des plats d'une journee donnee d'un utilisateur
