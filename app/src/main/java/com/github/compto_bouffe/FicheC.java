@@ -1,14 +1,18 @@
 package com.github.compto_bouffe;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,15 +33,14 @@ public class FicheC extends Activity {
     private Button modifier, addPlat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        super.onCreate(savedInstanceState);
         dbh = new DBHelper(this);
         db = dbh.getReadableDatabase();
-        Cursor c = dbh.listeE(db);
+        Cursor c = DBHelper.listePlatsDateCourante(db);
 
-        adapter = new MyAdapter(this, c);
-        listfood.setAdapter(adapter);
+        //adapter = new MyAdapter(this, c);
+        //listfood.setAdapter(adapter);
 
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_c);
         initClickListener();
         modifier = (Button)findViewById(R.id.modify);
@@ -86,5 +89,44 @@ public class FicheC extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class MyAdapter extends CursorAdapter
+    {
+        private LayoutInflater inflater;
+        private MyAdapter(Context context, Cursor c) {
+            super(context, c, false);
+            inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup parent) {
+            if(view == null) {
+                view = inflater.inflate(R.layout.nutriment_row, parent, false);
+            }
+            //Cursor c = getCursor();
+            //c.moveToFirst();
+
+            //int qte = c.getInt(c.getColumnIndex(DBHelper.L_QUANTITE));
+            /*String nom = c.getString(c.getColumnIndex(DBHelper.L_NOM));
+            String desc = c.getString(c.getColumnIndex(DBHelper.L_NOM));
+            String cal = c.getString(c.getColumnIndex(DBHelper.L_CALORIES));
+            String sucre = c.getString(c.getColumnIndex(DBHelper.L_SUGARS));
+            String fat  = c.getString(c.getColumnIndex("'" +DBHelper.L_TOTALFAT + "'"));
+            String proteine = c.getString(c.getColumnIndex(DBHelper.L_PROTEIN));*/
+            //TextView tv1 = (TextView)view.findViewById(R.id.quantity);
+            //tv1.setText(Integer.parseInt(qte));
+            return view;
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
+            return null;
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+
+        }
     }
 }

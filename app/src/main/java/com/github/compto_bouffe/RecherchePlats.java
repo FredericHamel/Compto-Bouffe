@@ -157,13 +157,13 @@ public class RecherchePlats extends Activity {
                 {
                     case R.id.add_element_btn:
                         i = searchProductAdapter.getSelectedIndex();
+                        myListAdapter.setSelectedIndex(-1);
                         Log.d("BTN_ADD", "Add item " + i + " a mes choix");
                         if(i > -1) {
                             Product p = listProducts.get(i);
                             for(ProductQty pty : myChoice) {
                                 if(pty.getProduct().equals(p)) {
                                     pty.add();
-                                    p = null;
                                     break;
                                 }
                             }
@@ -176,7 +176,6 @@ public class RecherchePlats extends Activity {
                         i = myListAdapter.getSelectedIndex();
                         if(i > -1 && i < myChoice.size()) {
                             ProductQty pty = myChoice.get(i);
-
                             if(pty.getQte() > 1)
                                 pty.sub();
                             else {
@@ -184,9 +183,6 @@ public class RecherchePlats extends Activity {
                                 myListAdapter.setSelectedIndex(-1);
                             }
                         }
-
-
-
                 }
                 myListAdapter.notifyDataSetChanged();
             }

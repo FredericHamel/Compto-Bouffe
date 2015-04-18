@@ -29,8 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // Table de listes des plats
     static final String TABLE_LISTEPLATS = "ListePlats";
-    static final String L_USER_ID ="UserID";
-    static final String L_ID ="_id";
+    static final String L_ID ="ID";
     static final String L_OBJECTIF ="Objectif";
     static final String L_QUANTITE ="Quantite";
     static final String L_UPC ="UPC";
@@ -57,6 +56,14 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        /*String dropper1="DROP TABLE "+TABLE_PROFILS+";";
+        String dropper2="DROP TABLE "+TABLE_LISTEPLATS+";";
+        String dropper3="DROP TABLE "+TABLE_RESULTATS+";";
+
+        db.execSQL(dropper1);
+        db.execSQL(dropper2);
+        db.execSQL(dropper3);*/
+
         String creerTableProfils = "CREATE TABLE IF NOT EXISTS "+TABLE_PROFILS+" ("
                 +P_ID+" INT, "
                 +P_PRENOM+" TEXT NOT NULL,"
@@ -64,8 +71,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 +"PRIMARY KEY("+P_ID+"));";
 
         String creerTableListe = "CREATE TABLE IF NOT EXISTS "+TABLE_LISTEPLATS+" ("
-                + L_USER_ID +" INT, "
-                +L_ID+" INT PRIMARY KEY AUTOINCREMENT,"
+                +L_ID+" INT, "
                 +L_OBJECTIF+" TEXT NOT NULL,"
                 +L_QUANTITE+" INT, "
                 +L_UPC+" TEXT NOT NULL, "
@@ -76,7 +82,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 +L_SUGARS+" TEXT, '"
                 +L_TOTALFAT+"' TEXT, "
                 +L_PROTEIN+" TEXT, "
-                +"FOREIGN KEY("+ L_USER_ID +") REFERENCES "+TABLE_PROFILS+"("+P_ID+");";
+                +"FOREIGN KEY("+L_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"),"
+                +"PRIMARY KEY("+L_ID+","+L_DATEENTREE+"));";
 
         String creerTableResultats = "CREATE TABLE IF NOT EXISTS "+TABLE_RESULTATS+" ("
                 +R_ID+" INT, "
@@ -85,8 +92,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 +R_DATE+" TEXT NOT NULL,"
                 +"FOREIGN KEY("+R_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"),"
                 +"FOREIGN KEY("+R_OBJECTIF_INIT+") REFERENCES "+TABLE_LISTEPLATS+"("+L_OBJECTIF+"),"
-                +"PRIMARY KEY("+R_ID+", "+R_DATE+"));";
-
+                +"PRIMARY KEY("+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+"));";
         db.execSQL(creerTableProfils);
         db.execSQL(creerTableListe);
         db.execSQL(creerTableResultats);
@@ -134,7 +140,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
 
-        String requete = "SELECT "+L_QUANTITE+", "+L_NOM+", "+L_CALORIES+", "+L_SUGARS+", "
+        String requete = "SELECT "+L_QUANTITE+", "+L_NOM+", "+ L_DESC +", "+L_CALORIES+", "+L_SUGARS+", "
                         +"'"+L_TOTALFAT+"', "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
                         +" WHERE "+L_DATEENTREE+"="+dateCourante+";";
         Cursor c = db.rawQuery(requete, null);
@@ -177,19 +183,9 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    /**
-     * Methode qui update la quantite de la rangee concernee dans la base de donnee
-     * @param db la base de donnees
-     * @param upc le code du plat
-     * @param qte la nouvelle quantite
-     */
-    public static void changerQuantite(SQLiteDatabase db, String upc, int qte) {
-        ContentValues v = new ContentValues();
-        v.put(L_QUANTITE, qte);
-        db.update(TABLE_LISTEPLATS, v, " WHERE "+L_UPC+"="+upc, null);
-    }
+    public static void changerQuantite(SQLiteDatabase db, String nom, String upc, int qte){
 
-     /*   // On va chercher la quantite initiale pour pouvoir la comparer avec la nouvelle
+        // On va chercher la quantite initiale pour pouvoir la comparer avec la nouvelle
         Cursor qteC = getQuantite(db, upc);
         String quantiteAvantChgt = qteC.getString(qteC.getColumnIndex(L_QUANTITE));
         int ancienneQte = Integer.parseInt(quantiteAvantChgt);
@@ -208,7 +204,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             String nutriments = "SELECT * FROM " + TABLE_LISTEPLATS
                     + " WHERE " + L_DATEENTREE + "=" + dateCourante
-                    + " AND " + L_UPC + "=" + upc + ";";
+                    + " AND " + L_NOM + "=" + nom + ";";
             c = db.rawQuery(nutriments, null);
 
             //String recevant les donnees des requetes suivants les colonnes de la base de donnees
@@ -264,21 +260,19 @@ public class DBHelper extends SQLiteOpenHelper {
             String newSugars;
             String newTotalFat;
 
-            Cursor cObj = getObjectif(db);
-            String obj = cObj.getString(cObj.getColumnIndex(P_OBJECTIF));
-
+            String obj = getObjectif(db);
 
             //Insert dans le contentValue des nouvelles valeurs
-            values.put(L_QUANTITE, qte);
+            /*values.put(L_QUANTITE, qte);
             values.put(L_CALORIES, newCalorie);
             values.put(L_PROTEIN, newProtein);
             values.put(L_SUGARS, newSugars);
-            values.put(L_TOTALFAT, newTotalFat);
+            values.put(L_TOTALFAT, newTotalFat);*/
 
             //Mise a jour de la base de donnees
             db.update(TABLE_LISTEPLATS, values, " WHERE " + L_NOM + "=" + nom, null);
         }
-    }*/
+    }
 
 
     /**
@@ -329,6 +323,11 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(TABLE_LISTEPLATS, L_UPC+"="+upc+" AND "+L_DATEENTREE+"="+dateCourante, null);
     }
 
+
+    /**
+     *Insertions
+     */
+
     /**
      * Methode qui insert dans la base de donnees les informations concernant l'utilisateur
      * @param db la base de donnees
@@ -375,7 +374,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
 
         ContentValues values = new ContentValues();
-        values.put(L_USER_ID, USER_ID);
+        values.put(L_ID, USER_ID);
         values.put(L_NOM, nom);
         values.put(L_QUANTITE, qte);
         values.put(L_UPC, upc);
@@ -391,7 +390,6 @@ public class DBHelper extends SQLiteOpenHelper {
             String nouvelleValeur = " ";
             valeur = Double.parseDouble(n.getValue());
             nouvelleValeur = Double.toString(valeur * qte);
-
             switch (n.getName()) {
                 case L_CALORIES:
                     values.put(L_CALORIES, n.getValue() + " " + n.getUOM());
