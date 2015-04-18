@@ -47,4 +47,13 @@ public class Nutriment {
     {
         return uom;
     }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    public boolean equals(Nutriment o) {
+        return name.equals(o.name);
+    }
 }

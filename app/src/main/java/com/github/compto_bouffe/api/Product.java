@@ -50,7 +50,7 @@ public class Product {
      * Getter du upc.
      * @return le upc code associer au produit.
      */
-    String getUpc()
+    public String getUpc()
     {
         return upc;
     }
