@@ -106,12 +106,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     /**
-     * Methode qui renvoie la liste de plats d'un utilisateur a la date courante
+     * Methode qui renvoie la liste de plats de l'utilisateur a la date courante
      * @param db la base de donnees
-     * @param id l'id unique de l'utilisateur
      * @return c le curseur;
      */
-    public static Cursor listePlatsDateCourante (SQLiteDatabase db, int id){
+    public static Cursor listePlatsDateCourante (SQLiteDatabase db){
         Calendar mcurrentDate=Calendar.getInstance();
         int mYear = mcurrentDate.get(Calendar.YEAR);
         int mMonth=mcurrentDate.get(Calendar.MONTH);
@@ -121,8 +120,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String requete = "SELECT "+L_QUANTITE+", "+L_NOM+", "+L_CALORIES+", "+L_SUGARS+", "
                         +L_TOTALFAT+", "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
-                        +" WHERE "+L_ID+"="+id
-                        +" AND "+L_DATEENTREE+"="+dateCourante+";";
+                        +" WHERE "+L_DATEENTREE+"="+dateCourante+";";
         Cursor c = db.rawQuery(requete, null);
         return c;
     }
@@ -164,11 +162,64 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
-    /*public static void changerQuantite(SQLiteDatabase db, int id, String nom, int qte){
+    public static void changerQuantite(SQLiteDatabase db, String nom, String upc, int qte){
+        Cursor c;
+
+        Calendar mcurrentDate=Calendar.getInstance();
+        int mYear = mcurrentDate.get(Calendar.YEAR);
+        int mMonth=mcurrentDate.get(Calendar.MONTH);
+        int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
+        String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
         ContentValues values = new ContentValues();
+
+
+        // On va chercher la quantite initiale pour pouvoir la comparer avec la nouvelle
+        Cursor qteC = getQuantite(db, upc);
+        String quantiteAvantChgt = qteC.getString(qteC.getColumnIndex(L_QUANTITE));
+
+
+        String nutriments = "SELECT * FROM "+TABLE_LISTEPLATS
+                          +" WHERE "+L_DATEENTREE+"="+dateCourante
+                          +" AND "+L_NOM+"="+nom+";";
+        c =db.rawQuery(nutriments, null);
+
+        //String recevant les donnees des requetes suivants les colonnes de la base de donnees
+        String calories = c.getString(c.getColumnIndex(L_CALORIES));
+        String protein =c.getString(c.getColumnIndex(L_PROTEIN));
+        String sugars = c.getString(c.getColumnIndex(L_SUGARS));
+        String totalFat = c.getString(c.getColumnIndex(L_TOTALFAT));
+
+        //Split de chacune des Strings pour distinguer les valeurs des unites
+        String[] cal = calories.split(" ");
+        String cal1 = cal[0]; // 1500
+        String cal2 = cal[1]; // kcal
+
+        String[] prot = protein.split(" ");
+        String prot1 = prot[0]; // 12
+        String prot2 = prot[1]; // unites
+
+        String[] sug = sugars.split(" ");
+        String sug1 = sug[0]; // 150
+        String sug2 = sug[1]; // unites
+
+        String[] fat = totalFat.split(" ");
+        String fat1 = fat[0]; // 3.2
+        String fat2 = fat[1]; // unite
+
+        String newCalorie;
+        String newProtein;
+        String newSugars;
+        String newTotalFat;
+
+
         values.put(L_QUANTITE, qte);
-        db.update(TABLE_PROFILS, values, P_ID+" = "+id, null);
-    }*/
+        values.put(L_CALORIES, newCalorie);
+        values.put(L_PROTEIN, newProtein);
+        values.put(L_SUGARS, newSugars);
+        values.put(L_TOTALFAT, newTotalFat);
+
+        db.update(TABLE_LISTEPLATS, values ," WHERE "+L_NOM+"="+nom, null);
+    }
 
     /**
      * Methode qui renvoie la liste des plats d'une journee donnee d'un utilisateur
@@ -176,11 +227,10 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param date la date de type YYYY-MM-DD dont on veut connaitre la liste des plats
      * @return c le curseur
      */
-    public static Cursor listePeriode(SQLiteDatabase db, int id, String date){
+    public static Cursor listePeriode(SQLiteDatabase db, String date){
         String requete = "SELECT "+L_QUANTITE+", "+L_NOM+", "+L_CALORIES+", "+L_SUGARS+", "
                         +L_TOTALFAT+", "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
-                        +" WHERE "+L_ID+"="+id
-                        +" AND "+L_DATEENTREE+"="+date+";";
+                        +" WHERE "+L_DATEENTREE+"="+date+";";
         Cursor c = db.rawQuery(requete, null);
         return c;
     }
@@ -189,16 +239,14 @@ public class DBHelper extends SQLiteOpenHelper {
      * Methode qui renvoit une liste  de date et l'objectif du jour et l'objectif resultat associes
      * pour une periode de temps donnee
      * @param db la base de donnees
-     * @param id l'id unique de l'utilisateur
      * @param dateDebut la date au format YYYY-MM-DD du debut de periode
      * @param dateFin la date au format YYYY-MM-DD de fin de periode
      * @return c le curseur
      */
-    public static Cursor listeObjectifs(SQLiteDatabase db, int id, String dateDebut, String dateFin){
+    public static Cursor listeObjectifs(SQLiteDatabase db, String dateDebut, String dateFin){
         String requete = "SELECT "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
                 +" FROM "+TABLE_RESULTATS
-                +" WHERE "+R_ID+"="+id
-                +" AND "+R_DATE+">="+dateDebut
+                +" WHERE "+R_DATE+">="+dateDebut
                 +" AND "+R_DATE+"<="+dateFin+";";
 
         Cursor c = db.rawQuery(requete, null);
@@ -210,7 +258,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param db la base de donnees
      * @param upc le code du plat
      */
-    public static void supprimerPlatListe(SQLiteDatabase db, int id, String upc){
+    public static void supprimerPlatListe(SQLiteDatabase db, String upc){
         Calendar mcurrentDate=Calendar.getInstance();
         int mYear = mcurrentDate.get(Calendar.YEAR);
         int mMonth=mcurrentDate.get(Calendar.MONTH);
@@ -218,8 +266,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
 
-        db.delete(TABLE_LISTEPLATS, L_UPC+"="+upc+" AND "+L_DATEENTREE+"="+dateCourante
-                +" AND "+L_ID+"="+id, null);
+        db.delete(TABLE_LISTEPLATS, L_UPC+"="+upc+" AND "+L_DATEENTREE+"="+dateCourante, null);
     }
 
 
@@ -286,7 +333,7 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         }
 
-        db.insert(TABLE_PROFILS, null, values);
+        db.insert(TABLE_LISTEPLATS, null, values);
 
     }
 
