@@ -342,7 +342,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(requete, null);
         String obj = "";
         if(c != null) {
-            c.moveToNext();
+            c.moveToFirst();
             obj = c.getString(c.getColumnIndex(P_OBJECTIF));
             c.close();
         }
