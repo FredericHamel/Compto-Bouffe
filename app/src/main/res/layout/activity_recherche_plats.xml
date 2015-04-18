@@ -99,13 +99,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#000000"
+            android:background="@color/black"
             android:padding="2dp">
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:background="#FFFFFF">
+                android:background="@color/white">
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
@@ -113,8 +113,8 @@
                     android:text="@string/my_list_header"
                     android:gravity="center"
                     android:textSize="@dimen/liste_view_header_text_size"
-                    android:background="#000000"
-                    android:textColor="#FFFFFF"
+                    android:background="@color/black"
+                    android:textColor="@color/white"
                     />
                 <ListView
                     android:id="@+id/my_list"

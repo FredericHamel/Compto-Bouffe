@@ -179,14 +179,18 @@ public class RecherchePlats extends Activity {
                         break;
                     case R.id.sub_element_btn:
                         i = myListAdapter.getSelectedIndex();
-                        if(i > -1) {
+                        if(i > -1 && i < myChoice.size()) {
                             ProductQty pty = myChoice.get(i);
-                            if (pty.getQte() == 1) {
+
+                            if(pty.getQte() > 1)
+                                pty.sub();
+                            else {
                                 myChoice.remove(i);
                                 myListAdapter.setSelectedIndex(-1);
                             }
-                            pty.sub();
                         }
+
+
 
                 }
                 myListAdapter.notifyDataSetChanged();
