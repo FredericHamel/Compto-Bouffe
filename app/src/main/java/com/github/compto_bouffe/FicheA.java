@@ -2,9 +2,7 @@ package com.github.compto_bouffe;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -82,29 +80,31 @@ public class FicheA extends Activity implements View.OnClickListener {
             //on crée un toast
             String letter_name = ed_name.getText().toString();
             String number_cal = ed_cal.getText().toString();
-            Toast.makeText(this, "Bonjour " + letter_name + " votre objectif de ce jour est de " + number_cal + " calories" , Toast.LENGTH_LONG).show();
+
+            int obCal = Integer.parseInt(number_cal);
+            //Toast.makeText(this, "Bonjour " + letter_name + " votre objectif de ce jour est de " + number_cal + " calories" , Toast.LENGTH_LONG).show();
+
+            //code pour passer de la fiche a à la fiche b si l,utilisateur rente des objectifs compris entre 1200 et 6000 calories
+
+
+            if(obCal >= 1200 && obCal <= 6000 ){
+
+                Button button = (Button) v;
+                startActivity(new Intent(getApplicationContext(), FicheB.class));
+
+            }
+            else{
+                Toast.makeText(this, "Bonjour " + letter_name + " veuillez entrer un objectif entre 1200 et 6000 calories "  , Toast.LENGTH_LONG).show();
+
+
+            }
+
+            //Toast.makeText(this, "Bonjour " + letter_name + " votre objectif de ce jour est de " + number_cal + " calories" , Toast.LENGTH_LONG).show();
 
             //code pour passer de la fiche a à la fiche b
 
-            Button button = (Button) v;
-            AsyncTask<String, Void, Long> d = new AsyncTask<String, Void, Long>(){
-
-                @Override
-                protected Long doInBackground(String... strings) {
-                    DBHelper dbH = new DBHelper(getApplicationContext());
-                    SQLiteDatabase db = dbH.getWritableDatabase();
-                    DBHelper.insererProfil(db, strings[0], Integer.parseInt(strings[1]));
-                    db.close();
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Long aLong) {
-                    startActivity(new Intent(getApplicationContext(), FicheB.class));
-                    super.onPostExecute(aLong);
-                }
-            };
-            d.execute(letter_name, number_cal);
+            //Button button = (Button) v;
+            //startActivity(new Intent(getApplicationContext(), FicheB.class));
 
 
         }
