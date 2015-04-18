@@ -94,9 +94,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static String getPrenom(SQLiteDatabase db){
         String requete = "SELECT"+P_PRENOM+" FROM "+TABLE_PROFILS+";";
         Cursor c = db.rawQuery(requete, null);
-
-        String prenom = c.getString(c.getColumnIndex(P_PRENOM));
-
+        String prenom = c.toString();
         return prenom;
     }
 
@@ -262,8 +260,8 @@ public class DBHelper extends SQLiteOpenHelper {
             //Mise a jour de la base de donnees
             db.update(TABLE_LISTEPLATS, values, " WHERE " + L_NOM + "=" + nom, null);
         }
-    }*/
-
+    }
+*/
 
     /**
      * Methode qui renvoie la liste des plats d'une journee donnee d'un utilisateur
@@ -333,11 +331,11 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_PROFILS, null, values);
     }
 
-    public static Cursor getObjectif(SQLiteDatabase db){
+    public static String getObjectif(SQLiteDatabase db){
         String requete = "SELECT "+P_OBJECTIF+" FROM "+TABLE_PROFILS+";";
-
         Cursor c = db.rawQuery(requete, null);
-        return c;
+        String obj = c.toString();
+        return obj;
     }
 
     /**
@@ -347,17 +345,16 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param upc le code du produit
      * @param nom le nom du produit
      * @param desc la description du produit
-     * @param nutriment le arraylist de type nutriment correspondant au produit
+     * @param nutriments le arraylist de type nutriment correspondant au produit
      */
     public static void insererListePlats(SQLiteDatabase db, int qte, String upc, String nom,
-                                    String desc, ArrayList<Nutriment> nutriment){
+                                    String desc, ArrayList<Nutriment> nutriments){
         Calendar mcurrentDate=Calendar.getInstance();
         int mYear = mcurrentDate.get(Calendar.YEAR);
         int mMonth=mcurrentDate.get(Calendar.MONTH);
         int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
 
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
-
 
         ContentValues values = new ContentValues();
         values.put(L_NOM, nom);
@@ -366,11 +363,10 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(L_DESC, desc);
         values.put(L_DATEENTREE, dateCourante);
 
-        Cursor cObj = getObjectif(db);
-        String obj = cObj.getString(cObj.getColumnIndex(P_OBJECTIF));
+        String obj = getObjectif(db);
         values.put(L_OBJECTIF, obj);
 
-        for(Nutriment n: nutriment){
+        for(Nutriment n: nutriments){
 
             switch(n.getName()){
                 case L_CALORIES:
