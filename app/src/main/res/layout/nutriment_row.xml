@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="2"
+        android:id="@+id/quantity"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.03"
+        android:gravity="center_vertical" />
+
+    <TextView
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Pain Kaiser"
+        android:id="@+id/food_name"
+        android:layout_gravity="center_vertical" />
+
+    <TextView
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="456"
+        android:id="@+id/calorie"
+        android:layout_gravity="center_vertical" />
+
+    <TextView
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="38,8g"
+        android:id="@+id/glucide"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.03" />
+
+    <TextView
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="8g"
+        android:id="@+id/sucre"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.03" />
+
+    <TextView
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="6g"
+        android:id="@+id/gras"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.03" />
+
+    <TextView
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="2g"
+        android:id="@+id/sature"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.03" />
+
+    <TextView
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="20g"
+        android:id="@+id/proteines"
+        android:layout_gravity="center_vertical" />
+</LinearLayout>

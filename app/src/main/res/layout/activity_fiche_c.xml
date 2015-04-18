@@ -370,5 +370,13 @@
                     android:layout_alignParentRight="false" />
             </RelativeLayout>
         </LinearLayout>
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_nutri"
+            android:layout_toEndOf="@+id/linearLayout6"
+            android:layout_below="@+id/linearLayout7"
+            android:layout_alignBottom="@+id/linearLayout8" />
     </RelativeLayout>
 </RelativeLayout>

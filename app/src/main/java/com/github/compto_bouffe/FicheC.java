@@ -2,19 +2,41 @@ package com.github.compto_bouffe;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 
 public class FicheC extends Activity {
+
+
+    ListView listfood;
+
+    DBHelper dbh;
+    SQLiteDatabase db;
+    MyAdapter adapter;
+
+
+
 
     private View.OnClickListener listener;
     private Button modifier, addPlat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        dbh = new DBHelper(this);
+        db = dbh.getReadableDatabase();
+        Cursor c = dbh.listeE(db);
+
+        adapter = new MyAdapter(this, c);
+        listfood.setAdapter(adapter);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_c);
         initClickListener();
