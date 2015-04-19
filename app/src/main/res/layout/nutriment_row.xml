@@ -11,6 +11,7 @@
         android:id="@+id/quantity"
         android:layout_gravity="center_vertical"
         android:layout_weight="0.8"
+        android:layout_marginLeft="10dp"
         android:gravity="center_vertical" />
 
     <TextView
