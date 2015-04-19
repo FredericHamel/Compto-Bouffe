@@ -53,7 +53,7 @@ public class FicheC extends Activity {
 
         dbh = new DBHelper(this);
         db = dbh.getReadableDatabase();
-        Cursor c = dbh.listePlatsDateCourante(db);
+        Cursor c = DBHelper.listePlatsDateCourante(db);
 
         adapter = new MyAdapter(this, c);
         listfood.setAdapter(adapter);
@@ -126,7 +126,7 @@ public class FicheC extends Activity {
             c.moveToPosition(position);
             Integer qtity = c.getInt(c.getColumnIndex(DBHelper.L_QUANTITE));
             String name = c.getString(c.getColumnIndex(DBHelper.L_NOM));
-            String desc = c.getString(c.getColumnIndex(DBHelper.L_DESC));
+            String desc = c.getString(c.getColumnIndex(DBHelper.L_SIZE));
             String cal = c.getString(c.getColumnIndex(DBHelper.L_CALORIES));
             String sucre = c.getString(c.getColumnIndex(DBHelper.L_SUGARS));
             String gras = c.getString(c.getColumnIndex(DBHelper.L_TOTALFAT));
@@ -141,7 +141,7 @@ public class FicheC extends Activity {
             TextView g = (TextView)v.findViewById(R.id.gras);
             TextView p = (TextView)v.findViewById(R.id.proteines);
 
-            q.setText(qtity);
+            q.setText(Integer.toString(qtity));
             n.setText(name);
             des.setText(desc);
             calo.setText(cal);

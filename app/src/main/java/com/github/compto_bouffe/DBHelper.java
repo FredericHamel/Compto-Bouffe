@@ -35,7 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String L_QUANTITE ="Quantite";
     static final String L_UPC ="UPC";
     static final String L_NOM ="Nom";
-    static final String L_DESC ="Desc";
+    static final String L_SIZE ="Size";
     static final String L_DATEENTREE ="DateEntree";
     static final String L_CALORIES ="Calories";
     static final String L_TOTALFAT ="Total Fat";
@@ -70,7 +70,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 +L_QUANTITE+" INTEGER, "
                 +L_UPC+" TEXT NOT NULL, "
                 +L_NOM+" TEXT NOT NULL, "
-                +L_DESC+" TEXT, "
+                +L_SIZE+" TEXT, "
                 +L_DATEENTREE+" TEXT, "
                 +L_CALORIES+" TEXT, "
                 +L_SUGARS+" TEXT, `"
@@ -134,9 +134,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
 
-        String requete = "SELECT "+L_ID + ", " +L_QUANTITE+", "+L_NOM+", "+L_CALORIES+", "+L_SUGARS+", `"
+        String requete = "SELECT "+L_ID + ", " +L_QUANTITE+", "+L_NOM+", "+L_SIZE+", "+L_CALORIES+", "+L_SUGARS+", `"
                         +L_TOTALFAT+"`, "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
-                        +" WHERE "+L_DATEENTREE+"="+dateCourante+";";
+                        +" WHERE "+L_DATEENTREE+"='"+dateCourante+"';";
+        Log.d("Query", requete);
         Cursor c = db.rawQuery(requete, null);
         return c;
     }
@@ -147,9 +148,10 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return c le cursor
      */
     public static Cursor afficherHistorique (SQLiteDatabase db){
-        String requete = "SELECT DISTINCT "+L_NOM+", "+L_DESC+" FROM "+TABLE_LISTEPLATS
+        String requete = "SELECT DISTINCT "+L_NOM+", "+L_SIZE+" FROM "+TABLE_LISTEPLATS
                           +" ORDER BY "+L_DATEENTREE
                           +" LIMIT 15;";
+        Log.d("Query", requete);
         Cursor c=db.rawQuery(requete, null);
         return c;
     }
@@ -171,7 +173,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String requete = "SELECT "+L_QUANTITE+" FROM "+TABLE_LISTEPLATS
                         +" WHERE "+L_UPC+"="+upc
-                        +" AND "+L_DATEENTREE+"="+dateCourante+";";
+                        +" AND "+L_DATEENTREE+"='"+dateCourante+"';";
+        Log.d("Query", requete);
         Cursor c= db.rawQuery(requete, null);
         return c;
     }
@@ -288,9 +291,9 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return c le curseur
      */
     public static Cursor listePeriode(SQLiteDatabase db, String date){
-        String requete = "SELECT "+L_QUANTITE+", "+L_NOM+", "+L_CALORIES+", "+L_SUGARS+", `"
+        String requete = "SELECT "+L_ID+", "+L_QUANTITE+", "+L_NOM+", "+L_SIZE+", "+L_CALORIES+", "+L_SUGARS+", `"
                         +L_TOTALFAT+"`, "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
-                        +" WHERE "+L_DATEENTREE+"="+date+";";
+                        +" WHERE "+L_DATEENTREE+"='"+date+"';";
         Cursor c = db.rawQuery(requete, null);
         return c;
     }
@@ -326,7 +329,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
 
-        db.delete(TABLE_LISTEPLATS, L_UPC+"="+upc+" AND "+L_DATEENTREE+"="+dateCourante, null);
+        db.delete(TABLE_LISTEPLATS, L_UPC+"="+upc+" AND "+L_DATEENTREE+"='"+dateCourante+"'", null);
     }
 
     /**
@@ -362,11 +365,11 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param qte la quantite du produit
      * @param upc le code du produit
      * @param nom le nom du produit
-     * @param desc la description du produit
+     * @param size le format du produit
      * @param nutriments le arraylist de type nutriment correspondant au produit
      */
     public static void insererListePlats(SQLiteDatabase db, int qte, String upc, String nom,
-                                    String desc, ArrayList<Nutriment> nutriments){
+                                    String size, ArrayList<Nutriment> nutriments){
         Calendar mcurrentDate=Calendar.getInstance();
         int mYear = mcurrentDate.get(Calendar.YEAR);
         int mMonth=mcurrentDate.get(Calendar.MONTH);
@@ -378,8 +381,8 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(L_USER_ID, USER_ID);
         values.put(L_NOM, nom);
         values.put(L_QUANTITE, qte);
+        values.put(L_SIZE, size);
         values.put(L_UPC, upc);
-        values.put(L_DESC, desc);
         values.put(L_DATEENTREE, dateCourante);
 
         String obj = getObjectif(db);

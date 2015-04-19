@@ -42,8 +42,8 @@
             <TextView
                 android:id="@+id/text2"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:gravity="bottom|start"
                 android:text="Medium Text"
                 android:background="@color/white"
@@ -53,7 +53,6 @@
                 android:id="@+id/text3"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:gravity="top|start"
                 android:background="@color/white"
                 android:text="Small Text"
