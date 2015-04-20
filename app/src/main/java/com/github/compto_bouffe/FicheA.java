@@ -26,9 +26,6 @@ public class FicheA extends Activity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.feuille_a);
 
@@ -43,9 +40,6 @@ public class FicheA extends Activity implements View.OnClickListener {
         btn1.setOnClickListener(this);
         btn2.setOnClickListener(this);
         //adapter = new myAdapter();
-
-
-
     }
 
 
@@ -82,7 +76,7 @@ public class FicheA extends Activity implements View.OnClickListener {
             //on crée un toast
             String letter_name = ed_name.getText().toString();
             String number_cal = ed_cal.getText().toString();
-            Toast.makeText(this, "Bonjour " + letter_name + " votre objectif de ce jour est de " + number_cal + " calories" , Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Bonjour " + letter_name + " votre objectif de ce jour est de " + number_cal + " calories" , Toast.LENGTH_LONG).show();
 
             //code pour passer de la fiche a à la fiche b
 
@@ -104,7 +98,10 @@ public class FicheA extends Activity implements View.OnClickListener {
                     super.onPostExecute(aLong);
                 }
             };
-            d.execute(letter_name, number_cal);
+            if(number_cal.matches("[1-9]+[0-9]{3,4}"))
+                d.execute(letter_name, number_cal);
+            else
+                Toast.makeText(this, "Veuillez entrer un objectif valide", Toast.LENGTH_SHORT).show();
 
 
         }
