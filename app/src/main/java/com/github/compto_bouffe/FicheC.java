@@ -30,17 +30,19 @@ public class FicheC extends Activity {
     SQLiteDatabase db;
     MyAdapter adapter;
 
-
-
+    private TextView textViewCalIng, textViewCalRes;
 
     private View.OnClickListener listener;
     private Button modifier, addPlat;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_c);
         initClickListener();
+        textViewCalIng = (TextView)findViewById(R.id.textViewCalIng);
+        textViewCalRes = (TextView)findViewById(R.id.textViewCalRes);
+
         modifier = (Button)findViewById(R.id.modify);
         addPlat = (Button)findViewById(R.id.add_plat);
 
@@ -49,14 +51,31 @@ public class FicheC extends Activity {
         modifier.setOnClickListener(listener);
         addPlat.setOnClickListener(listener);
 
-
-
         dbh = new DBHelper(this);
         db = dbh.getReadableDatabase();
         Cursor c = DBHelper.listePlatsDateCourante(db);
 
         adapter = new MyAdapter(this, c);
         listfood.setAdapter(adapter);
+
+        updateStatus(c);
+
+    }
+
+    private void updateStatus(Cursor c)
+    {
+        double calorie = 0;
+        double objectif = Double.parseDouble(DBHelper.getObjectif(db));
+        if(c.getCount() > 0)
+        {
+            c.moveToFirst();
+            do {
+                int qte = c.getInt(c.getColumnIndex(DBHelper.L_QUANTITE));
+                calorie += qte*Double.parseDouble(c.getString(c.getColumnIndex(DBHelper.L_CALORIES)).split(" ")[0]);
+            } while (c.moveToNext());
+        }
+        textViewCalIng.setText(String.valueOf(calorie));
+        textViewCalRes.setText(String.valueOf(objectif - calorie));
     }
 
     private void initClickListener()
@@ -72,10 +91,8 @@ public class FicheC extends Activity {
                     case R.id.add_plat:
                         startActivity(new Intent(FicheC.this, RecherchePlats.class));
                         break;
-
                 }
-                Cursor c = dbh.listePlatsDateCourante(db);
-                adapter.changeCursor(c);
+                updateStatus(adapter.getCursor());
                 adapter.notifyDataSetChanged();
             }
         };
