@@ -9,7 +9,7 @@ public class DateInfos {
     String date, info1, info2;
     int image;
 
-    // Obtient la date et les ifnormations calorique sur l'objectif du jour;
+    // Obtient la date et les informations calorique sur l'objectif du jour;
     // change le fond à rouge si l'objectif n'a pas été atteint, à vert sinon.
     public DateInfos(String date, String info1, String info2){
         this.date=date;
