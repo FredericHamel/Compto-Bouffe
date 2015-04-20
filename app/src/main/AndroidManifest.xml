@@ -26,26 +26,26 @@
         </activity>
         <activity
             android:name=".FicheB"
-            android:label="@string/title_activity_menu_principal"
+            android:label="Menu principal"
             android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name=".FicheC"
-            android:label="@string/title_activity_fiche_c"
+            android:label="Menu quotidien"
             android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name=".ModifierMaListe"
-            android:label="Modifier Ma Liste"
+            android:label="Modifier ma liste"
             android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name=".RecherchePlats"
-            android:label="@string/title_activity_recherche_plats" >
+            android:label="Recherche de plats" >
         </activity>
         <activity
             android:name=".Recapitulatif"
-            android:label="Recapitulatif"/>
+            android:label="Récapitulatif"/>
     </application>
 
 </manifest>
