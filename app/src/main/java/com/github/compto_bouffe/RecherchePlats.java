@@ -1,6 +1,7 @@
 package com.github.compto_bouffe;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -28,6 +29,7 @@ import com.github.compto_bouffe.api.Product;
 import com.github.compto_bouffe.api.ProductQty;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class RecherchePlats extends Activity {
 
@@ -102,6 +104,12 @@ public class RecherchePlats extends Activity {
         Cursor c = DBHelper.listePlatsDateCourante(db);
         searchProductAdapter = new SearchProductAdapter(this, c);
         myListAdapter = new MyListAdapter();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        db.close();
     }
 
     private void initMyListContent() {
@@ -183,10 +191,27 @@ public class RecherchePlats extends Activity {
                         DBHelper dbH = new DBHelper(getApplicationContext());
                         SQLiteDatabase db = dbH.getWritableDatabase();
 
+                        Calendar mcurrentDate=Calendar.getInstance();
+                        int mYear = mcurrentDate.get(Calendar.YEAR);
+                        int mMonth=mcurrentDate.get(Calendar.MONTH);
+                        int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
+
+                        String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
+                        String base_query = "SELECT " + DBHelper.L_UPC + " FROM " + DBHelper.TABLE_LISTEPLATS + " WHERE "+DBHelper.L_DATEENTREE+"='"+dateCourante+"' AND "+DBHelper.L_UPC+ "=";
                         for(ProductQty productQty : p[0]) {
-                            nutriments = labelAPI1.searchScore(productQty.getProduct());
                             Product pf = productQty.getProduct();
-                            DBHelper.insererListePlats(db, productQty.getQte(), pf.getUpc(), pf.getName(), pf.getSize(), nutriments);
+                            Cursor c = db.rawQuery(base_query + "'"+ pf.getUpc()+"'" + ";", null);
+                            Log.d("SQL", base_query+ "'"+ pf.getUpc()+"'" + ";");
+                            Log.d("Cursor", Integer.toString(c.getCount()));
+                            if(c.getCount() == 0) {
+                                nutriments = labelAPI1.searchScore(productQty.getProduct());
+                                DBHelper.insererListePlats(db, productQty.getQte(), pf.getUpc(), pf.getName(), pf.getSize(), nutriments);
+                            }else {
+                                ContentValues cv = new ContentValues();
+                                cv.put(DBHelper.L_QUANTITE, productQty.getQte());
+                                db.update(DBHelper.TABLE_LISTEPLATS, cv, DBHelper.L_UPC+"='"+pf.getUpc()+"'", null);
+                            }
+                            c.close();
                         }
                         return 0L;
                     }

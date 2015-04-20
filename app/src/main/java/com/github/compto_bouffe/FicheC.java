@@ -68,7 +68,12 @@ public class FicheC extends Activity {
         Cursor c = DBHelper.listePlatsDateCourante(db);
         adapter.changeCursor(c);
         updateStatus(c);
-        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        db.close();
     }
 
     private void updateStatus(Cursor c)
