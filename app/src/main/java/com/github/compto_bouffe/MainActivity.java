@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 
+// Ici, on crée la base de données.
 public class MainActivity extends Activity {
 
     @Override

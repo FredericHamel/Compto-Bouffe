@@ -12,7 +12,10 @@ import android.widget.TextView;
 
 import static com.github.compto_bouffe.DBHelper.*;
 
-
+// La fiche B permet à l'usager, par trois boutons:
+// - d'accéder au menu du jour;
+// - d'accéder au récapitulatif des derniers jours;
+// - de modifier ses informations
 public class FicheB extends Activity implements View.OnClickListener {
 
     Button today;

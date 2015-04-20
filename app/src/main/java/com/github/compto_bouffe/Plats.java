@@ -3,6 +3,7 @@ package com.github.compto_bouffe;
 /**
  * Created by sabrinaouaret on 04/04/15.
  */
+// Cette classe contient simplement les informations sur un plat, quel qu'il soit.
 public class Plats {
 
     private String nom, qte;

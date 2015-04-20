@@ -15,7 +15,8 @@ import android.widget.Toast;
 
 
 
-
+// La fiche A demande son nom et son objectif à l'utilisateur; les deux sont sauvegardés dans la
+// base de deonnées.
 public class FicheA extends Activity implements View.OnClickListener {
 
     EditText ed_name;    // le nom du l'utilisateur

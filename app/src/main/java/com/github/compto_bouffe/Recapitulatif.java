@@ -25,6 +25,8 @@ import java.util.Calendar;
 /**
  * Created by Sabrina Ouaret on 16/04/15.
  */
+// Le récapitulatif montre à l'usager, rangée par rangée, un triplet date, objectif, résultat,
+// l'objectif et le résultat étant en calories
 public class Recapitulatif extends Activity{
 
     ListView listeView;

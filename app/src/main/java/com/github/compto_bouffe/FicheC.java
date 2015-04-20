@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import java.util.Calendar;
 
-
+// La fiche C permet à l'usager de consulter et de modifier son menu du jour.
 public class FicheC extends Activity {
 
 
