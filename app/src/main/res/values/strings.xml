@@ -10,7 +10,7 @@
     <string name="title_activity_recherche_plats">Recherche Plats</string>
     <string name="send_request_btn_text">Rechercher</string>
 
-    <string name="empty_answer">Aucun Résultat</string>
+    <string name="empty_answer">Aucun résultat</string>
 
     <!-- Recherche des plats -->
     <string name="add_selection_desc">Ajoute 1 élément</string>

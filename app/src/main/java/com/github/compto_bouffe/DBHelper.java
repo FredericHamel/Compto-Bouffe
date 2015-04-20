@@ -227,9 +227,9 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * Methode qui permet de supprimer un plat de la liste de plat de la journee courante
      * @param db la base de donnees
-     * @param upc le code du plat
+     * @param _id le code du plat
      */
-    public static void supprimerPlatListe(SQLiteDatabase db, String upc){
+    public static void supprimerPlatListe(SQLiteDatabase db, int _id){
         Calendar mcurrentDate=Calendar.getInstance();
         int mYear = mcurrentDate.get(Calendar.YEAR);
         int mMonth=mcurrentDate.get(Calendar.MONTH);
@@ -237,7 +237,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
 
-        db.delete(TABLE_LISTEPLATS, L_UPC+"="+upc+" AND "+L_DATEENTREE+"='"+dateCourante+"'", null);
+        db.delete(TABLE_LISTEPLATS, L_ID+"="+_id+" AND "+L_DATEENTREE+"='"+dateCourante+"'", null);
     }
 
     /**
