@@ -15,21 +15,9 @@
         android:layout_alignParentStart="true">
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:id="@+id/linearLayout2"
-            android:background="#ff000000"
-            android:paddingBottom="2dp"
-
-            android:layout_alignParentStart="true" />
-
-        <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_below="@+id/linearLayout2"
             android:layout_alignParentStart="true"
             android:id="@+id/linearLayout5"
             android:minWidth="120dp" >
@@ -47,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="1000"
+                android:text="0"
                 android:id="@+id/textViewCalIng"
                 android:textStyle="bold"
                 android:textSize="30sp"
@@ -66,7 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="500"
+                android:text="0"
                 android:textStyle="bold"
                 android:textSize="30sp"
                 android:id="@+id/textViewCalRes"
@@ -79,7 +67,6 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/linearLayout2"
             android:layout_toEndOf="@+id/linearLayout6"
             android:background="#ff9d9d9d"
             android:id="@+id/linearLayout10">
@@ -95,7 +82,7 @@
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:textSize="15sp"
-                android:layout_weight="0.8"/>
+                android:layout_weight="0.5"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -107,20 +94,7 @@
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:textSize="15sp"
-                android:layout_weight="1.5"/>
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Description"
-                android:id="@+id/textView13"
-                android:layout_marginTop="10dp"
-                android:maxLines="1"
-                android:textStyle="bold"
-                android:layout_marginRight="10dp"
-                android:textSize="15sp"
-                android:layout_weight="2.5"/>
+                android:layout_weight="1"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -131,7 +105,7 @@
                 android:maxLines="1"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:layout_weight="1.5"
+                android:layout_weight="1"
                 android:layout_marginTop="10dp" />
 
             <TextView
@@ -144,7 +118,7 @@
                 android:maxLines="1"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:layout_weight="1.2"/>
+                android:layout_weight="1"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -166,11 +140,20 @@
                 android:id="@+id/textView15"
                 android:maxLines="1"
                 android:textSize="15sp"
-                android:layout_weight="1.8"
+                android:layout_weight="1"
                 android:textStyle="bold"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp" />
+
         </LinearLayout>
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_nutri"
+            android:layout_toEndOf="@+id/linearLayout6"
+            android:layout_below="@+id/linearLayout7"
+            android:layout_alignBottom="@+id/linearLayout8" />
 
         <LinearLayout
             android:orientation="vertical"
@@ -179,8 +162,7 @@
             android:layout_toEndOf="@+id/linearLayout5"
             android:background="#ff000000"
             android:paddingRight="2dp"
-            android:id="@+id/linearLayout6"
-            android:layout_below="@+id/linearLayout2" />
+            android:id="@+id/linearLayout6" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -238,12 +220,5 @@
 
         </RelativeLayout>
 
-        <ListView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/list_nutri"
-            android:layout_toEndOf="@+id/linearLayout6"
-            android:layout_below="@+id/linearLayout7"
-            android:layout_alignBottom="@+id/linearLayout8" />
     </RelativeLayout>
 </RelativeLayout>

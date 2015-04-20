@@ -157,7 +157,6 @@ public class FicheC extends Activity {
 
             TextView q = (TextView)v.findViewById(R.id.quantity);
             TextView n = (TextView)v.findViewById(R.id.food_name);
-            TextView des = (TextView)v.findViewById(R.id.food_desc);
             TextView calo = (TextView)v.findViewById(R.id.calorie);
             TextView s = (TextView)v.findViewById(R.id.sucre);
             TextView g = (TextView)v.findViewById(R.id.gras);
@@ -165,7 +164,6 @@ public class FicheC extends Activity {
 
             q.setText(Integer.toString(qtity));
             n.setText(name);
-            des.setText(desc);
             calo.setText(cal);
             s.setText(sucre);
             g.setText(gras);
