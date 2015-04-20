@@ -139,7 +139,6 @@ public class RecherchePlats extends Activity {
             protected void onPostExecute(ArrayList<ProductQty> productQties) {
                 super.onPostExecute(productQties);
                 myChoice = productQties;
-                Toast.makeText(getApplicationContext(), "Init List", Toast.LENGTH_SHORT).show();
                 myListAdapter.notifyDataSetChanged();
             }
         };
