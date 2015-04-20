@@ -26,13 +26,18 @@ import android.widget.Toast;
 import com.github.compto_bouffe.api.LabelAPI;
 import com.github.compto_bouffe.api.Nutriment;
 import com.github.compto_bouffe.api.Product;
+import com.github.compto_bouffe.api.ProductQty;
 
 import java.util.ArrayList;
 
 public class RecherchePlats extends Activity {
 
+    // Database
+    private DBHelper dbH;
+    private SQLiteDatabase db;
+
     // Composantes graphiques
-    private Button searchBtn, confirm;
+    private Button searchBtn, confirm, recent, resultat;
     private ImageButton addBtn, subBtn;
     private TextView queryText;
     private ListView resultList, myList;
@@ -56,10 +61,14 @@ public class RecherchePlats extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recherche_plats);
-        listProducts = new ArrayList<>();
         myChoice = new ArrayList<>();
+        listProducts = new ArrayList<>();
+        dbH = new DBHelper(this);
+        db = dbH.getReadableDatabase();
         init();
         initAdapter();
+        initConfirmButton();
+        initTabsBtn();
         initOnItemClickListener();
         initSearchBtn();
         initClickListener();
@@ -70,6 +79,7 @@ public class RecherchePlats extends Activity {
 
         resultList.setOnItemClickListener(itemClickListener);
         myList.setOnItemClickListener(itemClickListener);
+        initMyListContent();
     }
 
     // Recupere les objets a partir des id et l'instance de LabelAPI.
@@ -82,53 +92,60 @@ public class RecherchePlats extends Activity {
         addBtn = (ImageButton)findViewById(R.id.add_element_btn);
         subBtn = (ImageButton)findViewById(R.id.sub_element_btn);
         confirm = (Button)findViewById(R.id.btn_confirm);
-        confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AsyncTask<ArrayList<ProductQty>, Void, Long> task = new AsyncTask<ArrayList<ProductQty>, Void, Long>() {
-                    @Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-
-                    }
-
-                    // Insert dans la base de donnees les produits choisit par l'usager.
-
-                    @Override
-                    protected Long doInBackground(ArrayList<ProductQty>... p) {
-                        LabelAPI labelAPI1 = LabelAPI.getInstance();
-                        ArrayList<Nutriment> nutriments;
-                        DBHelper dbH = new DBHelper(getApplicationContext());
-                        SQLiteDatabase db = dbH.getWritableDatabase();
-
-                        for(ProductQty productQty : p[0]) {
-                            nutriments = labelAPI1.searchScore(productQty.getProduct());
-                            Product pf = productQty.getProduct();
-                            DBHelper.insererListePlats(db, productQty.getQte(), pf.getUpc(), pf.getName(), pf.getDesc(), nutriments);
-                        }
-
-                        return 0L;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Long aLong) {
-                        super.onPostExecute(aLong);
-                        finish();
-                    }
-                };
-
-                task.execute(myChoice);
-
-            }
-        });
+        recent = (Button)findViewById(R.id.recent_btn);
+        resultat = (Button)findViewById(R.id.result_btn);
+        recent.setEnabled(false);
     }
 
     // Initiailise les Adapter
-    private void initAdapter()
-    {
+    private void initAdapter() {
         // le cursor doit etre initialise correctement, pas a null.
-        searchProductAdapter = new SearchProductAdapter(this, null, false);
+        Cursor c = DBHelper.listePlatsDateCourante(db);
+        searchProductAdapter = new SearchProductAdapter(this, c);
         myListAdapter = new MyListAdapter();
+    }
+
+    private void initMyListContent() {
+        AsyncTask<Cursor, Void, ArrayList<ProductQty>> task = new AsyncTask<Cursor, Void, ArrayList<ProductQty>>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected ArrayList<ProductQty> doInBackground(Cursor... cs) {
+                Cursor c = cs[0];
+                Log.d(getClass().toString(),"Cursor size: " +  c.getCount());
+                ArrayList<ProductQty> productQtyArrayList  = new ArrayList<>(c.getCount());
+                if(c.getCount() > 0) {
+                    ProductQty productQty;
+                    c.moveToFirst();
+                    do {
+                        productQty = new ProductQty(
+                            new Product(c.getString(c.getColumnIndex(DBHelper.L_NOM)), "",
+                                c.getString(c.getColumnIndex(DBHelper.L_UPC)),
+                                c.getString(c.getColumnIndex(DBHelper.L_SIZE)) ),
+                            c.getInt(c.getColumnIndex(DBHelper.L_QUANTITE)));
+
+                        Log.d("Product", productQty.getProduct().toString());
+                        productQtyArrayList.add(productQty);
+                    } while (c.moveToNext());
+                }
+                c.close();
+                return productQtyArrayList;
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<ProductQty> productQties) {
+                super.onPostExecute(productQties);
+                myChoice = productQties;
+                Toast.makeText(getApplicationContext(), "Init List", Toast.LENGTH_SHORT).show();
+                myListAdapter.notifyDataSetChanged();
+            }
+        };
+
+        Cursor c = DBHelper.listePlatsDateCourante(db);
+        task.execute(c);
     }
 
     // Initialise la logic du bouton de recherche
@@ -142,41 +159,106 @@ public class RecherchePlats extends Activity {
                     Toast.makeText(getApplicationContext(), "Recherche en cours...", Toast.LENGTH_SHORT).show();
                     new SearchProduct().execute(text);
                 }else
-                    Toast.makeText(getApplicationContext(), "Votre recherche est trop courte", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Vous devez specifier une recherche", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void initClickListener()
+    private void initConfirmButton()
     {
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AsyncTask<ArrayList<ProductQty>, Void, Long> task = new AsyncTask<ArrayList<ProductQty>, Void, Long>() {
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                        confirm.setEnabled(false);
+                    }
+
+                    // Insert dans la base de donnees les produits choisit par l'usager.
+                    @SafeVarargs
+                    @Override
+                    protected final Long doInBackground(ArrayList<ProductQty>... p) {
+                        LabelAPI labelAPI1 = LabelAPI.getInstance();
+                        ArrayList<Nutriment> nutriments;
+                        DBHelper dbH = new DBHelper(getApplicationContext());
+                        SQLiteDatabase db = dbH.getWritableDatabase();
+
+                        for(ProductQty productQty : p[0]) {
+                            nutriments = labelAPI1.searchScore(productQty.getProduct());
+                            Product pf = productQty.getProduct();
+                            DBHelper.insererListePlats(db, productQty.getQte(), pf.getUpc(), pf.getName(), pf.getSize(), nutriments);
+                        }
+                        return 0L;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Long aLong) {
+                        super.onPostExecute(aLong);
+                        confirm.setEnabled(true);
+                        finish();
+                    }
+                };
+
+                //noinspection unchecked
+                task.execute(myChoice);
+            }
+        });
+    }
+
+    public void initTabsBtn()
+    {
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId())
+                {
+                    case R.id.recent_btn:
+                        searchProductAdapter.setRecent(true);
+                        break;
+                    case R.id.result_btn:
+                        searchProductAdapter.setRecent(false);
+                        break;
+                }
+                searchProductAdapter.notifyDataSetChanged();
+                recent.setEnabled(resultat.isEnabled());
+                resultat.setEnabled(!recent.isEnabled());
+            }
+        };
+        recent.setOnClickListener(listener);
+        resultat.setOnClickListener(listener);
+    }
+
+    private void initClickListener() {
         btnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int i;
-                switch(view.getId())
-                {
+                switch (view.getId()) {
                     case R.id.add_element_btn:
                         i = searchProductAdapter.getSelectedIndex();
                         myListAdapter.setSelectedIndex(-1);
                         Log.d("BTN_ADD", "Add item " + i + " a mes choix");
-                        if(i > -1) {
-                            Product p = listProducts.get(i);
-                            for(ProductQty pty : myChoice) {
-                                if(pty.getProduct().equals(p)) {
+                        if (i > -1) {
+                            Product p = (Product)searchProductAdapter.getItem(i);
+                            for (ProductQty pty : myChoice) {
+                                if (pty.getProduct().equals(p)) {
                                     pty.add();
+                                    p = null;
                                     break;
                                 }
                             }
-                            if(p != null)
+                            if (p != null)
                                 myChoice.add(new ProductQty(p, 1));
                         }
 
                         break;
                     case R.id.sub_element_btn:
                         i = myListAdapter.getSelectedIndex();
-                        if(i > -1 && i < myChoice.size()) {
+                        if (i > -1 && i < myChoice.size()) {
                             ProductQty pty = myChoice.get(i);
-                            if(pty.getQte() > 1)
+                            if (pty.getQte() > 1)
                                 pty.sub();
                             else {
                                 myChoice.remove(i);
@@ -189,26 +271,26 @@ public class RecherchePlats extends Activity {
         };
     }
 
-    private void initOnItemClickListener()
-    {
+    private void initOnItemClickListener() {
         itemClickListener = new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Adapter adapter = adapterView.getAdapter();
-                if(adapter == myListAdapter) {
+                if (adapter == myListAdapter) {
                     myListAdapter.setSelectedIndex(i);
                     searchProductAdapter.setSelectedIndex(-1);
-                }else {
+                } else {
                     searchProductAdapter.setSelectedIndex(i);
                     myListAdapter.setSelectedIndex(-1);
                 }
                 searchProductAdapter.notifyDataSetChanged();
                 myListAdapter.notifyDataSetChanged();
-                Log.d("ResultList","Adapter " + adapter.getClass().toString() +  ". Item " + i + " selected(" + view.isSelected() + ") or pressed(" + view.isPressed() + ")");
+                Log.d("ResultList", "Adapter " + adapter.getClass().toString() + ". Item " + i + " selected(" + view.isSelected() + ") or pressed(" + view.isPressed() + ")");
             }
         };
     }
+
     private void initAddSubBtn() {
         addBtn.setOnClickListener(btnClickListener);
         subBtn.setOnClickListener(btnClickListener);
@@ -236,33 +318,6 @@ public class RecherchePlats extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class ProductQty {
-        private Product product;
-        private int qte;
-
-        public ProductQty(Product p, int q) {
-            this.product = p;
-            this.qte = q;
-        }
-
-        public void add() {
-            ++qte;
-        }
-
-        public void sub() {
-            if(qte > 0)
-                --qte;
-        }
-
-        public Product getProduct() {
-            return product;
-        }
-
-        public int getQte() {
-            return qte;
-        }
-    }
-
     private class SearchProduct extends AsyncTask<String, Void, ArrayList<Product>> {
         @Override
         protected ArrayList<Product> doInBackground(String... strings) {
@@ -274,11 +329,13 @@ public class RecherchePlats extends Activity {
         protected void onPreExecute() {
             super.onPreExecute();
             // Place indicateur execution
+            searchBtn.setEnabled(!searchBtn.isEnabled());
         }
 
         @Override
         protected void onPostExecute(ArrayList<Product> products) {
             super.onPostExecute(products);
+            searchBtn.setEnabled(!searchBtn.isEnabled());
             if (products == null) {
                 Toast.makeText(RecherchePlats.this, "Probleme de connection, reessayer plus tard.", Toast.LENGTH_LONG).show();
                 products = new ArrayList<>();
@@ -287,6 +344,9 @@ public class RecherchePlats extends Activity {
                 products = new ArrayList<>();
             }
             RecherchePlats.this.listProducts =  products;
+            searchProductAdapter.setRecent(false);
+            recent.setEnabled(true);
+            resultat.setEnabled(false);
             searchProductAdapter.notifyDataSetChanged();
         }
     }
@@ -294,10 +354,12 @@ public class RecherchePlats extends Activity {
     private class SearchProductAdapter extends CursorAdapter {
         private LayoutInflater inflater;
         private int selectedIndex;
+        private boolean isRecent;
 
-        private SearchProductAdapter(Context context, Cursor c, boolean autoRequery) {
-            super(context, c, autoRequery);
-            inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        private SearchProductAdapter(Context context, Cursor c) {
+            super(context, c, false);
+            this.isRecent = true;
+            this.inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             this.selectedIndex = -1;
         }
 
@@ -305,39 +367,60 @@ public class RecherchePlats extends Activity {
             selectedIndex = i;
         }
 
-        public int getSelectedIndex()
-        {
+        public int getSelectedIndex() {
             return selectedIndex;
         }
+
+        public void setRecent(boolean value) {
+            this.isRecent = value;
+            this.notifyDataSetChanged();
+        }
+
         @Override
         public int getCount() {
-            return listProducts.size();
+            return isRecent ? super.getCount() : listProducts.size();
         }
 
         @Override
-        public Object getItem(int i) {
-            return listProducts.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
+        public Object getItem(int position) {
+            Object obj = null;
+            if(position > -1)
+                if(isRecent) {
+                    Cursor c = getCursor();
+                    if(position < c.getCount()) {
+                        c.moveToPosition(position);
+                        obj = new Product(c.getString(c.getColumnIndex(DBHelper.L_NOM)), "",
+                                c.getString(c.getColumnIndex(DBHelper.L_UPC)),
+                                c.getString(c.getColumnIndex(DBHelper.L_SIZE)));
+                    }
+                } else {
+                    if(position < listProducts.size())
+                        obj = listProducts.get(position);
+                }
+            return obj;
         }
 
         @Override
         public View getView(int position, View view, ViewGroup parent) {
 
-            if(view == null)
-            {
+            if (view == null) {
                 view = inflater.inflate(R.layout.activity_recherche_resultat_row, parent, false);
             }
             Log.d("SearchProductAdapter", "getView(" + position + ")");
-            TextView tv1 = (TextView)view.findViewById(R.id.text1);
-            TextView tv2 = (TextView)view.findViewById(R.id.text2);
-            Product p = listProducts.get(position);
-            tv1.setText(p.getName());
-            tv2.setText(p.getSize());
-            int color = selectedIndex == position ? R.color.light_blue: R.color.white;
+            TextView tv1 = (TextView) view.findViewById(R.id.text1);
+            TextView tv2 = (TextView) view.findViewById(R.id.text2);
+            if (isRecent) {
+                Cursor c = getCursor();
+                c.moveToPosition(position);
+                tv1.setText(c.getString(c.getColumnIndex(DBHelper.L_NOM)));
+                tv2.setText(c.getString(c.getColumnIndex(DBHelper.L_SIZE)));
+            } else {
+                Product p = listProducts.get(position);
+                tv1.setText(p.getName());
+                tv2.setText(p.getSize());
+            }
+            int color = selectedIndex == position ? R.color.light_blue:
+                    position % 2 == 1 ? R.color.grisRangee1 : R.color.grisRangee2;
             tv1.setBackgroundResource(color);
             tv2.setBackgroundResource(color);
             return view;
@@ -362,15 +445,12 @@ public class RecherchePlats extends Activity {
         public MyListAdapter() {
             this.inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             this.selectedIndex = -1;
-
         }
-
-
 
         public void setSelectedIndex(int i)
         {
             if(i < myChoice.size())
-                selectedIndex = myChoice.size()- i - 1;
+                selectedIndex = myChoice.size() - i - 1;
         }
 
         public int getSelectedIndex()
@@ -398,7 +478,6 @@ public class RecherchePlats extends Activity {
             if(view == null)
             {
                 view = inflater.inflate(R.layout.activity_recherche_my_list_row, parent, false);
-
             }
             int reverseOrder = myChoice.size() - i - 1;
 
