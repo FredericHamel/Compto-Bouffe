@@ -57,8 +57,6 @@ public class FicheC extends Activity {
 
         adapter = new MyAdapter(this, c);
         listfood.setAdapter(adapter);
-
-
     }
 
     private void initClickListener()
