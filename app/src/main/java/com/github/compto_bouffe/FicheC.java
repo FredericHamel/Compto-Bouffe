@@ -62,6 +62,15 @@ public class FicheC extends Activity {
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Cursor c = DBHelper.listePlatsDateCourante(db);
+        adapter.changeCursor(c);
+        updateStatus(c);
+        adapter.notifyDataSetChanged();
+    }
+
     private void updateStatus(Cursor c)
     {
         double calorie = 0;
@@ -92,8 +101,6 @@ public class FicheC extends Activity {
                         startActivity(new Intent(FicheC.this, RecherchePlats.class));
                         break;
                 }
-                updateStatus(adapter.getCursor());
-                adapter.notifyDataSetChanged();
             }
         };
     }
