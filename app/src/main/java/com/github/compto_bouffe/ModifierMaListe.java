@@ -2,16 +2,19 @@ package com.github.compto_bouffe;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,8 +27,10 @@ public class ModifierMaListe extends Activity {
     ListView listeView;
     Button valider;
     LinearLayout titreLayout;
-    ArrayAdapter<Plats> adapter;
-    ArrayList<Plats> plats;
+    DBHelper dbh;
+    SQLiteDatabase db;
+    MyAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,31 +41,46 @@ public class ModifierMaListe extends Activity {
         //Titre Description, Quantité et A supprimer
         titreLayout = (LinearLayout) findViewById(R.id.linearLayoutHeader);
 
-        //pour tester en attendant les données de l'API
-        plats = new ArrayList<Plats>();
 
+
+        //Base de données + cursor contenant les plats de la liste d'aujourd'hui
+        dbh = new DBHelper(this);
+        db = dbh.getReadableDatabase();
+        Cursor c = DBHelper.listePlatsDateCourante(db);
+
+        //ListView contenant les plats + quantites
         listeView = (ListView) findViewById(R.id.listeRepas);
-        adapter = new Fiche_e_myAdapter(this,getPlat());
+        adapter = new MyAdapter(this, c);
         listeView.setAdapter(adapter);
+
+        //Bouton valider
         valider = (Button) findViewById(R.id.boutonValider);
 
         valider.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
+                DBHelper dbH = new DBHelper(getApplicationContext());
+                SQLiteDatabase db = dbH.getWritableDatabase();
+
+                ArrayList<Boolean> checkedI = adapter.getItemChecked();
+                for(int i=0; i< checkedI.size();i++) {
+                    if (checkedI.get(i)) {
+                        DBHelper.supprimerPlatListe(db, i);
+                        Log.d("adapterModifierListe","Supprimer de la bdd:" + i);
+                    }
+                }
+
+                ArrayList<Integer> changedI = adapter.getItemQtyChanged();
+                for(int i=0; i< changedI.size();i++){
+                    if(changedI.get(i)!=-1 && !checkedI.get(i)){
+
+                    }
+                }
+
                 finish();
             }
         });
-    }
-
-    public ArrayList<Plats> getPlat(){
-        plats.add(new Plats("Soupe", "1"));
-        plats.add(new Plats("Fruits", "1"));
-        plats.add(new Plats("Croissants", "1"));
-        plats.add(new Plats("Big Mac", "1"));
-        plats.add(new Plats("Woopie Burger", "1"));
-        plats.add(new Plats("Sushi", "1"));
-        plats.add(new Plats("Salade", "1"));
-        return plats;
     }
 
     @Override
@@ -85,97 +105,148 @@ public class ModifierMaListe extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class Fiche_e_myAdapter extends ArrayAdapter<Plats> {
+    //Adapter de la listView
+    public class MyAdapter extends CursorAdapter {
 
-        private final ArrayList<Plats> plats;
-        private final Activity context;
+        private final Context context;
+        LayoutInflater myInflater;
         ViewHolder holder;
+        Cursor cursor;
+        ArrayList<Boolean> itemChecked = new ArrayList<Boolean>();
+        ArrayList<Integer> itemQtyChanged = new ArrayList<Integer>();
 
-        public Fiche_e_myAdapter(Context context, ArrayList<Plats> plats) {
-            super(context, R.layout.modifier_ma_liste_row, plats);
-            this.context = (Activity) context;
-            this.plats= plats;
+        /**
+         * Constructeur de la classe MyAdapter
+         * @param context le contexte
+         * @param c le curseur
+         */
+        public MyAdapter(Context context, Cursor c) {
+            super(context, c, false);
+            myInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            this.context=context;
+            this.cursor=c;
+
+            c.moveToFirst();
+            for (int i = 0; i < this.getCount(); i++) {
+                itemChecked.add(i, false); // initializes all items value with false
+                itemQtyChanged.add(i, -1);
+                c.moveToNext();
+            }
         }
 
+        public ArrayList<Boolean> getItemChecked(){
+            return itemChecked;
+        }
+
+        public ArrayList<Integer> getItemQtyChanged(){
+            return itemQtyChanged;
+        }
+
+        //Classe interne ViewHolder
         class ViewHolder{
-            protected TextView theTextView;
+            protected TextView nom;
             protected CheckBox checkBoxView;
             protected Button boutonPlus;
             protected TextView textViewQte;
             protected Button boutonMoins;
         }
 
+
         public View getView(final int position, View convertView,ViewGroup parent) {
 
             View viewRow=convertView;
 
+            cursor.moveToPosition(position);
+
             if (viewRow == null) {
-                LayoutInflater myInflater = LayoutInflater.from(getContext());
                 viewRow = myInflater.inflate(R.layout.modifier_ma_liste_row, null);
-
                 holder = new ViewHolder();
-                holder.theTextView = (TextView)viewRow.findViewById(R.id.textView1);
-                holder.checkBoxView = (CheckBox)viewRow.findViewById(R.id.checkBoxSupprimer);
-                holder.boutonPlus = (Button)viewRow.findViewById(R.id.boutonPlus);
-                holder.textViewQte = (TextView)viewRow.findViewById(R.id.textQte);
-                holder.boutonMoins = (Button)viewRow.findViewById(R.id.boutonMoins);
 
-                holder.checkBoxView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        //position de la checkbox
-                        int getPosition = (Integer) buttonView.getTag();
-                        plats.get(getPosition).setSelected(buttonView.isChecked());
-                    }
-                });
+                holder.nom = (TextView) viewRow.findViewById(R.id.textView1);
+                holder.checkBoxView = (CheckBox) viewRow.findViewById(R.id.checkBoxSupprimer);
+                holder.boutonPlus = (Button) viewRow.findViewById(R.id.boutonPlus);
+                holder.textViewQte = (TextView) viewRow.findViewById(R.id.textQte);
+                holder.boutonMoins = (Button) viewRow.findViewById(R.id.boutonMoins);
 
                 viewRow.setTag(holder);
-                viewRow.setTag(R.id.textView1, holder.theTextView);
+                viewRow.setTag(R.id.textView1, holder.nom);
                 viewRow.setTag(R.id.checkBoxSupprimer, holder.checkBoxView);
 
                 viewRow.setTag(R.id.boutonMoins, holder.boutonMoins);
                 viewRow.setTag(R.id.boutonPlus, holder.boutonPlus);
                 viewRow.setTag(R.id.textQte, holder.textViewQte);
 
-            }else {
-                holder=(ViewHolder) viewRow.getTag();
+            } else {
+                holder = (ViewHolder) viewRow.getTag();
             }
 
+            int quantite = cursor.getInt(cursor.getColumnIndex(DBHelper.L_QUANTITE));
+            String nomProduit = cursor.getString(cursor.getColumnIndex(DBHelper.L_NOM));
+            holder.nom.setText(nomProduit);
+            holder.textViewQte.setText(Integer.toString(quantite));
 
+            holder.checkBoxView.setTag(position);
+            holder.checkBoxView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    //position de la checkbox
+                    int getPosition = (Integer) buttonView.getTag();
+
+                    if (isChecked) {
+                        itemChecked.set(getPosition, true);
+                    } else if (!isChecked) {
+                        itemChecked.set(getPosition, false);
+                    }
+                    Log.d("adapterModifierListe","position ArrayList A Supprimer:" + position );
+                }
+            });
+
+            //Modification de la quantite lors du click sur le bouton 'moins'
             holder.boutonMoins.setTag(holder);
             holder.boutonMoins.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ViewHolder holder_b = (ViewHolder)v.getTag();
+                    ViewHolder holder_b = (ViewHolder) v.getTag();
                     int qte = Integer.parseInt(holder_b.textViewQte.getText().toString());
-                    if(qte<=1){
+
+                    if (qte <= 1) {
                         holder_b.textViewQte.setText("0");
-                        plats.get(position).setQte("0");
-                    }else{
-                        String quantite = Integer.toString(qte-1);
+                    } else {
+                        String quantite = Integer.toString(qte - 1);
                         holder_b.textViewQte.setText(quantite);
-                        plats.get(position).setQte(quantite);
                     }
+
+                    int newQte = Integer.parseInt(holder_b.textViewQte.getText().toString());
+                    itemQtyChanged.set(position,newQte);
+
+                    //Insertion de la position et nouvelle quantite dans le Map
+                    Log.d("adapterModifierListe", "position Map position:" + position + ", quantite:" + newQte);
+
                 }
             });
 
+            //Modification de la quantite lors du click sur le bouton 'plus'
             holder.boutonPlus.setTag(holder);
-            holder.boutonPlus.setOnClickListener(new View.OnClickListener(){
+            holder.boutonPlus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ViewHolder holder_b = (ViewHolder)v.getTag();
+                    ViewHolder holder_b = (ViewHolder) v.getTag();
                     int qte = Integer.parseInt(holder_b.textViewQte.getText().toString());
-                    String quantite = Integer.toString(qte+1);
+                    String quantite = Integer.toString(qte + 1);
                     holder_b.textViewQte.setText(quantite);
-                    plats.get(position).setQte(quantite);
+                    itemQtyChanged.set(position,Integer.parseInt(quantite));
+
+                    //Insertion de la position et nouvelle quantite dans le Map
+                    //positionQte.put(getPosition, (String) holder_b.textViewQte.getText());
+                    Log.d("adapterModifierListe","position Map position:" + position + ", quantite:"+Integer.parseInt(quantite));
                 }
             });
 
             holder.checkBoxView.setTag(position);
-            holder.checkBoxView.setChecked(plats.get(position).isSelected());
-            holder.theTextView.setText(plats.get(position).getNom());
-            holder.textViewQte.setText(plats.get(position).getQte());
+            Log.d("adapterModifierListe","itemChecked:" + itemChecked.get(position));
+            //holder.checkBoxView.setChecked(itemChecked.get(position));
+            //holder.nom.setText(plats.get(position).getNom());
+            holder.textViewQte.setText(Integer.toString(itemQtyChanged.get(position)));
 
             //Couleur alternative des rangées
             if (position % 2 == 1) {
@@ -184,6 +255,16 @@ public class ModifierMaListe extends Activity {
                 viewRow.setBackgroundColor(context.getResources().getColor(R.color.grisRangee2));
             }
             return viewRow;
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            return null;
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+
         }
     }
 }

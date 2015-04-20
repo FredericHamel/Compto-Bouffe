@@ -3,7 +3,6 @@ package com.github.compto_bouffe;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -336,7 +335,7 @@ public class RecherchePlats extends Activity {
             super.onPostExecute(products);
             searchBtn.setEnabled(!searchBtn.isEnabled());
             if (products == null) {
-                Toast.makeText(RecherchePlats.this, "Probleme de connection, reessayer plus tard.", Toast.LENGTH_LONG).show();
+                Toast.makeText(RecherchePlats.this, "Problème de connexion, réessayez plus tard.", Toast.LENGTH_LONG).show();
                 products = new ArrayList<>();
             }else if(products.size() == 0) {
                 Toast.makeText(RecherchePlats.this, getString(R.string.empty_answer), Toast.LENGTH_LONG).show();
