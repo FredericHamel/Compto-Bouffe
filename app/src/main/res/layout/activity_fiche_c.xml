@@ -34,145 +34,12 @@
             android:id="@+id/linearLayout5"
             android:minWidth="120dp" >
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:background="#ff000000"
-                android:minHeight="30dp"
-                android:padding="2dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp" >
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_gravity="center"
-                    android:background="#ffc198ab" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="5dp" >
-
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="10dp"
-                    android:minWidth="10dp"
-                    android:measureAllChildren="false"
-                    android:background="#ff000000"
-                    android:padding="2dp" >
-
-                    <FrameLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:background="#ff00a558"
-                        android:layout_gravity="center"
-                        android:minHeight="10dp"
-                        android:minWidth="10dp" />
-                </FrameLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="SUCRES"
-                    android:id="@+id/textView6"
-                    android:layout_marginLeft="5dp"
-                    android:maxLines="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="5dp" >
-
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="10dp"
-                    android:minWidth="10dp"
-                    android:measureAllChildren="false"
-                    android:background="#ff000000"
-                    android:padding="2dp" >
-
-                    <FrameLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:background="#ffdf22d7"
-                        android:layout_gravity="center"
-                        android:minHeight="10dp"
-                        android:minWidth="10dp" />
-                </FrameLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="GRAS"
-                    android:id="@+id/textView8"
-                    android:layout_marginLeft="5dp"
-                    android:maxLines="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="5dp" >
-
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="10dp"
-                    android:minWidth="10dp"
-                    android:measureAllChildren="false"
-                    android:background="#ff000000"
-                    android:padding="2dp" >
-
-                    <FrameLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:background="#ffffa232"
-                        android:layout_gravity="center"
-                        android:minHeight="10dp"
-                        android:minWidth="10dp" />
-                </FrameLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="PROTÉINES"
-                    android:id="@+id/textView10"
-                    android:layout_marginLeft="5dp"
-                    android:maxLines="1" />
-            </LinearLayout>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Cal. ingérées"
+                android:text="Calories ingérées:"
                 android:id="@+id/textView4"
-                android:padding="10dp"
                 android:layout_marginTop="15dp"
                 android:maxLines="1" />
 
@@ -180,39 +47,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Cal. restantes"
-                android:id="@+id/textView5"
-                android:padding="10dp"
+                android:text="1000"
+                android:id="@+id/textViewCalIng"
+                android:textStyle="bold"
+                android:textSize="30sp"
                 android:maxLines="1" />
 
-            <FrameLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="15dp"
-                android:minWidth="15dp"
-                android:background="#ff000000"
-                android:padding="2dp"
-                android:layout_gravity="right"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="10dp" >
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Calories restantes:"
+                android:id="@+id/textView5"
+                android:maxLines="1"
+                android:layout_marginTop="10dp" />
 
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="#ffd2d2d2"
-                    android:minHeight="13dp"
-                    android:minWidth="13dp" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="500"
+                android:textStyle="bold"
+                android:textSize="30sp"
+                android:id="@+id/textViewCalRes"
+                android:maxLines="1" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="%"
-                        android:id="@+id/textView11"
-                        android:layout_gravity="center" />
-                </FrameLayout>
-            </FrameLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -344,15 +204,16 @@
             android:layout_alignTop="@+id/linearLayout9"
             android:layout_alignStart="@+id/linearLayout7" />
 
-        <LinearLayout
+        <RelativeLayout
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/linearLayout9"
             android:padding="10dp"
-            android:layout_alignParentBottom="true"
             android:layout_alignEnd="@+id/linearLayout8"
-            android:layout_toEndOf="@+id/linearLayout6" >
+            android:layout_toEndOf="@+id/linearLayout6"
+            android:weightSum="4"
+            android:layout_alignParentBottom="true">
 
             <Button
                 android:layout_width="wrap_content"
@@ -362,23 +223,20 @@
                 android:layout_alignParentTop="false"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="false" />
+                android:layout_alignParentRight="false"
+                android:layout_weight="1"/>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AJOUTER UN PLAT"
+                android:id="@+id/add_plat"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_weight="1" />
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="AJOUTER UN PLAT"
-                    android:id="@+id/add_plat"
-                    android:layout_alignParentTop="false"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true" />
-
-            </RelativeLayout>
-        </LinearLayout>
+        </RelativeLayout>
 
         <ListView
             android:layout_width="wrap_content"

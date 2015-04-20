@@ -169,7 +169,7 @@ public class DBHelper extends SQLiteOpenHelper {
         int mMonth=mcurrentDate.get(Calendar.MONTH);
         int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
 
-        String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
+        String dateCourante='"'+Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay)+'"';
 
         String requete = "SELECT "+L_QUANTITE+" FROM "+TABLE_LISTEPLATS
                         +" WHERE "+L_UPC+"="+upc
