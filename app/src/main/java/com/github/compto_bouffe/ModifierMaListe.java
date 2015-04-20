@@ -66,15 +66,15 @@ public class ModifierMaListe extends Activity {
                 ArrayList<Boolean> checkedI = adapter.getItemChecked();
                 for(int i=0; i< checkedI.size();i++) {
                     if (checkedI.get(i)) {
-                        DBHelper.supprimerPlatListe(db, i);
-                        Log.d("adapterModifierListe","Supprimer de la bdd:" + i);
+                        DBHelper.supprimerPlatListe(db, i+1);
+                        Log.d("adapterModifierListe","Supprimer de la bdd:" + i+1);
                     }
                 }
 
                 ArrayList<Integer> changedI = adapter.getItemQtyChanged();
                 for(int i=0; i< changedI.size();i++){
                     if(changedI.get(i)!=-1 && !checkedI.get(i)){
-
+                        //Ajouter ici la fonction pour afficher les nouvelles quantités des nutriments
                     }
                 }
 
@@ -126,11 +126,13 @@ public class ModifierMaListe extends Activity {
             this.context=context;
             this.cursor=c;
 
-            c.moveToFirst();
-            for (int i = 0; i < this.getCount(); i++) {
-                itemChecked.add(i, false); // initializes all items value with false
-                itemQtyChanged.add(i, -1);
-                c.moveToNext();
+            if(cursor!=null){
+                cursor.moveToFirst();
+                Log.d("adapterModifierListe","Count dans cursor:" + c.getCount());
+                for (int i=0; i < cursor.getCount(); i++) {
+                    itemChecked.add(i, false); // initializes all items value with false
+                    itemQtyChanged.add(i, -1);
+                }
             }
         }
 
