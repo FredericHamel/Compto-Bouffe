@@ -223,6 +223,20 @@ public class DBHelper extends SQLiteOpenHelper {
      * Methode qui renvoit une liste  de date et l'objectif du jour et l'objectif resultat associes
      * pour une periode de temps donnee
      * @param db la base de donnees
+     * @return c le curseur
+     */
+    public static Cursor listeObjectifs(SQLiteDatabase db){
+        String requete = "SELECT "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
+                +" FROM "+TABLE_RESULTATS +";";
+
+        Cursor c = db.rawQuery(requete, null);
+        return c;
+    }
+
+    /**
+     * Methode qui renvoit une liste  de date et l'objectif du jour et l'objectif resultat associes
+     * pour une periode de temps donnee
+     * @param db la base de donnees
      * @param dateDebut la date au format YYYY-MM-DD du debut de periode
      * @param dateFin la date au format YYYY-MM-DD de fin de periode
      * @return c le curseur
@@ -230,8 +244,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static Cursor listeObjectifs(SQLiteDatabase db, String dateDebut, String dateFin){
         String requete = "SELECT "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
                 +" FROM "+TABLE_RESULTATS
-                +" WHERE "+R_DATE+">="+dateDebut
-                +" AND "+R_DATE+"<="+dateFin+";";
+                +" WHERE "+R_DATE+">='"+dateDebut
+                +"' AND "+R_DATE+"<='"+dateFin+"';";
 
         Cursor c = db.rawQuery(requete, null);
         return c;
