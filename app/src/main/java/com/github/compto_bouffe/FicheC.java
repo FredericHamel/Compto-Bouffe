@@ -172,6 +172,13 @@ public class FicheC extends Activity {
             g.setText(newQuantite(gras, qtity));
             p.setText(newQuantite(prot, qtity));
 
+            int color = position % 2 == 1 ? R.color.grisRangee1 : R.color.grisRangee2;
+            q.setBackgroundResource(color);
+            n.setBackgroundResource(color);
+            calo.setBackgroundResource(color);
+            s.setBackgroundResource(color);
+            g.setBackgroundResource(color);
+            p.setBackgroundResource(color);
             Log.d("adapterFicheC","position" + position );
 
 
@@ -181,7 +188,6 @@ public class FicheC extends Activity {
         private String newQuantite(String n, int q)
         {
             String[] parts = n.split(" ");
-            Log.d("changeQuatity", String.format("%s -> %d", n, parts.length));
             double d = Double.parseDouble(parts[0]) * q;
             return String.format("%.1f %s", d, parts.length == 1? "": parts[1]);
         }
