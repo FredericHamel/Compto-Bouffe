@@ -120,6 +120,19 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(requete);
     }
 
+    /**
+     * Retourne la date courante
+     * @return date courante
+     */
+    private static String getDateCourante()
+    {
+        Calendar mcurrentDate=Calendar.getInstance();
+        int mYear = mcurrentDate.get(Calendar.YEAR);
+        int mMonth=mcurrentDate.get(Calendar.MONTH);
+        int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
+
+        return String.format("%04d-%02d-%02d", mYear, mMonth, mDay);
+    }
 
     /**
      * Methode qui renvoie la liste de plats de l'utilisateur a la date courante
@@ -127,16 +140,21 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return c le curseur;
      */
     public static Cursor listePlatsDateCourante (SQLiteDatabase db){
-        Calendar mcurrentDate=Calendar.getInstance();
-        int mYear = mcurrentDate.get(Calendar.YEAR);
-        int mMonth=mcurrentDate.get(Calendar.MONTH);
-        int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
 
-        String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
-
+        String dateCourante = getDateCourante();
         String requete = "SELECT "+L_ID +", " + L_UPC+ ", " +L_QUANTITE+", "+L_NOM+", "+L_SIZE+", "+L_CALORIES+", "+L_SUGARS+", `"
                         +L_TOTALFAT+"`, "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
-                        +" WHERE "+L_DATEENTREE+"='"+dateCourante+"';";
+                        +" WHERE "+L_DATEENTREE+"='"+dateCourante+"' AND " + L_QUANTITE +  " > 0;";
+        Log.d("Query", requete);
+        Cursor c = db.rawQuery(requete, null);
+        return c;
+    }
+
+    public Cursor listePlatsRecent(SQLiteDatabase db)
+    {
+        String dateCourante = getDateCourante();
+        String requete = "SELECT "+L_ID +", DISTINCT " + L_UPC+ ", " +L_QUANTITE+", "+L_NOM+", "+L_SIZE+", "+L_CALORIES+", "+L_SUGARS+", `"
+                +L_TOTALFAT+"`, "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS +";";
         Log.d("Query", requete);
         Cursor c = db.rawQuery(requete, null);
         return c;
@@ -163,13 +181,8 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param upc le code du plat
      * @return c le curseur
      */
-    public static Cursor getQuantite(SQLiteDatabase db, String upc){
-        Calendar mcurrentDate=Calendar.getInstance();
-        int mYear = mcurrentDate.get(Calendar.YEAR);
-        int mMonth=mcurrentDate.get(Calendar.MONTH);
-        int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
-
-        String dateCourante='"'+Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay)+'"';
+    public static Cursor getQuantite(SQLiteDatabase db, String upc) {
+        String dateCourante=getDateCourante();
 
         String requete = "SELECT "+L_QUANTITE+" FROM "+TABLE_LISTEPLATS
                         +" WHERE "+L_UPC+"="+upc
@@ -189,7 +202,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static void changerQuantite(SQLiteDatabase db, String upc, int qte) {
         ContentValues v = new ContentValues();
         v.put(L_QUANTITE, qte);
-        db.update(TABLE_LISTEPLATS, v, " WHERE "+L_UPC+"="+upc, null);
+        db.update(DBHelper.TABLE_LISTEPLATS, v, DBHelper.L_UPC+"='"+upc+"'", null);
     }
 
     /**
@@ -227,17 +240,12 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * Methode qui permet de supprimer un plat de la liste de plat de la journee courante
      * @param db la base de donnees
-     * @param _id le code du plat
+     * @param upc le code unique du produit
      */
-    public static void supprimerPlatListe(SQLiteDatabase db, int _id){
-        Calendar mcurrentDate=Calendar.getInstance();
-        int mYear = mcurrentDate.get(Calendar.YEAR);
-        int mMonth=mcurrentDate.get(Calendar.MONTH);
-        int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
+    public static void supprimerPlatListe(SQLiteDatabase db, String upc){
+        String dateCourante=getDateCourante();
 
-        String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
-
-        db.delete(TABLE_LISTEPLATS, L_ID+"="+_id+" AND "+L_DATEENTREE+"='"+dateCourante+"'", null);
+        db.delete(TABLE_LISTEPLATS, L_ID+"='"+upc+"' AND "+L_DATEENTREE+"='"+dateCourante+"'", null);
     }
 
     /**
@@ -278,12 +286,7 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     public static void insererListePlats(SQLiteDatabase db, int qte, String upc, String nom,
                                     String size, ArrayList<Nutriment> nutriments){
-        Calendar mcurrentDate=Calendar.getInstance();
-        int mYear = mcurrentDate.get(Calendar.YEAR);
-        int mMonth=mcurrentDate.get(Calendar.MONTH);
-        int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
-
-        String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
+        String dateCourante=getDateCourante();
 
         ContentValues values = new ContentValues();
         values.put(L_USER_ID, USER_ID);

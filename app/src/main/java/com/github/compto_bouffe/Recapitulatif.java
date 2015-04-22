@@ -60,8 +60,8 @@ public class Recapitulatif extends Activity{
                 DatePickerDialog mDatePicker= new DatePickerDialog(Recapitulatif.this, new DatePickerDialog.OnDateSetListener() {
 
                     public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
-                        editDate1.setText("" + selectedday + "/" + selectedmonth + "/" + selectedyear);
-                        anneeDebut= selectedyear;
+                        editDate1.setText(String.format("%04d-%02d-%02d", selectedyear, selectedmonth+1, selectedday));
+                        anneeDebut=selectedyear;
                         moisDebut=selectedmonth;
                         jourDebut=selectedday;
                     }
