@@ -3,6 +3,7 @@ package com.github.compto_bouffe;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,17 +38,23 @@ public class Recapitulatif extends Activity{
     ArrayAdapter<DateInfos> adapter;
     Button valider;
 
+    private DatabaseManager dbM;
+    private SQLiteDatabase db;
+
     int anneeDebut=0, moisDebut=0, jourDebut=0;//, anneeFin, moisFin, jourFin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recapitulatif);
+
+        dbM = DatabaseManager.getInstance();
+        db = dbM.openConnection();
 
         dates = new ArrayList<DateInfos>();
         editDate1 = (EditText)findViewById(R.id.editDate1);
         editDate2 = (EditText)findViewById(R.id.editDate2);
-
         editDate1.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -202,5 +209,11 @@ public class Recapitulatif extends Activity{
             }
             return viewRow;
         }
+    }
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        dbM.close();
     }
 }
