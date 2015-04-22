@@ -108,7 +108,6 @@ public class Recapitulatif extends Activity{
                     mDatePicker.setTitle("Select date");
                     mDatePicker.show();
                 }
-
             }
         });
 
@@ -117,6 +116,13 @@ public class Recapitulatif extends Activity{
 
         listeView.setAdapter(adapter);
     }
+
+    /*
+        public ArrayList<DateInfos> getDatesInfos(){
+        Cursor curseur = DBHelper.listeObjectifs(db);
+        return dates;
+    }
+    */
 
     public ArrayList<DateInfos> getDatesInfos(){
         dates.add(new DateInfos("21 décembre", "1500", "1800"));
