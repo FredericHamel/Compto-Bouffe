@@ -34,7 +34,7 @@ import java.util.Calendar;
 public class RecherchePlats extends Activity {
 
     // Database
-    private DBHelper dbH;
+    private DatabaseManager dbM;
     private SQLiteDatabase db;
 
     // Composantes graphiques
@@ -64,8 +64,8 @@ public class RecherchePlats extends Activity {
         setContentView(R.layout.activity_recherche_plats);
         myChoice = new ArrayList<>();
         listProducts = new ArrayList<>();
-        dbH = new DBHelper(this);
-        db = dbH.getReadableDatabase();
+        dbM = DatabaseManager.getInstance();
+        db = dbM.openConnection();
         init();
         initAdapter();
         initConfirmButton();
@@ -106,17 +106,12 @@ public class RecherchePlats extends Activity {
         myListAdapter = new MyListAdapter();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        db.close();
-    }
-
     private void initMyListContent() {
         AsyncTask<Cursor, Void, ArrayList<ProductQty>> task = new AsyncTask<Cursor, Void, ArrayList<ProductQty>>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+
             }
 
             @Override
@@ -281,10 +276,9 @@ public class RecherchePlats extends Activity {
                         i = myListAdapter.getSelectedIndex();
                         if (i > -1 && i < myChoice.size()) {
                             ProductQty pty = myChoice.get(i);
-                            if (pty.getQte() > 1)
+                            if (pty.getQte() > 0)
                                 pty.sub();
                             else {
-                                myChoice.remove(i);
                                 myListAdapter.setSelectedIndex(-1);
                             }
                         }
@@ -327,6 +321,14 @@ public class RecherchePlats extends Activity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        searchProductAdapter.getCursor().close();
+        dbM.close();
+        Log.d("SQLite", "NbConnection to SQLDatabase="+dbM.getNbConnection());
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -335,6 +337,7 @@ public class RecherchePlats extends Activity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
             return true;
         }
 
@@ -463,7 +466,6 @@ public class RecherchePlats extends Activity {
     private class MyListAdapter extends BaseAdapter {
         private LayoutInflater inflater;
         private int selectedIndex;
-        private AdapterView.OnItemClickListener listener;
 
         public MyListAdapter() {
             this.inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);

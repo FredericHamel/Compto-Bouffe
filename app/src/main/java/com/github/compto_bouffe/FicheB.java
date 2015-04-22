@@ -10,16 +10,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import static com.github.compto_bouffe.DBHelper.*;
-
 // La fiche B permet à l'usager, par trois boutons:
 // - d'accéder au menu du jour;
 // - d'accéder au récapitulatif des derniers jours;
 // - de modifier ses informations
 public class FicheB extends Activity implements View.OnClickListener {
 
-    Button today;
-    Button bton1;          //bouton "Aujourd'hui"
+    DatabaseManager dbM;
+    //Button today;
+    //Button bton1;          //bouton "Aujourd'hui"
     Button bton2;          //bouton "Récapitulatif"
     Button bton3;          //bouton "Modifier les infos"
 
@@ -28,11 +27,10 @@ public class FicheB extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_b);
-
-        DBHelper dbh = new DBHelper(this);
-        SQLiteDatabase db = dbh.getReadableDatabase();
-        String nom = getPrenom(db);
-        db.close();
+        dbM = DatabaseManager.getInstance();
+        SQLiteDatabase db = dbM.openConnection();
+        String nom = DBHelper.getPrenom(db);
+        dbM.close();
 
         TextView prenom = (TextView)findViewById(R.id.textView2);
         prenom.setText(nom);
@@ -47,7 +45,7 @@ public class FicheB extends Activity implements View.OnClickListener {
     }
 
     public void buttonTodayOnClick(View v){
-        Button versC = (Button) v;
+        //Button versC = (Button) v;
         startActivity(new Intent(getApplicationContext(), FicheC.class));
     }
 
@@ -58,14 +56,14 @@ public class FicheB extends Activity implements View.OnClickListener {
 
             //code pour passer de la fiche b à la fiche c
 
-            Button button = (Button) v;
+            //Button button = (Button) v;
             startActivity(new Intent(getApplicationContext(), FicheC.class));
 
 
         }
         
         if(v.getId()==R.id.button2){
-            Button button = (Button) v;
+            //Button button = (Button) v;
             startActivity(new Intent(getApplicationContext(), Recapitulatif.class));
         }
 
@@ -73,7 +71,7 @@ public class FicheB extends Activity implements View.OnClickListener {
 
         if(v.getId()==R.id.button3){
 
-            Button button = (Button) v;
+            //Button button = (Button) v;
             startActivity(new Intent(getApplicationContext(), FicheA.class));
 
         }

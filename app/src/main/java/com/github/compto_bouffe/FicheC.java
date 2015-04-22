@@ -1,12 +1,10 @@
 package com.github.compto_bouffe;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,15 +17,12 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.Calendar;
-
 // La fiche C permet à l'usager de consulter et de modifier son menu du jour.
 public class FicheC extends Activity {
 
-
-    ListView listfood;
-    DBHelper dbh;
+    DatabaseManager dbM;
     SQLiteDatabase db;
+    ListView listfood;
     MyAdapter adapter;
 
     private TextView textViewCalIng, textViewCalRes;
@@ -51,8 +46,8 @@ public class FicheC extends Activity {
         modifier.setOnClickListener(listener);
         addPlat.setOnClickListener(listener);
 
-        dbh = new DBHelper(this);
-        db = dbh.getReadableDatabase();
+        dbM = DatabaseManager.getInstance();
+        db = dbM.openConnection();
         Cursor c = DBHelper.listePlatsDateCourante(db);
 
         adapter = new MyAdapter(this, c);
@@ -65,6 +60,7 @@ public class FicheC extends Activity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        adapter.getCursor().close();
         Cursor c = DBHelper.listePlatsDateCourante(db);
         adapter.changeCursor(c);
         updateStatus(c);
@@ -73,7 +69,9 @@ public class FicheC extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        db.close();
+        adapter.getCursor().close();
+        dbM.close();
+        Log.d("SQLite", "NbConnection to SQLDatabase="+dbM.getNbConnection());
     }
 
     private void updateStatus(Cursor c)
@@ -153,7 +151,7 @@ public class FicheC extends Activity {
             c.moveToPosition(position);
             Integer qtity = c.getInt(c.getColumnIndex(DBHelper.L_QUANTITE));
             String name = c.getString(c.getColumnIndex(DBHelper.L_NOM));
-            String desc = c.getString(c.getColumnIndex(DBHelper.L_SIZE));
+            //String size = c.getString(c.getColumnIndex(DBHelper.L_SIZE));
             String cal = c.getString(c.getColumnIndex(DBHelper.L_CALORIES));
             String sucre = c.getString(c.getColumnIndex(DBHelper.L_SUGARS));
             String gras = c.getString(c.getColumnIndex(DBHelper.L_TOTALFAT));
@@ -169,15 +167,23 @@ public class FicheC extends Activity {
 
             q.setText(Integer.toString(qtity));
             n.setText(name);
-            calo.setText(cal);
-            s.setText(sucre);
-            g.setText(gras);
-            p.setText(prot);
+            calo.setText(newQuantite(cal, qtity));
+            s.setText(newQuantite(sucre, qtity));
+            g.setText(newQuantite(gras, qtity));
+            p.setText(newQuantite(prot, qtity));
 
             Log.d("adapterFicheC","position" + position );
 
 
             return v;
+        }
+
+        private String newQuantite(String n, int q)
+        {
+            String[] parts = n.split(" ");
+            Log.d("changeQuatity", String.format("%s -> %d", n, parts.length));
+            double d = Double.parseDouble(parts[0]) * q;
+            return String.format("%.1f %s", d, parts.length == 1? "": parts[1]);
         }
 
         @Override

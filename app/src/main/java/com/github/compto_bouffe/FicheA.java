@@ -81,15 +81,15 @@ public class FicheA extends Activity implements View.OnClickListener {
 
             //code pour passer de la fiche a à la fiche b
 
-            Button button = (Button) v;
+            //Button button = (Button) v;
             AsyncTask<String, Void, Long> d = new AsyncTask<String, Void, Long>(){
 
                 @Override
                 protected Long doInBackground(String... strings) {
-                    DBHelper dbH = new DBHelper(getApplicationContext());
-                    SQLiteDatabase db = dbH.getWritableDatabase();
+                    DatabaseManager dbM = DatabaseManager.getInstance();
+                    SQLiteDatabase db = dbM.openConnection();
                     DBHelper.insererProfil(db, strings[0], strings[1]);
-                    db.close();
+                    dbM.close();
                     return null;
                 }
 

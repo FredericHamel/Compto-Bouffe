@@ -60,8 +60,8 @@ public class ModifierMaListe extends Activity {
 
             @Override
             public void onClick(View v) {
-                DBHelper dbH = new DBHelper(getApplicationContext());
-                SQLiteDatabase db = dbH.getWritableDatabase();
+                DatabaseManager dbM = DatabaseManager.getInstance();
+                SQLiteDatabase db = dbM.openConnection();
 
                 ArrayList<Boolean> checkedI = adapter.getItemChecked();
                 for(int i=0; i< checkedI.size();i++) {
@@ -77,7 +77,7 @@ public class ModifierMaListe extends Activity {
                         //Ajouter ici la fonction pour afficher les nouvelles quantités des nutriments
                     }
                 }
-
+                dbM.close();
                 finish();
             }
         });
@@ -108,8 +108,8 @@ public class ModifierMaListe extends Activity {
         LayoutInflater myInflater;
         ViewHolder holder;
         Cursor cursor;
-        ArrayList<Boolean> itemChecked = new ArrayList<Boolean>();
-        ArrayList<Integer> itemQtyChanged = new ArrayList<Integer>();
+        ArrayList<Boolean> itemChecked = new ArrayList<>();
+        ArrayList<Integer> itemQtyChanged = new ArrayList<>();
 
         /**
          * Constructeur de la classe MyAdapter
