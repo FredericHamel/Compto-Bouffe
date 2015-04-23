@@ -313,11 +313,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         //Si la quantite initiale est à 1, on recupere les valeurs initiales des nutriments
         for (Nutriment n : nutriments) {
-            double valeur;
-            String nouvelleValeur = " ";
-            valeur = Double.parseDouble(n.getValue());
-            nouvelleValeur = Double.toString(valeur * qte);
-
             switch (n.getName()) {
                 case L_CALORIES:
                     Log.d("DB", "Ajouter " + n.toString());
