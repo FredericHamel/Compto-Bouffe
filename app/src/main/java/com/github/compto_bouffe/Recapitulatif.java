@@ -108,7 +108,7 @@ public class Recapitulatif extends Activity{
                             } else if (selectedyear < anneeDebut) {
                                 Toast.makeText(getApplicationContext(), "Veuillez sélectionner une date postérieure à la date comparée.", Toast.LENGTH_SHORT).show();
                             } else {
-                                editDate2.setText("" + selectedday + "/" + selectedmonth + "/" + selectedyear);
+                                editDate1.setText(String.format("%04d-%02d-%02d", selectedyear, selectedmonth+1, selectedday));
                             }
                         }
                     }, mYear, mMonth, mDay);
