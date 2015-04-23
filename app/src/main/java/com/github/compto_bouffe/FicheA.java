@@ -88,7 +88,7 @@ public class FicheA extends Activity implements View.OnClickListener {
                 protected Long doInBackground(String... strings) {
                     DatabaseManager dbM = DatabaseManager.getInstance();
                     SQLiteDatabase db = dbM.openConnection();
-                    DBHelper.insererProfil(db, strings[0], strings[1]);
+                    DBHelper.changerInformations(db, strings[0], strings[1]);
                     dbM.close();
                     return null;
                 }
@@ -100,26 +100,15 @@ public class FicheA extends Activity implements View.OnClickListener {
                 }
 
             };
-            if(number_cal.matches("[1-9]+[0-9]{3}"))
+            if(number_cal.matches("[1-9]+[0-9]{2,4}"))
                 d.execute(letter_name, number_cal);
             else
                 Toast.makeText(this, "Veuillez entrer un objectif valide", Toast.LENGTH_SHORT).show();
-
-
         }
-
-
         //code pour accéder à la documentation du gouvernement
-
         if(v.getId()==R.id.button2){
-
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.hc-sc.gc.ca/fn-an/nutrition/reference/table/index-fra.php"));
             startActivity(browserIntent);
-
         }
-
-
     }
-
-
 }

@@ -107,19 +107,6 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-
-    /**
-     * Methode qui permet d'inserer pour la premiere fois ou d'updater les informations du profil
-     * @param db la base de donnees
-     * @param prenom le nouveau prenom
-     * @param objectif le nouvel objectif
-     */
-    public static void changerInformations(SQLiteDatabase db, String prenom, String objectif){
-        String requete = "INSERT OR REPLACE INTO "+TABLE_PROFILS+"("+P_PRENOM+", "+P_OBJECTIF
-                +") VALUES ("+prenom+", "+objectif+");";
-        db.execSQL(requete);
-    }
-
     /**
      * Retourne la date courante
      * @return date courante
@@ -258,6 +245,18 @@ public class DBHelper extends SQLiteOpenHelper {
         String dateCourante=getDateCourante();
 
         db.delete(TABLE_LISTEPLATS, L_ID+"='"+upc+"' AND "+L_DATEENTREE+"='"+dateCourante+"'", null);
+    }
+
+    /**
+     * Methode qui permet d'inserer pour la premiere fois ou d'updater les informations du profil
+     * @param db la base de donnees
+     * @param prenom le nouveau prenom
+     * @param objectif le nouvel objectif
+     */
+    public static void changerInformations(SQLiteDatabase db, String prenom, String objectif){
+        String requete = "INSERT OR REPLACE INTO "+TABLE_PROFILS+"("+P_PRENOM+", "+P_OBJECTIF
+                +") VALUES ('"+prenom+"', '"+objectif+"');";
+        db.execSQL(requete);
     }
 
     /**

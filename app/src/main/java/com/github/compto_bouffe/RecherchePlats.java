@@ -187,12 +187,7 @@ public class RecherchePlats extends Activity {
                         DatabaseManager dbM = DatabaseManager.getInstance();
                         SQLiteDatabase db = dbM.openConnection();
 
-                        Calendar mcurrentDate=Calendar.getInstance();
-                        int mYear = mcurrentDate.get(Calendar.YEAR);
-                        int mMonth=mcurrentDate.get(Calendar.MONTH);
-                        int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
-
-                        String dateCourante=Integer.toString(mYear)+"-"+Integer.toString(mMonth)+"-"+Integer.toString(mDay);
+                        String dateCourante=DBHelper.getDateCourante();
                         String base_query = "SELECT " + DBHelper.L_UPC + " FROM " + DBHelper.TABLE_LISTEPLATS + " WHERE "+DBHelper.L_DATEENTREE+"='"+dateCourante+"' AND "+DBHelper.L_UPC+ "=";
                         for(ProductQty productQty : p[0]) {
                             Product pf = productQty.getProduct();
