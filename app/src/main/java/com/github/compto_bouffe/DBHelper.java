@@ -124,7 +124,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * Retourne la date courante
      * @return date courante
      */
-    private static String getDateCourante()
+    public static String getDateCourante()
     {
         Calendar mcurrentDate=Calendar.getInstance();
         int mYear = mcurrentDate.get(Calendar.YEAR);
@@ -146,19 +146,24 @@ public class DBHelper extends SQLiteOpenHelper {
                         +L_TOTALFAT+"`, "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
                         +" WHERE "+L_DATEENTREE+"='"+dateCourante+"' AND " + L_QUANTITE +  " > 0;";
         Log.d("Query", requete);
-        Cursor c = db.rawQuery(requete, null);
-        return c;
+        return db.rawQuery(requete, null);
     }
 
-    public Cursor listePlatsRecent(SQLiteDatabase db)
+
+    /**
+     * Renvoie la liste des plats recements ajouter par l'utilisateur.
+     * @param db la database
+     * @return c un cursor contenant le resultat de la requete.
+     */
+    public static Cursor listePlatsRecent(SQLiteDatabase db)
     {
-        String dateCourante = getDateCourante();
-        String requete = "SELECT "+L_ID +", DISTINCT " + L_UPC+ ", " +L_QUANTITE+", "+L_NOM+", "+L_SIZE+", "+L_CALORIES+", "+L_SUGARS+", `"
-                +L_TOTALFAT+"`, "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS +";";
+        String requete = "SELECT "+L_ID +", " + L_UPC+ ", " +L_NOM+", "+L_SIZE+", "+L_CALORIES+", "+L_SUGARS+", `"
+                +L_TOTALFAT+"`, "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS +" GROUP BY " + L_UPC + " LIMIT 15;";
         Log.d("Query", requete);
-        Cursor c = db.rawQuery(requete, null);
-        return c;
+        return db.rawQuery(requete, null);
     }
+
+
 
     /**
      * Methode qui permet d'afficher la liste des element deja mange
@@ -170,8 +175,7 @@ public class DBHelper extends SQLiteOpenHelper {
                           +" ORDER BY "+L_DATEENTREE
                           +" LIMIT 15;";
         Log.d("Query", requete);
-        Cursor c=db.rawQuery(requete, null);
-        return c;
+        return db.rawQuery(requete, null);
     }
 
 
@@ -188,8 +192,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         +" WHERE "+L_UPC+"="+upc
                         +" AND "+L_DATEENTREE+"='"+dateCourante+"';";
         Log.d("Query", requete);
-        Cursor c= db.rawQuery(requete, null);
-        return c;
+        return db.rawQuery(requete, null);
     }
 
 
@@ -212,11 +215,10 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return c le curseur
      */
     public static Cursor listePeriode(SQLiteDatabase db, String date){
-        String requete = "SELECT "+L_ID+", "+L_QUANTITE+", "+L_NOM+", "+L_SIZE+", "+L_CALORIES+", "+L_SUGARS+", `"
+        String requete = "SELECT "+L_ID+", "+L_UPC+", "+L_QUANTITE+", "+L_NOM+", "+L_SIZE+", "+L_CALORIES+", "+L_SUGARS+", `"
                         +L_TOTALFAT+"`, "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
-                        +" WHERE "+L_DATEENTREE+"='"+date+"';";
-        Cursor c = db.rawQuery(requete, null);
-        return c;
+                        +" WHERE "+L_DATEENTREE+"='"+date+"' GROUP BY "+L_UPC +";";
+        return db.rawQuery(requete, null);
     }
 
     /**
@@ -228,9 +230,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static Cursor listeObjectifs(SQLiteDatabase db){
         String requete = "SELECT "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
                 +" FROM "+TABLE_RESULTATS +";";
-
-        Cursor c = db.rawQuery(requete, null);
-        return c;
+        return db.rawQuery(requete, null);
     }
 
     /**
@@ -246,9 +246,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 +" FROM "+TABLE_RESULTATS
                 +" WHERE "+R_DATE+">='"+dateDebut
                 +"' AND "+R_DATE+"<='"+dateFin+"';";
-
-        Cursor c = db.rawQuery(requete, null);
-        return c;
+        return db.rawQuery(requete, null);
     }
 
     /**

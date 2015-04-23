@@ -88,6 +88,7 @@ public class FicheC extends Activity {
         }
         textViewCalIng.setText(String.valueOf(calorie));
         textViewCalRes.setText(String.valueOf(objectif - calorie));
+        modifier.setEnabled(c.getCount() != 0);
     }
 
     private void initClickListener()

@@ -21,4 +21,6 @@
 
     <string name="my_list_header">Ma Liste</string>
     <string name="search_hint_en">Rechercher (ANGLAIS)…</string>
+
+    <string name="recapitulatif_objectif">: votre objectif quotidien actuel est de </string>
 </resources>

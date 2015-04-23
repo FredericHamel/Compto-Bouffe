@@ -101,7 +101,7 @@ public class RecherchePlats extends Activity {
     // Initiailise les Adapter
     private void initAdapter() {
         // le cursor doit etre initialise correctement, pas a null.
-        Cursor c = DBHelper.listePlatsDateCourante(db);
+        Cursor c = DBHelper.listePlatsRecent(db);
         searchProductAdapter = new SearchProductAdapter(this, c);
         myListAdapter = new MyListAdapter();
     }
@@ -145,7 +145,8 @@ public class RecherchePlats extends Activity {
             }
         };
 
-        Cursor c = DBHelper.listePlatsDateCourante(db);
+
+        Cursor c = DBHelper.listePeriode(db, DBHelper.getDateCourante());
         task.execute(c);
     }
 
@@ -183,8 +184,8 @@ public class RecherchePlats extends Activity {
                     protected final Long doInBackground(ArrayList<ProductQty>... p) {
                         LabelAPI labelAPI1 = LabelAPI.getInstance();
                         ArrayList<Nutriment> nutriments;
-                        DBHelper dbH = new DBHelper(getApplicationContext());
-                        SQLiteDatabase db = dbH.getWritableDatabase();
+                        DatabaseManager dbM = DatabaseManager.getInstance();
+                        SQLiteDatabase db = dbM.openConnection();
 
                         Calendar mcurrentDate=Calendar.getInstance();
                         int mYear = mcurrentDate.get(Calendar.YEAR);
@@ -208,6 +209,7 @@ public class RecherchePlats extends Activity {
                             }
                             c.close();
                         }
+                        dbM.close();
                         return 0L;
                     }
 

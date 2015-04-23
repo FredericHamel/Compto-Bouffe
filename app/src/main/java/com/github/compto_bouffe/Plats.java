@@ -1,17 +1,20 @@
 package com.github.compto_bouffe;
 
+// Cette classe contient simplement les informations sur un plat, quel qu'il soit.
 /**
  * Created by sabrinaouaret on 04/04/15.
  */
-// Cette classe contient simplement les informations sur un plat, quel qu'il soit.
 public class Plats {
 
-    private String nom, qte;
+    private String nom, upc;
+    private int old_qte, qte;
     private boolean selected;
 
-    public Plats(String nom, String qte){
+    public Plats(String nom, String upc, int qte){
         this.nom=nom;
-        this.qte=qte;
+        this.qte = qte >= 0 ? qte : 0;
+        this.upc=upc;
+        this.old_qte=this.qte;
         this.selected=false;
     }
 
@@ -19,16 +22,25 @@ public class Plats {
         return this.nom;
     }
 
-    public String getQte(){
+    public String getUpc() {
+        return this.upc;
+    }
+
+    public int getQte(){
         return this.qte;
     }
 
-    public void setQte(String qte){
-        this.qte=qte;
+    public void setQte(int qte){
+        if(qte >= 0)
+            this.qte=qte;
+    }
+
+    public boolean isModified() {
+        return this.old_qte != this.qte;
     }
 
     public boolean isSelected(){
-        return this.selected;
+        return this.getQte() == 0 || this.selected;
     }
 
     public void setSelected(boolean selected){

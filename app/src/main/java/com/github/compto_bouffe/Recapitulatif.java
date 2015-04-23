@@ -20,6 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -30,6 +32,7 @@ import java.util.Calendar;
 // l'objectif et le résultat étant en calories
 public class Recapitulatif extends Activity{
 
+    TextView objectif;
     ListView listeView;
     ArrayList<DateInfos> dates;
     EditText editDate1;
@@ -51,6 +54,10 @@ public class Recapitulatif extends Activity{
 
         dbM = DatabaseManager.getInstance();
         db = dbM.openConnection();
+        String prenom = DBHelper.getPrenom(db);
+        String obj = DBHelper.getObjectif(db);
+        objectif = (TextView)findViewById(R.id.phrases);
+        objectif.setText(String.format("%s %s %s", prenom, getString(R.string.recapitulatif_objectif), obj));
 
         dates = new ArrayList<DateInfos>();
         editDate1 = (EditText)findViewById(R.id.editDate1);

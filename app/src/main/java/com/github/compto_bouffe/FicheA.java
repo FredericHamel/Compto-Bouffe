@@ -98,8 +98,9 @@ public class FicheA extends Activity implements View.OnClickListener {
                     startActivity(new Intent(getApplicationContext(), FicheB.class));
                     super.onPostExecute(aLong);
                 }
+
             };
-            if(number_cal.matches("[1-9]+[0-9]{3,4}"))
+            if(number_cal.matches("[1-9]+[0-9]{3}"))
                 d.execute(letter_name, number_cal);
             else
                 Toast.makeText(this, "Veuillez entrer un objectif valide", Toast.LENGTH_SHORT).show();

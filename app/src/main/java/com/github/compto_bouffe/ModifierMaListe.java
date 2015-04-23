@@ -1,9 +1,11 @@
 package com.github.compto_bouffe;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -27,7 +30,7 @@ public class ModifierMaListe extends Activity {
     ListView listeView;
     Button valider;
     LinearLayout titreLayout;
-    DBHelper dbh;
+    DatabaseManager dbM;
     SQLiteDatabase db;
     MyAdapter adapter;
 
@@ -44,8 +47,8 @@ public class ModifierMaListe extends Activity {
 
 
         //Base de données + cursor contenant les plats de la liste d'aujourd'hui
-        dbh = new DBHelper(this);
-        db = dbh.getReadableDatabase();
+        dbM = DatabaseManager.getInstance();
+        db = dbM.openConnection();
         Cursor c = DBHelper.listePlatsDateCourante(db);
 
         //ListView contenant les plats + quantites
@@ -56,33 +59,48 @@ public class ModifierMaListe extends Activity {
         //Bouton valider
         valider = (Button) findViewById(R.id.boutonValider);
 
+        @SuppressLint("ShowToast")
+        final Toast toast = Toast.makeText(getApplicationContext(), "Veuillez-patienter", Toast.LENGTH_LONG);
         valider.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                DatabaseManager dbM = DatabaseManager.getInstance();
-                SQLiteDatabase db = dbM.openConnection();
-
-                ArrayList<Boolean> checkedI = adapter.getItemChecked();
-                for(int i=0; i< checkedI.size();i++) {
-                    if (checkedI.get(i)) {
-                        DBHelper.supprimerPlatListe(db, i+1);
-                        Log.d("adapterModifierListe","Supprimer de la bdd:" + i+1);
+                AsyncTask<Integer, Void, Long> task = new AsyncTask<Integer, Void, Long>() {
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                        listeView.setEnabled(false);
+                        valider.setEnabled(false);
+                        toast.show();
                     }
-                }
 
-                ArrayList<Integer> changedI = adapter.getItemQtyChanged();
-                for(int i=0; i< changedI.size();i++){
-                    if(changedI.get(i)!=-1 && !checkedI.get(i)){
-                        //Ajouter ici la fonction pour afficher les nouvelles quantités des nutriments
+                    @Override
+                    protected Long doInBackground(Integer... integers) {
+                        adapter.updateDB();
+                        return null;
                     }
-                }
-                dbM.close();
-                finish();
+
+
+                    @Override
+                    protected void onPostExecute(Long l) {
+                        super.onPostExecute(l);
+                        listeView.setEnabled(true);
+                        valider.setEnabled(true);
+                        toast.cancel();
+                        finish();
+                    }
+                };
+                task.execute();
             }
         });
     }
 
+    @Override
+    protected void onDestroy()    {
+        super.onDestroy();
+        adapter.getCursor().close();
+        dbM.close();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -103,13 +121,12 @@ public class ModifierMaListe extends Activity {
 
     //Adapter de la listView
     public class MyAdapter extends CursorAdapter {
+        private View.OnClickListener listener;
+        private CompoundButton.OnCheckedChangeListener changeListener;
+        private LayoutInflater myInflater;
+        private ViewHolder holder;
 
-        private final Context context;
-        LayoutInflater myInflater;
-        ViewHolder holder;
-        Cursor cursor;
-        ArrayList<Boolean> itemChecked = new ArrayList<>();
-        ArrayList<Integer> itemQtyChanged = new ArrayList<>();
+        private ArrayList<Plats> plats;
 
         /**
          * Constructeur de la classe MyAdapter
@@ -118,30 +135,72 @@ public class ModifierMaListe extends Activity {
          */
         public MyAdapter(Context context, Cursor c) {
             super(context, c, false);
-            myInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            this.context=context;
-            this.cursor=c;
-
-            if(cursor!=null){
-                cursor.moveToFirst();
+            this.myInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            this.plats = new ArrayList<>();
+            initListener();
+            if(c != null){
+                c.moveToFirst();
                 Log.d("adapterModifierListe","Count dans cursor:" + c.getCount());
-                for (int i=0; i < cursor.getCount(); i++) {
-                    itemChecked.add(i, false); // initializes all items value with false
-                    itemQtyChanged.add(i, -1);
-                }
+
+                do {
+                    String nom=c.getString(c.getColumnIndex(DBHelper.L_NOM));
+                    int qte = c.getInt(c.getColumnIndex(DBHelper.L_QUANTITE));
+                    String upc = c.getString(c.getColumnIndex(DBHelper.L_UPC));
+                    plats.add(new Plats(nom, upc, qte));
+                } while(c.moveToNext());
             }
         }
 
-        public ArrayList<Boolean> getItemChecked(){
-            return itemChecked;
+        /**
+         * Initialise le listener des boutons add et sub.
+         * Initialise le checkListener pour les checkbox.
+         */
+        private void initListener()
+        {
+            this.listener = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ViewHolder holder_b = (ViewHolder) view.getTag(R.layout.modifier_ma_liste_row);
+                    int i = (int)view.getTag();
+                    int qte = Integer.parseInt(holder_b.textViewQte.getText().toString());
+                    Plats p = plats.get(i);
+                    switch (view.getId())
+                    {
+                        //Insertion de la position et nouvelle quantite dans le Map
+                        case R.id.boutonPlus:
+                            p.setQte(qte + 1);
+                            holder_b.textViewQte.setText(String.valueOf(p.getQte()));
+                            break;
+                        //Insertion de la position et nouvelle quantite dans le Map
+                        case R.id.boutonMoins:
+                            p.setQte(qte - 1);
+
+                            holder_b.textViewQte.setText(String.valueOf(p.getQte()));
+                            if(p.getQte() == 0) {
+                                p.setSelected(true);
+                                holder_b.checkBoxView.setChecked(p.isSelected());
+                            }
+                            break;
+                    }
+
+                    Log.d("adapterModifierListe", "position Map position:" + i + ", quantite:" + plats.get(i).getQte());
+                }
+            };
+
+            this.changeListener = new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    //position de la checkbox
+                    int position = (int) buttonView.getTag();
+                    plats.get(position).setSelected(isChecked);
+                    Log.d("adapterModifierListe","position ArrayList A Supprimer:" + position );
+                }
+            };
         }
 
-        public ArrayList<Integer> getItemQtyChanged(){
-            return itemQtyChanged;
-        }
 
         //Classe interne ViewHolder
-        class ViewHolder{
+        private class ViewHolder{
             protected TextView nom;
             protected CheckBox checkBoxView;
             protected Button boutonPlus;
@@ -149,11 +208,45 @@ public class ModifierMaListe extends Activity {
             protected Button boutonMoins;
         }
 
+        /*
+        new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    //position de la checkbox
+                    int getPosition = (Integer) buttonView.getTag();
+
+                    if (isChecked) {
+                        itemChecked.set(getPosition, true);
+                    } else if (!isChecked) {
+                        itemChecked.set(getPosition, false);
+                    }
+                    Log.d("adapterModifierListe","position ArrayList A Supprimer:" + position );
+                }
+            }
+         */
+
+        public void updateDB()
+        {
+            DatabaseManager dbM = DatabaseManager.getInstance();
+            SQLiteDatabase db = dbM.openConnection();
+            for(Plats plat : plats)
+            {
+                if(plat.isSelected()) {
+                    Log.d("Modify", "Modify " + plat.getNom() + " 0");
+                    DBHelper.changerQuantite(db, plat.getUpc(), 0);
+                }else if(plat.isModified()) {
+                    Log.d("Modify", "Modify " + plat.getNom() + " " + plat.getQte());
+                    DBHelper.changerQuantite(db, plat.getUpc(), plat.getQte());
+                }
+            }
+            dbM.close();
+        }
 
         public View getView(final int position, View convertView,ViewGroup parent) {
 
+            Log.d(MyAdapter.class.getSimpleName(), "Position: " + position);
             View viewRow=convertView;
-
+            Cursor cursor = getCursor();
             cursor.moveToPosition(position);
 
             if (viewRow == null) {
@@ -167,90 +260,41 @@ public class ModifierMaListe extends Activity {
                 holder.boutonMoins = (Button) viewRow.findViewById(R.id.boutonMoins);
 
                 viewRow.setTag(holder);
-                viewRow.setTag(R.id.textView1, holder.nom);
-                viewRow.setTag(R.id.checkBoxSupprimer, holder.checkBoxView);
 
-                viewRow.setTag(R.id.boutonMoins, holder.boutonMoins);
-                viewRow.setTag(R.id.boutonPlus, holder.boutonPlus);
-                viewRow.setTag(R.id.textQte, holder.textViewQte);
+                holder.boutonPlus.setOnClickListener(listener);
+                holder.boutonMoins.setOnClickListener(listener);
+                holder.checkBoxView.setOnCheckedChangeListener(changeListener);
 
             } else {
                 holder = (ViewHolder) viewRow.getTag();
             }
 
-            int quantite = cursor.getInt(cursor.getColumnIndex(DBHelper.L_QUANTITE));
             String nomProduit = cursor.getString(cursor.getColumnIndex(DBHelper.L_NOM));
+
             holder.nom.setText(nomProduit);
-            holder.textViewQte.setText(Integer.toString(quantite));
+            holder.textViewQte.setText(Integer.toString(plats.get(position).getQte()));
 
             holder.checkBoxView.setTag(position);
-            holder.checkBoxView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    //position de la checkbox
-                    int getPosition = (Integer) buttonView.getTag();
-
-                    if (isChecked) {
-                        itemChecked.set(getPosition, true);
-                    } else if (!isChecked) {
-                        itemChecked.set(getPosition, false);
-                    }
-                    Log.d("adapterModifierListe","position ArrayList A Supprimer:" + position );
-                }
-            });
 
             //Modification de la quantite lors du click sur le bouton 'moins'
-            holder.boutonMoins.setTag(holder);
-            holder.boutonMoins.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ViewHolder holder_b = (ViewHolder) v.getTag();
-                    int qte = Integer.parseInt(holder_b.textViewQte.getText().toString());
+            holder.boutonMoins.setTag(position);
+            holder.boutonMoins.setTag(R.layout.modifier_ma_liste_row, holder);
 
-                    if (qte <= 1) {
-                        holder_b.textViewQte.setText("0");
-                    } else {
-                        String quantite = Integer.toString(qte - 1);
-                        holder_b.textViewQte.setText(quantite);
-                    }
-
-                    int newQte = Integer.parseInt(holder_b.textViewQte.getText().toString());
-                    itemQtyChanged.set(position,newQte);
-
-                    //Insertion de la position et nouvelle quantite dans le Map
-                    Log.d("adapterModifierListe", "position Map position:" + position + ", quantite:" + newQte);
-
-                }
-            });
 
             //Modification de la quantite lors du click sur le bouton 'plus'
-            holder.boutonPlus.setTag(holder);
-            holder.boutonPlus.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ViewHolder holder_b = (ViewHolder) v.getTag();
-                    int qte = Integer.parseInt(holder_b.textViewQte.getText().toString());
-                    String quantite = Integer.toString(qte + 1);
-                    holder_b.textViewQte.setText(quantite);
-                    itemQtyChanged.set(position,Integer.parseInt(quantite));
+            holder.boutonPlus.setTag(position);
+            holder.boutonPlus.setTag(R.layout.modifier_ma_liste_row, holder);
 
-                    //Insertion de la position et nouvelle quantite dans le Map
-                    //positionQte.put(getPosition, (String) holder_b.textViewQte.getText());
-                    Log.d("adapterModifierListe","position Map position:" + position + ", quantite:"+Integer.parseInt(quantite));
-                }
-            });
-
+            Plats plat = plats.get(position);
             holder.checkBoxView.setTag(position);
-            Log.d("adapterModifierListe","itemChecked:" + itemChecked.get(position));
-            //holder.checkBoxView.setChecked(itemChecked.get(position));
-            //holder.nom.setText(plats.get(position).getNom());
-            holder.textViewQte.setText(Integer.toString(itemQtyChanged.get(position)));
+            holder.checkBoxView.setChecked(plat.isSelected());
 
+            Log.d("adapterModifierListe","itemChecked:" + plat.isSelected());
             //Couleur alternative des rangées
             if (position % 2 == 1) {
-                viewRow.setBackgroundColor(context.getResources().getColor(R.color.grisRangee1));
+                viewRow.setBackgroundResource(R.color.grisRangee1);
             } else {
-                viewRow.setBackgroundColor(context.getResources().getColor(R.color.grisRangee2));
+                viewRow.setBackgroundResource(R.color.grisRangee2);
             }
             return viewRow;
         }

@@ -32,13 +32,11 @@ public class DatabaseManager {
      */
     public static DatabaseManager getInstance()
     {
-
         if (instance == null)
             throw new IllegalStateException(DatabaseManager.class.getSimpleName() +
                 " is not initialized, call init(..) method first.");
         return instance;
     }
-
 
     /**
      * Constructeur du Singleton.
