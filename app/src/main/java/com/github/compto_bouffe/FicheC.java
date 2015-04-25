@@ -1,10 +1,12 @@
 package com.github.compto_bouffe;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,15 +22,17 @@ import android.widget.TextView;
 // La fiche C permet à l'usager de consulter et de modifier son menu du jour.
 public class FicheC extends Activity {
 
-    DatabaseManager dbM;
-    SQLiteDatabase db;
-    ListView listfood;
-    MyAdapter adapter;
+    private DatabaseManager dbM;
+    private SQLiteDatabase db;
+    private ListView listfood;
+    private MyAdapter adapter;
 
     private TextView textViewCalIng, textViewCalRes;
 
     private View.OnClickListener listener;
     private Button modifier, addPlat;
+
+    private AsyncTask<Double, Void, Void> task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +58,35 @@ public class FicheC extends Activity {
         listfood.setAdapter(adapter);
 
         updateStatus(c);
+    }
 
+    private void  updateTask()
+    {
+        task = new AsyncTask<Double, Void, Void>() {
+            @Override
+            protected Void doInBackground(Double... values) {
+                SQLiteDatabase db = dbM.openConnection();
+                String date = DBHelper.getDateCourante();
+                ContentValues cv = new ContentValues();
+
+                cv.put(DBHelper.R_OBJECTIF_RES, (int)Math.floor(values[1]));
+
+
+
+                Log.d("SQL", "UPDATE " + DBHelper.TABLE_RESULTATS + " SET " + DBHelper.R_OBJECTIF_INIT + "='"+(int)Math.floor(values[0]) + "', " + DBHelper.R_OBJECTIF_RES + "='"+(int)Math.floor(values[1]+30)+"' WHERE "+ DBHelper.R_DATE + "='"+date + "';");
+                if(db.update(DBHelper.TABLE_RESULTATS, cv, DBHelper.R_DATE +"='"+date+"'", null) == 0)
+                {
+
+                    cv.put(DBHelper.R_USER_ID, DBHelper.USER_ID);
+                    cv.put(DBHelper.R_DATE, date);
+                    cv.put(DBHelper.R_OBJECTIF_INIT, (int)Math.floor(values[0]));
+
+                    db.insert(DBHelper.TABLE_RESULTATS, null, cv);
+                }
+                dbM.close();
+                return null;
+            }
+        };
     }
 
     @Override
@@ -63,6 +95,7 @@ public class FicheC extends Activity {
         adapter.getCursor().close();
         Cursor c = DBHelper.listePlatsDateCourante(db);
         adapter.changeCursor(c);
+        updateTask();
         updateStatus(c);
     }
 
@@ -85,6 +118,8 @@ public class FicheC extends Activity {
                 int qte = c.getInt(c.getColumnIndex(DBHelper.L_QUANTITE));
                 calorie += qte*Double.parseDouble(c.getString(c.getColumnIndex(DBHelper.L_CALORIES)).split(" ")[0]);
             } while (c.moveToNext());
+            updateTask();
+            task.execute(objectif, calorie);
         }
         textViewCalIng.setText(String.valueOf(calorie));
         textViewCalRes.setText(String.valueOf(objectif - calorie));

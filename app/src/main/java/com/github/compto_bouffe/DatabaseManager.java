@@ -64,7 +64,10 @@ public class DatabaseManager {
         if(nbConnection == 1) {
             // Open Database connection
             Log.d("SQLite", "Open connection to DB.");
+            String pragma = "PRAGMA foreign_keys=1;";
             db = dbH.getWritableDatabase();
+            // Enable foreign keys.
+            db.execSQL(pragma);
         }
         return db;
     }

@@ -17,11 +17,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="PRENOM"
+            android:text="@string/profil_prenom_label"
             android:id="@+id/prenom"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:nestedScrollingEnabled="false"
             android:padding="5dp"
             android:minHeight="35dp" />
 
@@ -35,13 +33,13 @@
             android:id="@+id/bordureEntrerNomLayout"
             android:layout_marginBottom="10dp"
             android:minHeight="35dp"
-            android:layout_below="@+id/prenom">>
+            android:layout_below="@+id/prenom">
 
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="35dp"
-                android:layout_below="@+id/ligne"
-                android:paddingLeft="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="0dp"
                 android:id="@+id/entrerNomLayout"
                 android:background="#fff0f0f0"
                 android:minHeight="35dp">
@@ -50,10 +48,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/name"
-                    android:hint="Entrez votre prénom"
-                    android:layout_weight="1"
+                    android:hint="@string/profil_prenom_hint"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true"
+                    android:singleLine="true"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:inputType="textNoSuggestions"
                     android:padding="5dp" />
 
             </RelativeLayout>
@@ -76,24 +77,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="25dp"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Mon objectif quotidien en calories"
+                    android:text="@string/profil_objectif_label"
                     android:id="@+id/textView3"
-                    android:height="50dp"
-                    android:layout_above="@+id/objectifs"
-                    android:layout_alignStart="@+id/bordureEntrerNomLayout" />
+                    android:height="50dp" />
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/objectifs"
-                    android:hint="Entrez votre objectif (nombre de calories)"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignEnd="@+id/button" />
+                    android:singleLine="true"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:inputType="number"
+                    android:hint="@string/profil_objectif_hint" />
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
@@ -104,25 +104,16 @@
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="VALIDER"
-                    android:id="@+id/button"
-                    android:clickable="true"
-                    android:elegantTextHeight="false"
-                    android:onClick="setContentView"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="true" />
+                    android:text="@string/profil_btn_valide_text"
+                    android:id="@+id/btn_profil_valider"
+                    android:clickable="true" />
 
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="CONNAÎTRE LES RECOMMENDATIONS DU GOUVERNEMENT SUR LES APPORTS JOURNALIERS"
-                    android:id="@+id/button2"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true" />
-            </RelativeLayout>
+                    android:text="@string/profil_btn_gouv_text"
+                    android:id="@+id/btn_profil_gouv" />
+            </LinearLayout>
         </RelativeLayout>
 
     </RelativeLayout>

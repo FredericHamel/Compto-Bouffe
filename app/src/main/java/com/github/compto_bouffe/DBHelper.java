@@ -18,12 +18,12 @@ import java.util.Calendar;
 public class DBHelper extends SQLiteOpenHelper {
 
     static final String DB_NAME = "comptoBouffe.db";
-    static final int DB_VERSION = 4;
+    static final int DB_VERSION = 6;
     static final int USER_ID = 1;
 
     // Table des profils
     static final String TABLE_PROFILS = "Profils";
-    static final String P_ID = "ID";
+    static final String P_ID = "_id";
     static final String P_PRENOM ="Prenom";
     static final String P_OBJECTIF ="Objectif";
 
@@ -44,7 +44,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // Table des resultats
     static final String TABLE_RESULTATS = "Resultats";
-    static final String R_ID = "ID";
+    static final String R_ID = "_id";
+    static final String R_USER_ID = "UserID";
     static final String R_OBJECTIF_INIT = "Objectif_initial";
     static final String R_OBJECTIF_RES = "Objectif_resultant";
     static final String R_DATE = "DateR";
@@ -57,6 +58,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        // Creates tables query.
         String creerTableProfils = "CREATE TABLE IF NOT EXISTS "+TABLE_PROFILS+" ("
                 +P_ID+" INT, "
                 +P_PRENOM+" TEXT NOT NULL,"
@@ -79,33 +81,18 @@ public class DBHelper extends SQLiteOpenHelper {
                 +"FOREIGN KEY("+ L_USER_ID +") REFERENCES "+TABLE_PROFILS+"("+P_ID+"));";
 
         String creerTableResultats = "CREATE TABLE IF NOT EXISTS "+TABLE_RESULTATS+" ("
-                +R_ID+" INT, "
-                +R_OBJECTIF_INIT+" TEXT NOT NULL,"
-                +R_OBJECTIF_RES+" TEXT,"
-                +R_DATE+" TEXT NOT NULL,"
-                +"FOREIGN KEY("+R_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"),"
-                +"FOREIGN KEY("+R_OBJECTIF_INIT+") REFERENCES "+TABLE_LISTEPLATS+"("+L_OBJECTIF+"),"
-                +"PRIMARY KEY("+R_ID+", "+R_DATE+"));";
+                +R_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "
+                +R_USER_ID+" INTEGER, "
+                +R_OBJECTIF_INIT+" TEXT NOT NULL, "
+                +R_OBJECTIF_RES+" TEXT, "
+                +R_DATE+" TEXT NOT NULL UNIQUE, "
+                +"FOREIGN KEY("+R_USER_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"));";
 
         db.execSQL(creerTableProfils);
         db.execSQL(creerTableListe);
         db.execSQL(creerTableResultats);
         Log.d("DB", "DB created");
     }
-
-    // SELECT Prenom FROM Profils;
-    public static String getPrenom(SQLiteDatabase db){
-        String requete = "SELECT "+P_PRENOM+" FROM "+TABLE_PROFILS+";";
-        Cursor c = db.rawQuery(requete, null);
-        String prenom = "";
-        if(c != null) {
-            c.moveToFirst();
-            prenom=c.getString(c.getColumnIndex(P_PRENOM));
-            c.close();
-        }
-        return prenom;
-    }
-
 
     /**
      * Retourne la date courante
@@ -119,6 +106,19 @@ public class DBHelper extends SQLiteOpenHelper {
         int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
 
         return String.format("%04d-%02d-%02d", mYear, mMonth, mDay);
+    }
+
+    // SELECT Prenom FROM Profils;
+    public static String getPrenom(SQLiteDatabase db){
+        String requete = "SELECT "+P_PRENOM+" FROM "+TABLE_PROFILS+";";
+        Cursor c = db.rawQuery(requete, null);
+        String prenom = "";
+        if(c.getCount() > 0) {
+            c.moveToFirst();
+            prenom=c.getString(c.getColumnIndex(P_PRENOM));
+        }
+        c.close();
+        return prenom;
     }
 
     /**
@@ -190,9 +190,10 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param qte la nouvelle quantite
      */
     public static void changerQuantite(SQLiteDatabase db, String upc, int qte) {
+        String dateCourante = getDateCourante();
         ContentValues v = new ContentValues();
         v.put(L_QUANTITE, qte);
-        db.update(DBHelper.TABLE_LISTEPLATS, v, DBHelper.L_UPC+"='"+upc+"'", null);
+        db.update(DBHelper.TABLE_LISTEPLATS, v, DBHelper.L_UPC+"='"+upc+"' AND +"+DBHelper.L_DATEENTREE+"='"+dateCourante+"'", null);
     }
 
     /**
@@ -215,7 +216,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return c le curseur
      */
     public static Cursor listeObjectifs(SQLiteDatabase db){
-        String requete = "SELECT "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
+        String requete = "SELECT "+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
                 +" FROM "+TABLE_RESULTATS +";";
         return db.rawQuery(requete, null);
     }
@@ -229,7 +230,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return c le curseur
      */
     public static Cursor listeObjectifs(SQLiteDatabase db, String dateDebut, String dateFin){
-        String requete = "SELECT "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
+        String requete = "SELECT "+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
                 +" FROM "+TABLE_RESULTATS
                 +" WHERE "+R_DATE+">='"+dateDebut
                 +"' AND "+R_DATE+"<='"+dateFin+"';";
@@ -248,41 +249,31 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Methode qui permet d'inserer pour la premiere fois ou d'updater les informations du profil
-     * @param db la base de donnees
-     * @param prenom le nouveau prenom
-     * @param objectif le nouvel objectif
-     */
-    public static void changerInformations(SQLiteDatabase db, String prenom, String objectif){
-        String requete = "INSERT OR REPLACE INTO "+TABLE_PROFILS+"("+P_PRENOM+", "+P_OBJECTIF
-                +") VALUES ('"+prenom+"', '"+objectif+"');";
-        db.execSQL(requete);
-    }
-
-    /**
      * Methode qui insert dans la base de donnees les informations concernant l'utilisateur
      * @param db la base de donnees
      * @param prenom le prenom de l'utilisateur
      * @param objectif l'objectif quotidien
      */
-    public static void insererProfil(SQLiteDatabase db, String prenom, String objectif){
-        ContentValues values = new ContentValues();
-        values.put(P_ID, USER_ID);
-        values.put(P_PRENOM, prenom);
-        values.put(P_OBJECTIF, objectif);
-
-        db.insert(TABLE_PROFILS, null, values);
-    }
+     public static void insererProfil(SQLiteDatabase db, String prenom, String objectif) {
+         ContentValues values = new ContentValues();
+         values.put(P_PRENOM, prenom);
+         values.put(P_OBJECTIF, objectif);
+         if(db.update(TABLE_PROFILS, values, P_ID+"="+USER_ID, null) == 0) {
+             values.put(P_ID, USER_ID);
+             db.insert(TABLE_PROFILS, null, values);
+         }
+     }
 
     public static String getObjectif(SQLiteDatabase db){
         String requete = "SELECT "+P_OBJECTIF+" FROM "+TABLE_PROFILS+";";
         Cursor c = db.rawQuery(requete, null);
         String obj = "";
-        if(c != null) {
+        if(c.getCount() > 0) {
             c.moveToFirst();
             obj = c.getString(c.getColumnIndex(P_OBJECTIF));
-            c.close();
+
         }
+        c.close();
         return obj;
     }
 
@@ -333,7 +324,6 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         db.insert(TABLE_LISTEPLATS, null, values);
     }
-
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

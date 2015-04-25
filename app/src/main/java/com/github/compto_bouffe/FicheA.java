@@ -1,7 +1,10 @@
 package com.github.compto_bouffe;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -19,38 +22,38 @@ import android.widget.Toast;
 // base de deonnées.
 public class FicheA extends Activity implements View.OnClickListener {
 
-    EditText ed_name;    // le nom du l'utilisateur
-    EditText ed_cal;     //le nombre de calories entrées
-    Button btn1;          //bouton valider
-    Button btn2;          //bouton pour accéder à la documentation
-
+    private EditText ed_name;    // le nom du l'utilisateur
+    private EditText ed_cal;     //le nombre de calories entrées
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.feuille_a);
 
-        btn1 = (Button)findViewById(R.id.button);
-        btn2 = (Button)findViewById(R.id.button2);
+        Button btnValider = (Button) findViewById(R.id.btn_profil_valider);
+        Button btnGouv = (Button) findViewById(R.id.btn_profil_gouv);
         ed_name = (EditText)findViewById(R.id.name);
         ed_cal = (EditText)findViewById(R.id.objectifs);
 
-        //String letter_name = ed_name.getText().toString();
-        //String number_cal = ed_cal.getText().toString();
+        updateData();
 
-        btn1.setOnClickListener(this);
-        btn2.setOnClickListener(this);
-        //adapter = new myAdapter();
+        btnValider.setOnClickListener(this);
+        btnGouv.setOnClickListener(this);
     }
-
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    protected void onRestart() {
+        super.onRestart();
+        updateData();
     }
 
+    private void updateData() {
+        DatabaseManager dbM = DatabaseManager.getInstance();
+        SQLiteDatabase db = dbM.openConnection();
+        ed_name.setText(DBHelper.getPrenom(db));
+        ed_cal.setText(DBHelper.getObjectif(db));
+        dbM.close();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -63,52 +66,52 @@ public class FicheA extends Activity implements View.OnClickListener {
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
 
 
-    //@Override
+    @Override
     public void onClick(View v) {
 
-        if(v.getId()==R.id.button){
+        switch (v.getId()) {
+            case R.id.btn_profil_valider:
+                //on crée un toast
+                String letter_name = ed_name.getText().toString();
+                String number_cal = ed_cal.getText().toString();
+                AsyncTask<String, Void, Long> d = new AsyncTask<String, Void, Long>() {
 
-            //on crée un toast
-            String letter_name = ed_name.getText().toString();
-            String number_cal = ed_cal.getText().toString();
-            //Toast.makeText(this, "Bonjour " + letter_name + " votre objectif de ce jour est de " + number_cal + " calories" , Toast.LENGTH_LONG).show();
+                    @Override
+                    protected Long doInBackground(String... strings) {
+                        DatabaseManager dbM = DatabaseManager.getInstance();
+                        SQLiteDatabase db = dbM.openConnection();
+                        DBHelper.insererProfil(db, strings[0], strings[1]);
+                        dbM.close();
+                        return null;
+                    }
 
-            //code pour passer de la fiche a à la fiche b
+                    @Override
+                    protected void onPostExecute(Long aLong) {
+                        super.onPostExecute(aLong);
+                        Intent intent = new Intent(getApplicationContext(), FicheB.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-            //Button button = (Button) v;
-            AsyncTask<String, Void, Long> d = new AsyncTask<String, Void, Long>(){
+                        startActivity(intent);
+                    }
 
-                @Override
-                protected Long doInBackground(String... strings) {
-                    DatabaseManager dbM = DatabaseManager.getInstance();
-                    SQLiteDatabase db = dbM.openConnection();
-                    DBHelper.changerInformations(db, strings[0], strings[1]);
-                    dbM.close();
-                    return null;
-                }
+                };
+                if (number_cal.matches("[1-9]+[0-9]{2,4}"))
+                    d.execute(letter_name, number_cal);
+                else
+                    Toast.makeText(this, "Veuillez entrer un objectif valide", Toast.LENGTH_SHORT).show();
 
-                @Override
-                protected void onPostExecute(Long aLong) {
-                    startActivity(new Intent(getApplicationContext(), FicheB.class));
-                    super.onPostExecute(aLong);
-                }
-
-            };
-            if(number_cal.matches("[1-9]+[0-9]{2,4}"))
-                d.execute(letter_name, number_cal);
-            else
-                Toast.makeText(this, "Veuillez entrer un objectif valide", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.btn_profil_gouv:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.hc-sc.gc.ca/fn-an/nutrition/reference/table/index-fra.php"));
+                startActivity(browserIntent);
+                break;
         }
-        //code pour accéder à la documentation du gouvernement
-        if(v.getId()==R.id.button2){
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.hc-sc.gc.ca/fn-an/nutrition/reference/table/index-fra.php"));
-            startActivity(browserIntent);
-        }
+
+
     }
 }

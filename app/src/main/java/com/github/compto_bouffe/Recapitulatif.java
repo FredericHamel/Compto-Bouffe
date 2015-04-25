@@ -1,10 +1,13 @@
 package com.github.compto_bouffe;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,8 +26,12 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by Sabrina Ouaret on 16/04/15.
@@ -32,26 +40,36 @@ import java.util.Calendar;
 // l'objectif et le résultat étant en calories
 public class Recapitulatif extends Activity{
 
-    TextView objectif;
-    ListView listeView;
-    ArrayList<DateInfos> dates;
-    EditText editDate1;
-    EditText editDate2;
-    ImageView imageRangee;
-    ArrayAdapter<DateInfos> adapter;
-    Button valider;
+    private String[] DAY_OF_WEEK;
+    private String[] MONTH;
+
+    private TextView objectif;
+    private ListView listeView;
+    private ArrayList<DateInfos> dates;
+    private EditText editDate1;
+    private EditText editDate2;
+    private CursorAdapter adapter;
+    private ImageView imageRangee;
+    private Button valider;
+
 
     private DatabaseManager dbM;
     private SQLiteDatabase db;
 
     int anneeDebut=0, moisDebut=0, jourDebut=0;//, anneeFin, moisFin, jourFin;
 
+    public Recapitulatif() {
+        super();
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recapitulatif);
-
+        DAY_OF_WEEK = getResources().getStringArray(R.array.jour_semaine);
+        MONTH = getResources().getStringArray(R.array.mois);
         dbM = DatabaseManager.getInstance();
         db = dbM.openConnection();
         String prenom = DBHelper.getPrenom(db);
@@ -119,7 +137,9 @@ public class Recapitulatif extends Activity{
         });
 
         listeView = (ListView)findViewById(R.id.listViewPeriode);
-        adapter = new Fiche_f_myAdapter(this, getDatesInfos());
+
+        Cursor c = DBHelper.listeObjectifs(db);
+        adapter = new Fiche_f_myAdapter(this, c);
 
         listeView.setAdapter(adapter);
     }
@@ -131,15 +151,6 @@ public class Recapitulatif extends Activity{
     }
     */
 
-    public ArrayList<DateInfos> getDatesInfos(){
-        dates.add(new DateInfos("21 décembre", "1500", "1800"));
-        dates.add(new DateInfos("22 décembre", "1500", "1500"));
-        dates.add(new DateInfos("23 décembre", "1500", "2100"));
-        dates.add(new DateInfos("24 décembre", "1500", "1500"));
-        dates.add(new DateInfos("25 décembre", "1500", "1500"));
-        return dates;
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
@@ -150,82 +161,86 @@ public class Recapitulatif extends Activity{
         return super.onOptionsItemSelected(item);
     }
 
-    private class Fiche_f_myAdapter extends ArrayAdapter<DateInfos> {
+    private class Fiche_f_myAdapter extends CursorAdapter {
+        private ViewHolder holder;
+        private LayoutInflater inflater;
+        private DateFormat formater;
 
-        private final ArrayList<DateInfos> dateInfos;
-        private final Activity context;
-        ViewHolder holder;
-
-        public Fiche_f_myAdapter(Context context, ArrayList<DateInfos> dateInfos) {
-            super(context, R.layout.recapitulatif_row, dateInfos);
-            this.context = (Activity) context;
-            this.dateInfos= dateInfos;
+        @SuppressLint("SimpleDateFormat")
+        public Fiche_f_myAdapter(Context context, Cursor c) {
+            super(context, c, false);
+            inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            formater = new SimpleDateFormat("yyyy-MM-dd");
         }
 
         class ViewHolder{
-            protected TextView textView1;
-            protected TextView textView2;
-            protected TextView textView3;
-            protected ImageView imageView1;
-            protected ImageButton imageView2;
+            protected ImageView imageResultat;
+            protected TextView textDate;
+            protected TextView textObjectif;
+            protected TextView textResultat;
+            protected ImageButton imageDetails;
         }
 
-        public View getView(final int position, View convertView,ViewGroup parent) {
+        public View getView(final int position, View view, ViewGroup parent) {
 
-            View viewRow=convertView;
 
-            if (viewRow == null) {
-                LayoutInflater myInflater = LayoutInflater.from(getContext());
-                viewRow = myInflater.inflate(R.layout.recapitulatif_row, null);
+            if (view == null) {
+
+                view = inflater.inflate(R.layout.recapitulatif_row, parent, false);
                 holder = new ViewHolder();
-                holder.textView1 = (TextView)viewRow.findViewById(R.id.textDate);
-                holder.imageView1 = (ImageView)viewRow.findViewById(R.id.imageResultat);
-                holder.textView2 = (TextView)viewRow.findViewById(R.id.textObjectif);
-                holder.textView3 = (TextView)viewRow.findViewById(R.id.textResultat);
-                holder.imageView2 = (ImageButton)viewRow.findViewById(R.id.imageDetails);
-                holder.imageView2.setImageResource(R.drawable.vert);
-
-                /*holder.imageView2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //int getPosition = (Integer) buttonView.getTag();
-                        //plats.get(getPosition).setSelected(buttonView.isChecked());
-                    }
-                });*/
-
-
-                viewRow.setTag(holder);
-                viewRow.setTag(R.id.textDate, holder.textView1);
-                viewRow.setTag(R.id.imageResultat, holder.imageView1);
-                viewRow.setTag(R.id.textObjectif, holder.textView2);
-                viewRow.setTag(R.id.textResultat, holder.textView3);
-                viewRow.setTag(R.id.imageDetails, holder.imageView2);
-
+                holder.textDate = (TextView)view.findViewById(R.id.textDate);
+                holder.imageResultat = (ImageView)view.findViewById(R.id.imageResultat);
+                holder.textObjectif = (TextView)view.findViewById(R.id.textObjectif);
+                holder.textResultat = (TextView)view.findViewById(R.id.textResultat);
+                holder.imageDetails = (ImageButton)view.findViewById(R.id.imageDetails);
+                holder.imageDetails.setImageResource(R.drawable.arrow);
+                view.setTag(holder);
             }else {
-                holder=(ViewHolder) viewRow.getTag();
+                holder=(ViewHolder) view.getTag();
             }
 
-            //holder.checkBoxView.setTag(position);
-            //holder.textViewQte.setText(plats.get(position).getNom());
+            Cursor c = getCursor();
+            c.moveToPosition(position);
+            String date = c.getString(c.getColumnIndex(DBHelper.R_DATE));
+            int objInitial = Integer.parseInt(c.getString(c.getColumnIndex(DBHelper.R_OBJECTIF_INIT)));
+            int resultat = Integer.parseInt(c.getString(c.getColumnIndex(DBHelper.R_OBJECTIF_RES)));
+            int image = resultat < objInitial ? R.drawable.vert : R.drawable.rouge;
+            Calendar calendar = Calendar.getInstance();
+            try {
+                calendar.setTime(formater.parse(date));
+                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                int month = calendar.get(Calendar.MONTH);
+                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                int year = calendar.get(Calendar.YEAR);
+                date = String.format("%s %s %s %d", DAY_OF_WEEK[dayOfWeek-1], dayOfMonth, MONTH[(month + 1)%12 ], year);
+            }catch (ParseException e) {
+                Log.d(getClass().getName() + ".DateParser", "Unable to parse " + date);
+            }
 
-            holder.textView1.setText(dateInfos.get(position).getDate());
-            holder.textView2.setText(dateInfos.get(position).getInfo1());
-            holder.textView3.setText(dateInfos.get(position).getInfo2());
-            holder.imageView1.setImageResource(dateInfos.get(position).getImage());
-            holder.imageView2.setImageResource(R.drawable.arrow);
+            holder.textDate.setText(date);
+            holder.textObjectif.setText(Integer.toString(objInitial));
+            holder.textResultat.setText(Integer.toString(resultat));
+            holder.imageResultat.setImageResource(image);
 
+            int color = position % 2 == 1 ? R.color.grisRangee1 : R.color.grisRangee2;
             //Couleur alternative des rangées
-            if (position % 2 == 1) {
-                viewRow.setBackgroundColor(context.getResources().getColor(R.color.grisRangee1));
-            } else {
-                viewRow.setBackgroundColor(context.getResources().getColor(R.color.grisRangee2));
-            }
-            return viewRow;
+            view.setBackgroundResource(color);
+            return view;
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
+            return null;
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+
         }
     }
+    
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
         super.onDestroy();
         dbM.close();
     }

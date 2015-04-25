@@ -2,6 +2,7 @@ package com.github.compto_bouffe;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,64 +17,60 @@ import android.widget.TextView;
 // - de modifier ses informations
 public class FicheB extends Activity implements View.OnClickListener {
 
-    DatabaseManager dbM;
-    //Button today;
-    //Button bton1;          //bouton "Aujourd'hui"
-    Button bton2;          //bouton "Récapitulatif"
-    Button bton3;          //bouton "Modifier les infos"
-
+    private Button recapitulatif;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_b);
-        dbM = DatabaseManager.getInstance();
+        Button today = (Button)findViewById(R.id.btn_today);
+        recapitulatif = (Button)findViewById(R.id.btn_recapitulatif);
+        Button modifyProfils = (Button)findViewById(R.id.btn_modify_profils);
+
+        updateData();
+
+        today.setOnClickListener(this);
+        recapitulatif.setOnClickListener(this);
+        modifyProfils.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onStart();
+        updateData();
+    }
+
+    private void updateData()
+    {
+        DatabaseManager dbM = DatabaseManager.getInstance();
         SQLiteDatabase db = dbM.openConnection();
         String nom = DBHelper.getPrenom(db);
+        Cursor c = DBHelper.listeObjectifs(db);
+        recapitulatif.setEnabled(c.getCount() > 0);
+        c.close();
         dbM.close();
 
-        TextView prenom = (TextView)findViewById(R.id.textView2);
+        TextView prenom = (TextView)findViewById(R.id.prenom);
         prenom.setText(nom);
-
-        //bton1 = (Button)findViewById(R.id.button);
-        bton2 = (Button)findViewById(R.id.button2);
-        bton3 = (Button)findViewById(R.id.button3);
-
-        //bton1.setOnClickListener(this);
-        bton2.setOnClickListener(this);
-        bton3.setOnClickListener(this);
     }
 
-    public void buttonTodayOnClick(View v){
-        //Button versC = (Button) v;
-        startActivity(new Intent(getApplicationContext(), FicheC.class));
-    }
-
+    @Override
     public void onClick(View v) {
 
-        if(v.getId()==R.id.button){
+        switch (v.getId())
+        {
+            case R.id.btn_today:
+                startActivity(new Intent(getApplicationContext(), FicheC.class));
+                break;
+            case R.id.btn_recapitulatif:
+                startActivity(new Intent(getApplicationContext(), Recapitulatif.class));
+                break;
+            case R.id.btn_modify_profils:
+                Intent intent = new Intent(getApplicationContext(), FicheA.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-
-            //code pour passer de la fiche b à la fiche c
-
-            //Button button = (Button) v;
-            startActivity(new Intent(getApplicationContext(), FicheC.class));
-
-
-        }
-        
-        if(v.getId()==R.id.button2){
-            //Button button = (Button) v;
-            startActivity(new Intent(getApplicationContext(), Recapitulatif.class));
-        }
-
-        //code pour retourner à la fiche a pour modifier les informations
-
-        if(v.getId()==R.id.button3){
-
-            //Button button = (Button) v;
-            startActivity(new Intent(getApplicationContext(), FicheA.class));
-
+                startActivity(intent);
+                break;
         }
     }
 
@@ -90,12 +87,10 @@ public class FicheB extends Activity implements View.OnClickListener {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

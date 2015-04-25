@@ -158,7 +158,6 @@ public class RecherchePlats extends Activity {
                 String text = queryText.getText().toString();
                 searchProductAdapter.setSelectedIndex(-1);
                 if(!text.equals("")) {
-                    Toast.makeText(getApplicationContext(), "Recherche en cours...", Toast.LENGTH_SHORT).show();
                     new SearchProduct().execute(text);
                 }else
                     Toast.makeText(getApplicationContext(), "Vous devez specifier une recherche", Toast.LENGTH_SHORT).show();
@@ -197,11 +196,8 @@ public class RecherchePlats extends Activity {
                             if(c.getCount() == 0) {
                                 nutriments = labelAPI1.searchScore(productQty.getProduct());
                                 DBHelper.insererListePlats(db, productQty.getQte(), pf.getUpc(), pf.getName(), pf.getSize(), nutriments);
-                            }else {
-                                ContentValues cv = new ContentValues();
-                                cv.put(DBHelper.L_QUANTITE, productQty.getQte());
-                                db.update(DBHelper.TABLE_LISTEPLATS, cv, DBHelper.L_UPC+"='"+pf.getUpc()+"'", null);
-                            }
+                            }else
+                                DBHelper.changerQuantite(db, productQty.getProduct().getUpc(), productQty.getQte());
                             c.close();
                         }
                         dbM.close();
@@ -348,9 +344,13 @@ public class RecherchePlats extends Activity {
             return labelAPI.searchProduct(strings[0]);
         }
 
+        private Toast toast;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            toast = Toast.makeText(getApplicationContext(), "Recherche en cours...", Toast.LENGTH_SHORT);
+            toast.show();
             // Place indicateur execution
             searchBtn.setEnabled(!searchBtn.isEnabled());
         }
@@ -358,6 +358,7 @@ public class RecherchePlats extends Activity {
         @Override
         protected void onPostExecute(ArrayList<Product> products) {
             super.onPostExecute(products);
+            toast.cancel();
             searchBtn.setEnabled(!searchBtn.isEnabled());
             if (products == null) {
                 Toast.makeText(RecherchePlats.this, "Problème de connexion, réessayez plus tard.", Toast.LENGTH_LONG).show();
