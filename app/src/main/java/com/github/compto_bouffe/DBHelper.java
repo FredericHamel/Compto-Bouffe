@@ -31,7 +31,6 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String TABLE_LISTEPLATS = "ListePlats";
     static final String L_USER_ID ="UserID";
     static final String L_ID ="_id";
-    static final String L_OBJECTIF ="Objectif";
     static final String L_QUANTITE ="Quantite";
     static final String L_UPC ="UPC";
     static final String L_NOM ="Nom";
@@ -68,7 +67,6 @@ public class DBHelper extends SQLiteOpenHelper {
         String creerTableListe = "CREATE TABLE IF NOT EXISTS "+TABLE_LISTEPLATS+" ("
                 +L_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "
                 +L_USER_ID +" INTEGER, "
-                +L_OBJECTIF+" TEXT NOT NULL, "
                 +L_QUANTITE+" INTEGER, "
                 +L_UPC+" TEXT NOT NULL, "
                 +L_NOM+" TEXT NOT NULL, "
@@ -136,6 +134,18 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.rawQuery(requete, null);
     }
 
+    /**
+     * Methode qui renvoie la liste de plats de l'utilisateur a la date courante
+     * @param db la base de donnees
+     * @return c le curseur;
+     */
+    public static Cursor listePlats (SQLiteDatabase db, String date){
+        String requete = "SELECT "+L_ID +", " + L_UPC+ ", " +L_QUANTITE+", "+L_NOM+", "+L_SIZE+", "+L_CALORIES+", "+L_SUGARS+", `"
+                +L_TOTALFAT+"`, "+L_PROTEIN+" FROM "+TABLE_LISTEPLATS
+                +" WHERE "+L_DATEENTREE+"='"+date+"' AND " + L_QUANTITE +  " > 0;";
+        Log.d("Query", requete);
+        return db.rawQuery(requete, null);
+    }
 
     /**
      * Renvoie la liste des plats recements ajouter par l'utilisateur.
@@ -217,7 +227,22 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     public static Cursor listeObjectifs(SQLiteDatabase db){
         String requete = "SELECT "+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
-                +" FROM "+TABLE_RESULTATS +";";
+                +" FROM "+TABLE_RESULTATS + " ORDER BY " + R_DATE +" DESC;";
+        return db.rawQuery(requete, null);
+    }
+
+    /**
+     * Methode qui renvoit une liste  de date et l'objectif du jour et l'objectif resultat associes
+     * pour une periode de temps donnee
+     * @param db la base de donnees
+     * @param date la date filtrant la recherche objectif.
+     * @param date la date filtrant la recherche objectif
+     * @param date la date filtrant la recherche objectif
+     * @return c le curseur
+     */
+    public static Cursor listeObjectifs(SQLiteDatabase db, String date){
+        String requete = "SELECT "+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
+                +" FROM "+TABLE_RESULTATS +" WHERE "+R_DATE+"='"+date+"';";
         return db.rawQuery(requete, null);
     }
 
@@ -271,7 +296,6 @@ public class DBHelper extends SQLiteOpenHelper {
         if(c.getCount() > 0) {
             c.moveToFirst();
             obj = c.getString(c.getColumnIndex(P_OBJECTIF));
-
         }
         c.close();
         return obj;
@@ -297,9 +321,6 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(L_SIZE, size);
         values.put(L_UPC, upc);
         values.put(L_DATEENTREE, dateCourante);
-
-        String obj = getObjectif(db);
-        values.put(L_OBJECTIF, obj);
 
         //Si la quantite initiale est à 1, on recupere les valeurs initiales des nutriments
         for (Nutriment n : nutriments) {

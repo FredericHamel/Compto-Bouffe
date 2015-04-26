@@ -1,9 +1,11 @@
 package com.github.compto_bouffe;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,15 +19,16 @@ import android.widget.TextView;
 // - de modifier ses informations
 public class FicheB extends Activity implements View.OnClickListener {
 
-    private Button recapitulatif;
+    private DatabaseManager dbM;
+    private Button today, recapitulatif, modifyProfils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_b);
-        Button today = (Button)findViewById(R.id.btn_today);
+        today = (Button)findViewById(R.id.btn_today);
         recapitulatif = (Button)findViewById(R.id.btn_recapitulatif);
-        Button modifyProfils = (Button)findViewById(R.id.btn_modify_profils);
+        modifyProfils = (Button)findViewById(R.id.btn_modify_profils);
 
         updateData();
 
@@ -42,7 +45,7 @@ public class FicheB extends Activity implements View.OnClickListener {
 
     private void updateData()
     {
-        DatabaseManager dbM = DatabaseManager.getInstance();
+        dbM = DatabaseManager.getInstance();
         SQLiteDatabase db = dbM.openConnection();
         String nom = DBHelper.getPrenom(db);
         Cursor c = DBHelper.listeObjectifs(db);
@@ -56,41 +59,57 @@ public class FicheB extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        final View view = v;
+        AsyncTask<Void, Void, Void> task =new AsyncTask<Void, Void, Void>() {
+            private boolean oldState;
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                oldState = recapitulatif.isEnabled();
+                today.setEnabled(false);
+                recapitulatif.setEnabled(false);
+                modifyProfils.setEnabled(false);
+            }
 
-        switch (v.getId())
-        {
-            case R.id.btn_today:
-                startActivity(new Intent(getApplicationContext(), FicheC.class));
-                break;
-            case R.id.btn_recapitulatif:
-                startActivity(new Intent(getApplicationContext(), Recapitulatif.class));
-                break;
-            case R.id.btn_modify_profils:
-                Intent intent = new Intent(getApplicationContext(), FicheA.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            @Override
+            protected Void doInBackground(Void... voids) {
+                SQLiteDatabase db = dbM.openConnection();
+                String dateCourante = DBHelper.getDateCourante();
+                ContentValues cv = new ContentValues();
+                cv.put(DBHelper.R_OBJECTIF_INIT, DBHelper.getObjectif(db));
+                if(db.update(DBHelper.TABLE_RESULTATS, cv, DBHelper.R_DATE+"='"+dateCourante+"'", null) == 0) {
+                    cv.put(DBHelper.L_USER_ID, DBHelper.USER_ID);
+                    cv.put(DBHelper.R_DATE, dateCourante);
+                    cv.put(DBHelper.R_OBJECTIF_RES, "0");
 
-                startActivity(intent);
-                break;
-        }
-    }
+                    db.insert(DBHelper.TABLE_RESULTATS, null, cv);
+                }
+                dbM.close();
+                return null;
+            }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_fiche_b, menu);
-        return true;
-    }
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                today.setEnabled(true);
+                recapitulatif.setEnabled(oldState);
+                modifyProfils.setEnabled(true);
+                switch (view.getId()) {
+                    case R.id.btn_today:
+                        startActivity(new Intent(getApplicationContext(), FicheC.class));
+                        break;
+                    case R.id.btn_recapitulatif:
+                        startActivity(new Intent(getApplicationContext(), Recapitulatif.class));
+                        break;
+                    case R.id.btn_modify_profils:
+                        Intent intent = new Intent(getApplicationContext(), FicheA.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        task.execute();
     }
 }

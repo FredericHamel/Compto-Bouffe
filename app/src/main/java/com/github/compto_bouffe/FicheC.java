@@ -1,5 +1,6 @@
 package com.github.compto_bouffe;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -16,158 +17,261 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 // La fiche C permet à l'usager de consulter et de modifier son menu du jour.
 public class FicheC extends Activity {
 
     private DatabaseManager dbM;
     private SQLiteDatabase db;
-    private ListView listfood;
+
+    private TextView caloriesIngerer;
+    private TextView caloriesRestant;
+
+    private ListView listePlats;
     private MyAdapter adapter;
 
-    private TextView textViewCalIng, textViewCalRes;
+    private LinearLayout btnContainer;
+    private Button btnAddPlat;
+    private Button btnModifyMenu;
 
-    private View.OnClickListener listener;
-    private Button modifier, addPlat;
+    private AsyncTask<PageInfo, Void, PageInfo> updater;
+    private PageInfo pageInfo;
 
-    private AsyncTask<Double, Void, Void> task;
+    private MenuItem next, preview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_c);
-        initClickListener();
-        textViewCalIng = (TextView)findViewById(R.id.textViewCalIng);
-        textViewCalRes = (TextView)findViewById(R.id.textViewCalRes);
-
-        modifier = (Button)findViewById(R.id.modify);
-        addPlat = (Button)findViewById(R.id.add_plat);
-
-        listfood = (ListView)findViewById(R.id.list_nutri);
-
-        modifier.setOnClickListener(listener);
-        addPlat.setOnClickListener(listener);
-
-        dbM = DatabaseManager.getInstance();
-        db = dbM.openConnection();
-        Cursor c = DBHelper.listePlatsDateCourante(db);
-
-        adapter = new MyAdapter(this, c);
-        listfood.setAdapter(adapter);
-
-        updateStatus(c);
+        Bundle bundle = getIntent().getExtras();
+        init();
+        initListener();
+        initAdapter(bundle);
+        initUpdater();
     }
 
-    private void  updateTask()
+    private void init()
     {
-        task = new AsyncTask<Double, Void, Void>() {
+        dbM = DatabaseManager.getInstance();
+        db = dbM.openConnection();
+
+        caloriesIngerer = (TextView)findViewById(R.id.textViewCalIng);
+        caloriesRestant = (TextView)findViewById(R.id.textViewCalRes);
+
+        listePlats = (ListView)findViewById(R.id.list_nutri);
+
+        btnContainer = (LinearLayout)findViewById(R.id.btn_menu);
+        btnAddPlat = (Button)findViewById(R.id.add_plat);
+        btnModifyMenu = (Button)findViewById(R.id.modify);
+    }
+
+    private void initListener()
+    {
+        View.OnClickListener listener = new View.OnClickListener() {
             @Override
-            protected Void doInBackground(Double... values) {
-                SQLiteDatabase db = dbM.openConnection();
-                String date = DBHelper.getDateCourante();
-                ContentValues cv = new ContentValues();
-
-                cv.put(DBHelper.R_OBJECTIF_RES, (int)Math.floor(values[1]));
-
-
-
-                Log.d("SQL", "UPDATE " + DBHelper.TABLE_RESULTATS + " SET " + DBHelper.R_OBJECTIF_INIT + "='"+(int)Math.floor(values[0]) + "', " + DBHelper.R_OBJECTIF_RES + "='"+(int)Math.floor(values[1]+30)+"' WHERE "+ DBHelper.R_DATE + "='"+date + "';");
-                if(db.update(DBHelper.TABLE_RESULTATS, cv, DBHelper.R_DATE +"='"+date+"'", null) == 0)
-                {
-
-                    cv.put(DBHelper.R_USER_ID, DBHelper.USER_ID);
-                    cv.put(DBHelper.R_DATE, date);
-                    cv.put(DBHelper.R_OBJECTIF_INIT, (int)Math.floor(values[0]));
-
-                    db.insert(DBHelper.TABLE_RESULTATS, null, cv);
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.add_plat:
+                        startActivity(new Intent(FicheC.this, RecherchePlats.class));
+                        break;
+                    case R.id.modify:
+                        startActivity(new Intent(FicheC.this, ModifierMaListe.class));
+                        break;
                 }
-                dbM.close();
-                return null;
             }
         };
+        btnAddPlat.setOnClickListener(listener);
+        btnModifyMenu.setOnClickListener(listener);
+    }
+
+    private void initAdapter(Bundle bundle)
+    {
+        final int position = bundle == null ? 0: bundle.getInt("position");
+
+        AsyncTask<Integer, Void, PageInfo> task = new AsyncTask<Integer, Void, PageInfo>() {
+            @Override
+            protected PageInfo doInBackground(Integer... integers) {
+                PageInfo pageInfo = new PageInfo();
+                pageInfo.position = integers[0];
+                pageInfo.listePages = DBHelper.listeObjectifs(db);
+                pageInfo.listePages.moveToPosition(pageInfo.position);
+                String date = pageInfo.listePages.getString(pageInfo.listePages.getColumnIndex(DBHelper.R_DATE));
+                pageInfo.page = DBHelper.listePlats(db, date);
+                return pageInfo;
+            }
+
+            @Override
+            protected void onPostExecute(PageInfo pageInfos) {
+                super.onPostExecute(pageInfos);
+                pageInfo = pageInfos;
+                updateTitle(pageInfo);
+
+                String objectif = pageInfo.listePages.getString(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_INIT));
+                String ingerer = pageInfo.listePages.getString(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_RES));
+                caloriesRestant.setText(String.format("%.1f", Double.parseDouble(objectif) - Double.parseDouble(ingerer)));
+                caloriesIngerer.setText(ingerer);
+                if(!pageInfo.listePages.isFirst())
+                    btnContainer.setVisibility(View.GONE);
+                if(adapter == null) {
+                    adapter = new MyAdapter(getApplicationContext(), pageInfo.page);
+                    listePlats.setAdapter(adapter);
+                }
+                btnModifyMenu.setEnabled(pageInfo.page.getCount() != 0);
+            }
+        };
+        task.execute(position);
+    }
+
+    // Called before updater.execute()
+    private void initUpdater()
+    {
+        updater = new AsyncTask<PageInfo, Void, PageInfo>() {
+            @Override
+            protected PageInfo doInBackground(PageInfo... pageInfos) {
+                PageInfo pageInfo = pageInfos[0];
+                int position = pageInfo.listePages.getPosition();
+                if(position == 0)
+                {
+                    Cursor listePlatsDateCourante = DBHelper.listePlatsDateCourante(db);
+                    if(listePlatsDateCourante.getCount() > 0)
+                    {
+                        listePlatsDateCourante.moveToFirst();
+                        double resultat = 0;
+                        do {
+                            int qte = listePlatsDateCourante.getInt(listePlatsDateCourante.getColumnIndex(DBHelper.L_QUANTITE));
+                            resultat += qte*Double.parseDouble(listePlatsDateCourante.getString(listePlatsDateCourante.getColumnIndex(DBHelper.L_CALORIES)).split(" ")[0]);
+                        } while (listePlatsDateCourante.moveToNext());
+                        ContentValues cv = new ContentValues();
+                        cv.put(DBHelper.R_OBJECTIF_RES, String.format("%.1f",resultat));
+                        db.update(DBHelper.TABLE_RESULTATS, cv, DBHelper.R_DATE + "='" + DBHelper.getDateCourante() + "'", null);
+                    }
+                    listePlatsDateCourante.close();
+                    pageInfo.listePages = DBHelper.listeObjectifs(db);
+                }
+                pageInfo.listePages.moveToPosition(pageInfo.position);
+                pageInfo.page = DBHelper.listeObjectifs(db);
+                String date = pageInfo.listePages.getString(pageInfo.listePages.getColumnIndex(DBHelper.R_DATE));
+                pageInfo.page = DBHelper.listePlats(db, date);
+                return pageInfo;
+            }
+
+            @Override
+            protected void onPostExecute(PageInfo pageInfo) {
+                super.onPostExecute(pageInfo);
+                updateTitle(pageInfo);
+                adapter.changeCursor(pageInfo.page);
+                String objectif = pageInfo.listePages.getString(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_INIT));
+                String ingerer = pageInfo.listePages.getString(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_RES));
+                caloriesRestant.setText(String.format("%.1f", Double.parseDouble(objectif) - Double.parseDouble(ingerer)));
+                caloriesIngerer.setText(ingerer);
+                if(!pageInfo.listePages.isFirst())
+                    btnContainer.setVisibility(View.GONE);
+                else
+                    btnContainer.setVisibility(View.VISIBLE);
+                btnModifyMenu.setEnabled(pageInfo.page.getCount() != 0);
+                updateActionBarBtn(pageInfo);
+            }
+        };
+    }
+
+    private void updateTitle(PageInfo pageInfo)
+    {
+        if(pageInfo.position == 0)
+            setTitle(R.string.today);
+        else {
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
+            String date = pageInfo.listePages.getString(pageInfo.listePages.getColumnIndex(DBHelper.R_DATE));
+            try {
+                String MONTH[] = getResources().getStringArray(R.array.mois);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(formater.parse(date));
+                int month = calendar.get(Calendar.MONTH);
+                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                int year = calendar.get(Calendar.YEAR);
+
+                date = String.format("%s %s %d", dayOfMonth, MONTH[(month + 1)%12 ], year);
+            }catch (ParseException e)
+            {
+                Log.d("Formater", "Invalid Date Format " + date);
+            }
+            setTitle(date);
+        }
+    }
+
+    private void updateActionBarBtn(PageInfo pageInfo)
+    {
+        next.setVisible(pageInfo.position != 0);
+        preview.setVisible(!pageInfo.listePages.isLast());
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        adapter.getCursor().close();
-        Cursor c = DBHelper.listePlatsDateCourante(db);
-        adapter.changeCursor(c);
-        updateTask();
-        updateStatus(c);
+        update();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        adapter.getCursor().close();
-        dbM.close();
-        Log.d("SQLite", "NbConnection to SQLDatabase="+dbM.getNbConnection());
-    }
-
-    private void updateStatus(Cursor c)
-    {
-        double calorie = 0;
-        double objectif = Double.parseDouble(DBHelper.getObjectif(db));
-        if(c.getCount() > 0)
-        {
-            c.moveToFirst();
-            do {
-                int qte = c.getInt(c.getColumnIndex(DBHelper.L_QUANTITE));
-                calorie += qte*Double.parseDouble(c.getString(c.getColumnIndex(DBHelper.L_CALORIES)).split(" ")[0]);
-            } while (c.moveToNext());
-            updateTask();
-            task.execute(objectif, calorie);
-        }
-        textViewCalIng.setText(String.valueOf(calorie));
-        textViewCalRes.setText(String.valueOf(objectif - calorie));
-        modifier.setEnabled(c.getCount() != 0);
-    }
-
-    private void initClickListener()
-    {
-        listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                switch(view.getId())
-                {
-                    case R.id.modify:
-                        startActivity(new Intent(FicheC.this, ModifierMaListe.class));
-                        break;
-                    case R.id.add_plat:
-                        startActivity(new Intent(FicheC.this, RecherchePlats.class));
-                        break;
-                }
-            }
-        };
+    private void update() {
+        initUpdater();
+        updater.execute(pageInfo);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_fiche_c, menu);
-        return true;
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        next = menu.findItem(R.id.next);
+        preview = menu.findItem(R.id.preview);
+        updateActionBarBtn(pageInfo);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        int i = item.getItemId();
+        switch (i)
+        {
+            case R.id.next:
+                if(pageInfo.position >= 1) {
+                    pageInfo.position--;
+                    //item.setVisible(pageInfo.position > 0);
+                    Toast.makeText(getApplicationContext(), "Next: " + pageInfo.position, Toast.LENGTH_SHORT).show();
+                    update();
+                }
+                break;
+            case R.id.preview:
+                if(pageInfo.position < pageInfo.listePages.getCount()-1) {
+                    pageInfo.position++;
+                    Toast.makeText(getApplicationContext(), "Preview: " + pageInfo.position, Toast.LENGTH_SHORT).show();
+                    update();
+                }
+                break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dbM.close();
+    }
 
-    public class MyAdapter extends CursorAdapter {
+    private class PageInfo {
+        public int position;
+        public Cursor listePages;
+        public Cursor page;
+    }
+
+    private class MyAdapter extends CursorAdapter {
         LayoutInflater inflater;
 
         public MyAdapter(Context context, Cursor c) {
@@ -216,8 +320,6 @@ public class FicheC extends Activity {
             g.setBackgroundResource(color);
             p.setBackgroundResource(color);
             Log.d("adapterFicheC","position" + position );
-
-
             return v;
         }
 
@@ -237,7 +339,5 @@ public class FicheC extends Activity {
         public void bindView(View view, Context context, Cursor cursor) {
 
         }
-
-
     }
 }

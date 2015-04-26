@@ -36,6 +36,7 @@ public class RecherchePlats extends Activity {
     // Database
     private DatabaseManager dbM;
     private SQLiteDatabase db;
+    private AsyncTask<Cursor, Void, ArrayList<ProductQty>> task;
 
     // Composantes graphiques
     private Button searchBtn, confirm, recent, resultat;
@@ -107,7 +108,7 @@ public class RecherchePlats extends Activity {
     }
 
     private void initMyListContent() {
-        AsyncTask<Cursor, Void, ArrayList<ProductQty>> task = new AsyncTask<Cursor, Void, ArrayList<ProductQty>>() {
+        task = new AsyncTask<Cursor, Void, ArrayList<ProductQty>>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -175,6 +176,9 @@ public class RecherchePlats extends Activity {
                     protected void onPreExecute() {
                         super.onPreExecute();
                         confirm.setEnabled(false);
+                        addBtn.setEnabled(false);
+                        subBtn.setEnabled(false);
+                        searchBtn.setEnabled(false);
                     }
 
                     // Insert dans la base de donnees les produits choisit par l'usager.
@@ -207,7 +211,6 @@ public class RecherchePlats extends Activity {
                     @Override
                     protected void onPostExecute(Long aLong) {
                         super.onPostExecute(aLong);
-                        confirm.setEnabled(true);
                         finish();
                     }
                 };
@@ -307,15 +310,10 @@ public class RecherchePlats extends Activity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_recherche_plats, menu);
-        return true;
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(task.getStatus() == AsyncTask.Status.RUNNING)
+            task.cancel(true);
         searchProductAdapter.getCursor().close();
         dbM.close();
         Log.d("SQLite", "NbConnection to SQLDatabase="+dbM.getNbConnection());

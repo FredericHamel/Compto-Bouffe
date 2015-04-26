@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -40,7 +41,6 @@ import java.util.Locale;
 // l'objectif et le résultat étant en calories
 public class Recapitulatif extends Activity{
 
-    private String[] DAY_OF_WEEK;
     private String[] MONTH;
 
     private TextView objectif;
@@ -60,7 +60,6 @@ public class Recapitulatif extends Activity{
 
     public Recapitulatif() {
         super();
-
     }
 
     @Override
@@ -68,7 +67,6 @@ public class Recapitulatif extends Activity{
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recapitulatif);
-        DAY_OF_WEEK = getResources().getStringArray(R.array.jour_semaine);
         MONTH = getResources().getStringArray(R.array.mois);
         dbM = DatabaseManager.getInstance();
         db = dbM.openConnection();
@@ -151,16 +149,6 @@ public class Recapitulatif extends Activity{
     }
     */
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
     private class Fiche_f_myAdapter extends CursorAdapter {
         private ViewHolder holder;
         private LayoutInflater inflater;
@@ -194,6 +182,16 @@ public class Recapitulatif extends Activity{
                 holder.textResultat = (TextView)view.findViewById(R.id.textResultat);
                 holder.imageDetails = (ImageButton)view.findViewById(R.id.imageDetails);
                 holder.imageDetails.setImageResource(R.drawable.arrow);
+                holder.imageDetails.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getApplicationContext(), FicheC.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("position", (Integer)view.getTag());
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    }
+                });
                 view.setTag(holder);
             }else {
                 holder=(ViewHolder) view.getTag();
@@ -202,26 +200,29 @@ public class Recapitulatif extends Activity{
             Cursor c = getCursor();
             c.moveToPosition(position);
             String date = c.getString(c.getColumnIndex(DBHelper.R_DATE));
-            int objInitial = Integer.parseInt(c.getString(c.getColumnIndex(DBHelper.R_OBJECTIF_INIT)));
-            int resultat = Integer.parseInt(c.getString(c.getColumnIndex(DBHelper.R_OBJECTIF_RES)));
+            Double objInitial = Double.parseDouble(c.getString(c.getColumnIndex(DBHelper.R_OBJECTIF_INIT)));
+            Double resultat =  Double.parseDouble(c.getString(c.getColumnIndex(DBHelper.R_OBJECTIF_RES)));
             int image = resultat < objInitial ? R.drawable.vert : R.drawable.rouge;
-            Calendar calendar = Calendar.getInstance();
+
             try {
+                Calendar calendar = Calendar.getInstance();
                 calendar.setTime(formater.parse(date));
-                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
                 int month = calendar.get(Calendar.MONTH);
                 int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
                 int year = calendar.get(Calendar.YEAR);
-                date = String.format("%s %s %s %d", DAY_OF_WEEK[dayOfWeek-1], dayOfMonth, MONTH[(month + 1)%12 ], year);
+                if(date.equals(DBHelper.getDateCourante()))
+                    date = getString(R.string.today);
+                else
+                    date = String.format("%s %s %d", dayOfMonth, MONTH[(month + 1)%12 ], year);
             }catch (ParseException e) {
                 Log.d(getClass().getName() + ".DateParser", "Unable to parse " + date);
             }
 
             holder.textDate.setText(date);
-            holder.textObjectif.setText(Integer.toString(objInitial));
-            holder.textResultat.setText(Integer.toString(resultat));
+            holder.textObjectif.setText(Integer.toString(objInitial.intValue()));
+            holder.textResultat.setText(Integer.toString(resultat.intValue()));
             holder.imageResultat.setImageResource(image);
-
+            holder.imageDetails.setTag(position);
             int color = position % 2 == 1 ? R.color.grisRangee1 : R.color.grisRangee2;
             //Couleur alternative des rangées
             view.setBackgroundResource(color);
