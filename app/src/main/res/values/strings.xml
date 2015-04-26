@@ -23,10 +23,14 @@
     <string name="search_hint_en">Rechercher (ANGLAIS)…</string>
 
     <string name="recapitulatif_objectif">: votre objectif quotidien actuel est de </string>
+
+    <!-- Menu Principal -->
     <string name="menu_today_btn_text">Aujourd\'hui</string>
     <string name="main_menu_title_text">COMPTO-BOUFFE</string>
     <string name="main_menu_recapitulatif_text">Récapitulatif</string>
     <string name="main_menu_modify_btn_text">Modifier mes informations</string>
+
+    <!-- Profils -->
     <string name="profil_titre">Profil</string>
     <string name="profil_prenom_hint">Entrez votre prénom</string>
     <string name="profil_prenom_label">PRENOM</string>
@@ -34,6 +38,18 @@
     <string name="profil_objectif_hint">Entrez votre objectif (nombre de calories)</string>
     <string name="profil_btn_valide_text">VALIDER</string>
     <string name="profil_btn_gouv_text">CONNAÎTRE LES RECOMMENDATIONS DU GOUVERNEMENT SUR LES APPORTS JOURNALIERS</string>
+
+    <!-- Recapitulatif d'un menu -->
+    <string name="calories_ingerees">Calories ingérées:</string>
+    <string name="calories_restantes">Calories restantes:</string>
+    <string name="produit_qte">Qté</string>
+    <string name="produit_nom">Nom</string>
+    <string name="produit_calorie">Calories</string>
+    <string name="produit_sucre">Sucres</string>
+    <string name="produit_gras">Gras</string>
+    <string name="produit_proteine">Protéines</string>
+    <string name="menu_modifier_ma_list">MODIFIER MA LISTE</string>
+    <string name="menu_ajouter_un_plat">AJOUTER UN PLAT</string>
 
     <string-array name="jour_semaine">
         <item>Dimanche</item>
