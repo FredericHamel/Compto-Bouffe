@@ -84,12 +84,12 @@
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:textSize="15sp"
-                android:layout_weight="1.30"/>
+                android:layout_weight="1"/>
 
             <TextView
-                android:layout_width="30dp"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:gravity="center_vertical|start"
+                android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/produit_nom"
                 android:layout_marginTop="10dp"
@@ -97,12 +97,12 @@
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:textSize="15sp"
-                android:layout_weight="1.5"/>
+                android:layout_weight="2.75"/>
 
             <TextView
-                android:layout_width="30dp"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:gravity="center_vertical|start"
+                android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/produit_calorie"
                 android:id="@+id/textViewCal"
@@ -113,9 +113,9 @@
                 android:layout_marginTop="10dp" />
 
             <TextView
-                android:layout_width="20dp"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:gravity="center_vertical|start"
+                android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/produit_sucre"
                 android:id="@+id/textView7"
@@ -126,22 +126,22 @@
                 android:layout_marginTop="10dp" />
 
             <TextView
-                android:layout_width="5dp"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:gravity="center_vertical|start"
+                android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/produit_gras"
                 android:id="@+id/textView14"
                 android:maxLines="1"
                 android:textSize="15sp"
-                android:layout_weight="0.98"
+                android:layout_weight="0.75"
                 android:textStyle="bold"
                 android:layout_marginTop="10dp" />
 
             <TextView
-                android:layout_width="35dp"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:gravity="center_vertical|start"
+                android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/produit_proteine"
                 android:id="@+id/textView15"
