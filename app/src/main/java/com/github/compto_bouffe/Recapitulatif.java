@@ -185,7 +185,7 @@ public class Recapitulatif extends Activity{
 
             if (view == null) {
 
-                view = inflater.inflate(R.layout.recapitulatif_row, parent, false);
+                view = inflater.inflate(R.layout.activity_recapitulatif_row, parent, false);
                 holder = new ViewHolder();
                 holder.textDate = (TextView)view.findViewById(R.id.textDate);
                 holder.imageResultat = (ImageView)view.findViewById(R.id.imageResultat);

@@ -303,7 +303,7 @@ public class FicheC extends Activity {
             View v = convertView;
 
             if(v==null){
-                v = inflater.inflate(R.layout.nutriment_row, parent, false);
+                v = inflater.inflate(R.layout.activity_fiche_c_row, parent, false);
             }
 
             Cursor c = getCursor();

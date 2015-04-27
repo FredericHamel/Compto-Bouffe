@@ -65,7 +65,7 @@
                 android:id="@+id/imageR"
                 android:layout_width="56dp"
                 android:layout_height="70dp"
-                android:background="@drawable/vert"
+                android:src="@drawable/vert"
                 android:gravity="bottom"
                 android:layout_gravity="center"/>
         </LinearLayout>

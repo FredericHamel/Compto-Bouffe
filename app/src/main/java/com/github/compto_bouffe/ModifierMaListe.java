@@ -9,8 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -143,7 +141,7 @@ public class ModifierMaListe extends Activity {
             this.listener = new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ViewHolder holder_b = (ViewHolder) view.getTag(R.layout.modifier_ma_liste_row);
+                    ViewHolder holder_b = (ViewHolder) view.getTag(R.layout.activity_modifier_ma_liste_row);
                     int i = (int)view.getTag();
                     int qte = Integer.parseInt(holder_b.textViewQte.getText().toString());
                     Plats p = plats.get(i);
@@ -191,23 +189,6 @@ public class ModifierMaListe extends Activity {
             protected Button boutonMoins;
         }
 
-        /*
-        new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    //position de la checkbox
-                    int getPosition = (Integer) buttonView.getTag();
-
-                    if (isChecked) {
-                        itemChecked.set(getPosition, true);
-                    } else if (!isChecked) {
-                        itemChecked.set(getPosition, false);
-                    }
-                    Log.d("adapterModifierListe","position ArrayList A Supprimer:" + position );
-                }
-            }
-         */
-
         public void updateDB()
         {
             DatabaseManager dbM = DatabaseManager.getInstance();
@@ -233,7 +214,7 @@ public class ModifierMaListe extends Activity {
             cursor.moveToPosition(position);
 
             if (viewRow == null) {
-                viewRow = myInflater.inflate(R.layout.modifier_ma_liste_row, null);
+                viewRow = myInflater.inflate(R.layout.activity_modifier_ma_liste_row, null);
                 holder = new ViewHolder();
 
                 holder.nom = (TextView) viewRow.findViewById(R.id.textView1);
@@ -261,12 +242,12 @@ public class ModifierMaListe extends Activity {
 
             //Modification de la quantite lors du click sur le bouton 'moins'
             holder.boutonMoins.setTag(position);
-            holder.boutonMoins.setTag(R.layout.modifier_ma_liste_row, holder);
+            holder.boutonMoins.setTag(R.layout.activity_modifier_ma_liste_row, holder);
 
 
             //Modification de la quantite lors du click sur le bouton 'plus'
             holder.boutonPlus.setTag(position);
-            holder.boutonPlus.setTag(R.layout.modifier_ma_liste_row, holder);
+            holder.boutonPlus.setTag(R.layout.activity_modifier_ma_liste_row, holder);
 
             Plats plat = plats.get(position);
             holder.checkBoxView.setTag(position);
