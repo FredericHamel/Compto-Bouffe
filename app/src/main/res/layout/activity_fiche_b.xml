@@ -9,44 +9,48 @@
     tools:context="com.github.compto_bouffe.FicheB">
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/main_menu_title_text"
+        android:gravity="center" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="#ff000000"
+        android:paddingBottom="2dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text=""
         android:id="@+id/prenom"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:textAlignment="center"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_weight="1"/>
+        android:textAlignment="center" />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/today"
+        android:id="@+id/btn_today"
+        android:layout_marginTop="45dp"
+        android:gravity="center" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="146dp"
-        android:orientation="vertical"
-        android:layout_gravity="bottom">
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_menu_recapitulatif_text"
+        android:id="@+id/btn_recapitulatif"
+        android:gravity="center" />
 
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/menu_today_btn_text"
-            android:id="@+id/btn_today"
-            android:gravity="center" />
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/main_menu_recapitulatif_text"
-            android:id="@+id/btn_recapitulatif"
-            android:gravity="center" />
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/main_menu_modify_btn_text"
-            android:id="@+id/btn_modify_profils"
-            android:gravity="center" />
-
-    </LinearLayout>
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_menu_modify_btn_text"
+        android:id="@+id/btn_modify_profils"
+        android:gravity="center" />
 </LinearLayout>
