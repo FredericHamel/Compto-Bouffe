@@ -2,26 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
         android:layout_width="0dp"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:text="2"
         android:id="@+id/quantity"
-        android:layout_weight="1"
-        android:gravity="center"
-        tools:ignore="HardcodedText" />
+        android:layout_weight="0.51"
+        tools:ignore="HardcodedText"
+        android:paddingLeft="10dp"
+        android:gravity="center"/>
 
     <TextView
         android:layout_width="0dp"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:text="Nom"
         android:id="@+id/food_name"
         android:gravity="center_vertical|start"
-        android:layout_weight="2.75"
-        tools:ignore="HardcodedText" />
+        android:layout_weight="2.20"
+        tools:ignore="HardcodedText"
+        android:paddingLeft="10dp"/>
 
     <TextView
         android:layout_width="0dp"
@@ -29,15 +31,15 @@
         android:text="Calories"
         android:id="@+id/calorie"
         android:layout_weight="1"
-        android:gravity="center_vertical|start"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText"
+        android:gravity="center" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:text="Sucre"
         android:id="@+id/sucre"
-        android:gravity="center_vertical|start"
+        android:gravity="center"
         android:layout_weight="1"
         tools:ignore="HardcodedText" />
 
@@ -46,17 +48,17 @@
         android:layout_height="fill_parent"
         android:text="Gras"
         android:id="@+id/gras"
-        android:gravity="center_vertical|start"
         android:layout_weight="0.75"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText"
+        android:gravity="center"  />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:text="Proteines"
         android:id="@+id/proteines"
-        android:gravity="center_vertical|start"
         android:layout_weight="1"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText"
+        android:gravity="center" />
 
 </LinearLayout>

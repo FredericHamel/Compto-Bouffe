@@ -57,10 +57,10 @@
             tools:ignore="HardcodedText" />
 
         <ImageView
-            android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/vert" />
+            android:layout_width="56dp"
+            android:layout_height="70dp"
+            android:background="@drawable/vert"
+            android:layout_gravity="center_horizontal"/>
     </LinearLayout>
     <LinearLayout
         android:orientation="vertical"
@@ -80,16 +80,14 @@
                 android:id="@+id/textView12"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginEnd="0dp"
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:textSize="15sp"
-                android:layout_weight="1"/>
+                android:layout_weight="0.51"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/produit_nom"
                 android:layout_marginTop="10dp"
@@ -97,12 +95,11 @@
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:textSize="15sp"
-                android:layout_weight="2.75"/>
+                android:layout_weight="2.20" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/produit_calorie"
                 android:id="@+id/textViewCal"
@@ -115,7 +112,6 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/produit_sucre"
                 android:id="@+id/textView7"
@@ -128,7 +124,6 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/produit_gras"
                 android:id="@+id/textView14"
@@ -141,7 +136,6 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/produit_proteine"
                 android:id="@+id/textView15"
@@ -149,8 +143,7 @@
                 android:textSize="15sp"
                 android:layout_weight="1"
                 android:textStyle="bold"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp" />
+                android:layout_marginTop="10dp"/>
         </LinearLayout>
         <ListView
             android:id="@+id/list_nutri"
@@ -164,21 +157,27 @@
         <LinearLayout
             android:id="@+id/btn_menu"
             android:orientation="horizontal"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:background="@color/white"
             android:layout_marginTop="2dp">
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/modify"
-                android:text="@string/menu_modifier_ma_list"/>
+                android:text="@string/menu_modifier_ma_list"
+                android:layout_weight="1"
+                android:layout_gravity="left"
+                android:layout_marginRight="20dp"/>
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/add_plat"
-                android:text="@string/menu_ajouter_un_plat"/>
+                android:text="@string/menu_ajouter_un_plat"
+                android:layout_weight="1"
+                android:layout_gravity="right"
+                android:layout_marginLeft="20dp"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

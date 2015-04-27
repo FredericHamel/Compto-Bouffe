@@ -28,7 +28,7 @@ public class FicheA extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.feuille_a);
+        setContentView(R.layout.activity_fiche_a);
 
         Button btnValider = (Button) findViewById(R.id.btn_profil_valider);
         Button btnGouv = (Button) findViewById(R.id.btn_profil_gouv);

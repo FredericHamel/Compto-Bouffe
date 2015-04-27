@@ -40,8 +40,8 @@
     <string name="profil_btn_gouv_text">CONNAÎTRE LES RECOMMENDATIONS DU GOUVERNEMENT SUR LES APPORTS JOURNALIERS</string>
 
     <!-- Recapitulatif d'un menu -->
-    <string name="calories_ingerees">Calories ingérées:</string>
-    <string name="calories_restantes">Calories restantes:</string>
+    <string name="calories_ingerees">Calories ingérées</string>
+    <string name="calories_restantes">Calories restantes</string>
     <string name="produit_qte">Qté</string>
     <string name="produit_nom">Nom</string>
     <string name="produit_calorie">Calories</string>

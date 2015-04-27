@@ -18,7 +18,7 @@ import java.util.Calendar;
 public class DBHelper extends SQLiteOpenHelper {
 
     static final String DB_NAME = "comptoBouffe.db";
-    static final int DB_VERSION = 6;
+    static final int DB_VERSION = 7;
     static final int USER_ID = 1;
 
     // Table des profils
@@ -66,7 +66,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 +"PRIMARY KEY("+P_ID+"));";
 
         String creerTableListe = "CREATE TABLE IF NOT EXISTS "+TABLE_LISTEPLATS+" ("
-                +L_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "
+                +L_ID+" INTEGER AUTO_INCREMENT, "
                 +L_USER_ID +" INTEGER, "
                 +L_OBJECTIF+" TEXT NOT NULL, "
                 +L_QUANTITE+" INTEGER, "
@@ -78,15 +78,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 +L_SUGARS+" TEXT, `"
                 +L_TOTALFAT+"` TEXT, "
                 +L_PROTEIN+" TEXT, "
-                +"FOREIGN KEY("+ L_USER_ID +") REFERENCES "+TABLE_PROFILS+"("+P_ID+"));";
+                +"FOREIGN KEY("+ L_USER_ID +") REFERENCES "+TABLE_PROFILS+"("+P_ID+"),"
+                +"PRIMARY KEY("+L_ID+", "+L_DATEENTREE+"));";
 
         String creerTableResultats = "CREATE TABLE IF NOT EXISTS "+TABLE_RESULTATS+" ("
-                +R_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "
+                +R_ID+" INTEGER AUTO_INCREMENT, "
                 +R_USER_ID+" INTEGER, "
                 +R_OBJECTIF_INIT+" TEXT NOT NULL, "
                 +R_OBJECTIF_RES+" TEXT, "
-                +R_DATE+" TEXT NOT NULL UNIQUE, "
-                +"FOREIGN KEY("+R_USER_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"));";
+                +R_DATE+" TEXT NOT NULL, "
+                +"FOREIGN KEY("+R_USER_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"),"
+                +"PRIMARY KEY("+R_ID+", "+R_DATE+"));";
 
         db.execSQL(creerTableProfils);
         db.execSQL(creerTableListe);
@@ -229,13 +231,13 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param dateFin la date au format YYYY-MM-DD de fin de periode
      * @return c le curseur
      */
-    public static Cursor listeObjectifs(SQLiteDatabase db, String dateDebut, String dateFin){
+    /*public static Cursor listeObjectifs(SQLiteDatabase db, String dateDebut, String dateFin){
         String requete = "SELECT "+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
                 +" FROM "+TABLE_RESULTATS
                 +" WHERE "+R_DATE+">='"+dateDebut
                 +"' AND "+R_DATE+"<='"+dateFin+"';";
         return db.rawQuery(requete, null);
-    }
+    }*/
 
     /**
      * Methode qui permet de supprimer un plat de la liste de plat de la journee courante
