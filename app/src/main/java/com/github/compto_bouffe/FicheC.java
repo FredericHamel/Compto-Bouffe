@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -47,6 +48,8 @@ public class FicheC extends Activity {
 
     private MenuItem next, preview;
 
+    private ImageView imageResultat;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,10 +71,25 @@ public class FicheC extends Activity {
 
         listePlats = (ListView)findViewById(R.id.list_nutri);
 
+        imageResultat = (ImageView)findViewById(R.id.imageR);
+
         btnContainer = (LinearLayout)findViewById(R.id.btn_menu);
         btnAddPlat = (Button)findViewById(R.id.add_plat);
         btnModifyMenu = (Button)findViewById(R.id.modify);
     }
+
+    private void updateImage(String objectif, String ingeree ){
+        double calIngeree = Double.parseDouble(ingeree);
+        double  calObjectif= Double.parseDouble(objectif);
+        double marge= Math.abs((calObjectif-calIngeree)/calObjectif);
+
+        if(marge < 0.20){
+            imageResultat.setImageResource(R.drawable.vert);
+        }else{
+            imageResultat.setImageResource(R.drawable.rouge);
+        }
+    }
+
 
     private void initListener()
     {
@@ -178,6 +196,7 @@ public class FicheC extends Activity {
                     btnContainer.setVisibility(View.VISIBLE);
                 btnModifyMenu.setEnabled(pageInfo.page.getCount() != 0);
                 updateActionBarBtn(pageInfo);
+                updateImage(objectif, ingerer);
             }
         };
     }
