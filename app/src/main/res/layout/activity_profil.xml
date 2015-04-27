@@ -29,7 +29,7 @@
             android:hint="@string/profil_prenom_hint"
             android:ems="10"
             android:layout_toEndOf="@+id/prenom"
-            android:id="@+id/editText"
+            android:id="@+id/name"
             android:padding="10dp"/>
     </RelativeLayout>
 
@@ -48,7 +48,7 @@
         <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
+            android:inputType="number"
             android:hint="@string/profil_objectif_hint"
             android:ems="10"
             android:layout_toEndOf="@+id/textView3"
@@ -62,43 +62,50 @@
         android:paddingTop="10dp">
 
         <TextView
+            android:id="@+id/margeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/marge_erreur"
-            android:id="@+id/marge"
             android:padding="10dp"
-            android:gravity="left"/>
+            android:gravity="start"/>
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="right"
+            android:gravity="end"
             android:layout_gravity="center_horizontal"
-            android:layout_toEndOf="@+id/marge"
-            android:paddingLeft="10dp"
+            android:layout_toEndOf="@+id/margeLabel"
+            android:paddingStart="10dp"
+            android:paddingEnd="0dp"
             android:weightSum="1.6">
 
             <Button
+                android:id="@+id/sub_percent"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="0.5"
-                android:text="-5%"/>
+                android:text="-5%"
+                tools:ignore="HardcodedText" />
 
             <TextView
+                android:id="@+id/marge"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="0.5"
                 android:text="0 %"
                 android:gravity="center"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                tools:ignore="HardcodedText" />
 
             <Button
+                android:id="@+id/add_percent"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="0.5"
-                android:text="+5%"/>
+                android:text="+5%"
+                tools:ignore="HardcodedText" />
 
         </LinearLayout>
     </RelativeLayout>
@@ -106,11 +113,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="bottom"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/englobeObjectifs"
-        android:id="@+id/englobeBoutons"
-        android:paddingTop="10dp">
+        android:layout_gravity="bottom">
 
         <Button
             android:layout_width="fill_parent"

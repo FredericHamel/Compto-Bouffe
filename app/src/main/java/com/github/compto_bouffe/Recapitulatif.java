@@ -37,14 +37,9 @@ public class Recapitulatif extends Activity{
 
     private String[] MONTH;
 
-    private TextView objectif;
-    private ListView listeView;
-    private ArrayList<DateInfos> dates;
     private EditText editDate1;
     private EditText editDate2;
     private CursorAdapter adapter;
-    private ImageView imageRangee;
-    private Button valider;
     private Cursor curseurValider;
 
 
@@ -66,10 +61,10 @@ public class Recapitulatif extends Activity{
         dbM = DatabaseManager.getInstance();
         db = dbM.openConnection();
         String prenom = DBHelper.getPrenom(db);
-        String obj = DBHelper.getObjectif(db);
-        objectif = (TextView)findViewById(R.id.phrases);
-        objectif.setText(String.format("%s %s %s", prenom, getString(R.string.recapitulatif_objectif), obj, " cal"));
-        valider = (Button) findViewById(R.id.boutonPeriode);
+        int obj = DBHelper.getObjectif(db);
+        TextView objectif = (TextView) findViewById(R.id.phrases);
+        objectif.setText(String.format("%s %s %d %s", prenom, getString(R.string.recapitulatif_objectif), obj, " cal"));
+        Button valider = (Button) findViewById(R.id.boutonPeriode);
 
         //dates = new ArrayList<DateInfos>();
         editDate1 = (EditText)findViewById(R.id.editDate1);
@@ -130,16 +125,16 @@ public class Recapitulatif extends Activity{
             }
         });
 
-        listeView = (ListView)findViewById(R.id.listViewPeriode);
+        ListView listeView = (ListView) findViewById(R.id.listViewPeriode);
 
         valider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("EditTextContent", editDate1.getText().toString());
-                String a=editDate1.getText().toString();
-                String b=editDate2.getText().toString();
-                if(a.equals("") || b.equals("") || a.compareTo(b) > 0)
-                    Toast.makeText(getApplicationContext(), "Entrer une interval valide.", Toast.LENGTH_LONG).show();
+                String a = editDate1.getText().toString();
+                String b = editDate2.getText().toString();
+                if (a.equals("") || b.equals("") || a.compareTo(b) > 0)
+                    Toast.makeText(getApplicationContext(), "Entrer une intervale valide.", Toast.LENGTH_LONG).show();
                 else {
                     curseurValider = DBHelper.listeObjectifsPeriode(db, a, b);
                     adapter.changeCursor(curseurValider);
@@ -152,13 +147,6 @@ public class Recapitulatif extends Activity{
 
         listeView.setAdapter(adapter);
     }
-
-    /*
-    public ArrayList<DateInfos> getDatesInfos(){
-        Cursor curseur = DBHelper.listeObjectifs(db);
-        return dates;
-    }*/
-
 
     private class Fiche_f_myAdapter extends CursorAdapter {
         private ViewHolder holder;
@@ -211,10 +199,13 @@ public class Recapitulatif extends Activity{
             Cursor c = getCursor();
             c.moveToPosition(position);
             String date = c.getString(c.getColumnIndex(DBHelper.R_DATE));
-            Double objInitial = Double.parseDouble(c.getString(c.getColumnIndex(DBHelper.R_OBJECTIF_INIT)));
-            Double resultat =  Double.parseDouble(c.getString(c.getColumnIndex(DBHelper.R_OBJECTIF_RES)));
-            int image = resultat < objInitial ? R.drawable.vert : R.drawable.rouge;
+            int objInitial = c.getInt(c.getColumnIndex(DBHelper.R_OBJECTIF_INIT));
+            int resultat =  c.getInt(c.getColumnIndex(DBHelper.R_OBJECTIF_RES));
+            int marge = c.getInt(c.getColumnIndex(DBHelper.R_MARGE));
+            int image = 100*Math.abs(objInitial - resultat) <= objInitial*marge ? R.drawable.vert : R.drawable.rouge;
 
+
+            Log.d("ResultatSQL", ""+resultat);
             try {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(formater.parse(date));
@@ -230,8 +221,8 @@ public class Recapitulatif extends Activity{
             }
 
             holder.textDate.setText(date);
-            holder.textObjectif.setText(Integer.toString(objInitial.intValue()));
-            holder.textResultat.setText(Integer.toString(resultat.intValue()));
+            holder.textObjectif.setText(String.format("%d ± %d %%", objInitial, DBHelper.getMarge(db)));
+            holder.textResultat.setText(String.valueOf(resultat));
             holder.imageResultat.setImageResource(image);
             holder.imageDetails.setTag(position);
             int color = position % 2 == 1 ? R.color.grisRangee1 : R.color.grisRangee2;

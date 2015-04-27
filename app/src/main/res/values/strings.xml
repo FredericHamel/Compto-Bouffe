@@ -56,6 +56,7 @@
     <string name="menu_modifier_ma_list">MODIFIER MA LISTE</string>
     <string name="menu_ajouter_un_plat">AJOUTER UN PLAT</string>
     <string name="marge_erreur">Ma marge d\'erreur</string>
+    <string name="menu_status_image_desc">État de l\'bjectif</string>
 
     <string-array name="jour_semaine">
         <item>Dimanche</item>

@@ -77,11 +77,11 @@ public class FicheB extends Activity implements View.OnClickListener {
                 String dateCourante = DBHelper.getDateCourante();
                 ContentValues cv = new ContentValues();
                 cv.put(DBHelper.R_OBJECTIF_INIT, DBHelper.getObjectif(db));
+                cv.put(DBHelper.R_MARGE, DBHelper.getMarge(db));
                 if(db.update(DBHelper.TABLE_RESULTATS, cv, DBHelper.R_DATE+"='"+dateCourante+"'", null) == 0) {
                     cv.put(DBHelper.L_USER_ID, DBHelper.USER_ID);
                     cv.put(DBHelper.R_DATE, dateCourante);
-                    cv.put(DBHelper.R_OBJECTIF_RES, "0");
-
+                    cv.put(DBHelper.R_OBJECTIF_RES, 0);
                     db.insert(DBHelper.TABLE_RESULTATS, null, cv);
                 }
                 dbM.close();

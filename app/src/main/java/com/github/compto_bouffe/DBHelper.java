@@ -14,6 +14,7 @@ import java.util.Calendar;
 
 /**
  * Created by Sabrina Ouaret on 16/04/15.
+ * La classe faisant les requete de
  */
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -26,6 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String P_ID = "_id";
     static final String P_PRENOM ="Prenom";
     static final String P_OBJECTIF ="Objectif";
+    static final String P_MARGE ="Marge";
 
     // Table de listes des plats
     static final String TABLE_LISTEPLATS = "ListePlats";
@@ -45,9 +47,10 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String TABLE_RESULTATS = "Resultats";
     static final String R_ID = "_id";
     static final String R_USER_ID = "UserID";
+    static final String R_MARGE = "Marge";
     static final String R_OBJECTIF_INIT = "Objectif_initial";
     static final String R_OBJECTIF_RES = "Objectif_resultant";
-    static final String R_DATE = "DateR";
+    static final String R_DATE = "DateEntree";
 
 
     public DBHelper(Context context) {
@@ -59,34 +62,34 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // Creates tables query.
         String creerTableProfils = "CREATE TABLE IF NOT EXISTS "+TABLE_PROFILS+" ("
-                +P_ID+" INT, "
-                +P_PRENOM+" TEXT NOT NULL,"
-                +P_OBJECTIF+" TEXT NOT NULL,"
+                +P_ID+" INTEGER, "
+                +P_PRENOM+" INTEGER,"
+                +P_OBJECTIF+" INTEGER,"
+                +P_MARGE+" INTEGER,"
                 +"PRIMARY KEY("+P_ID+"));";
 
         String creerTableListe = "CREATE TABLE IF NOT EXISTS "+TABLE_LISTEPLATS+" ("
-                +L_ID+" INTEGER AUTO_INCREMENT, "
+                +L_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "
                 +L_USER_ID +" INTEGER, "
                 +L_QUANTITE+" INTEGER, "
                 +L_UPC+" TEXT NOT NULL, "
                 +L_NOM+" TEXT NOT NULL, "
                 +L_SIZE+" TEXT, "
-                +L_DATEENTREE+" TEXT, "
+                +L_DATEENTREE+" TEXT NOT NULL UNIQUE, "
                 +L_CALORIES+" TEXT, "
                 +L_SUGARS+" TEXT, `"
                 +L_TOTALFAT+"` TEXT, "
                 +L_PROTEIN+" TEXT, "
-                +"FOREIGN KEY("+ L_USER_ID +") REFERENCES "+TABLE_PROFILS+"("+P_ID+"),"
-                +"PRIMARY KEY("+L_ID+", "+L_DATEENTREE+"));";
+                +"FOREIGN KEY("+ L_USER_ID +") REFERENCES "+TABLE_PROFILS+"("+P_ID+"));";
 
         String creerTableResultats = "CREATE TABLE IF NOT EXISTS "+TABLE_RESULTATS+" ("
-                +R_ID+" INTEGER AUTO_INCREMENT, "
+                +R_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "
                 +R_USER_ID+" INTEGER, "
-                +R_OBJECTIF_INIT+" TEXT NOT NULL, "
-                +R_OBJECTIF_RES+" TEXT, "
-                +R_DATE+" TEXT NOT NULL, "
-                +"FOREIGN KEY("+R_USER_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"),"
-                +"PRIMARY KEY("+R_ID+", "+R_DATE+"));";
+                +R_OBJECTIF_INIT+" INTEGER, "
+                +R_OBJECTIF_RES+" INTEGER, "
+                +R_DATE+" TEXT NOT NULL UNIQUE, "
+                +R_MARGE+" INTEGER,"
+                +"FOREIGN KEY("+R_USER_ID+") REFERENCES "+TABLE_PROFILS+"("+P_ID+"));";
 
         db.execSQL(creerTableProfils);
         db.execSQL(creerTableListe);
@@ -228,7 +231,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return c le curseur
      */
     public static Cursor listeObjectifs(SQLiteDatabase db){
-        String requete = "SELECT "+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
+        String requete = "SELECT "+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES+", "+R_MARGE
                 +" FROM "+TABLE_RESULTATS + " ORDER BY " + R_DATE +" DESC;";
         return db.rawQuery(requete, null);
     }
@@ -237,13 +240,11 @@ public class DBHelper extends SQLiteOpenHelper {
      * Methode qui renvoit une liste  de date et l'objectif du jour et l'objectif resultat associes
      * pour une periode de temps donnee
      * @param db la base de donnees
-     * @param date la date filtrant la recherche objectif.
-     * @param date la date filtrant la recherche objectif
      * @param date la date filtrant la recherche objectif
      * @return c le curseur
      */
     public static Cursor listeObjectifs(SQLiteDatabase db, String date){
-        String requete = "SELECT "+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
+        String requete = "SELECT "+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES+", "+R_MARGE
                 +" FROM "+TABLE_RESULTATS +" WHERE "+R_DATE+"='"+date+"';";
         return db.rawQuery(requete, null);
     }
@@ -257,7 +258,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return c le curseur
      */
     public static Cursor listeObjectifsPeriode(SQLiteDatabase db, String dateDebut, String dateFin){
-        String requete = "SELECT "+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
+        String requete = "SELECT "+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES+", "+R_MARGE
                 +" FROM "+TABLE_RESULTATS
                 +" WHERE "+R_DATE+">='"+dateDebut
                 +"' AND "+R_DATE+"<='"+dateFin+"';";
@@ -281,23 +282,37 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param prenom le prenom de l'utilisateur
      * @param objectif l'objectif quotidien
      */
-     public static void insererProfil(SQLiteDatabase db, String prenom, String objectif) {
+     public static void updateProfil(SQLiteDatabase db, String prenom, int objectif, int marge) {
          ContentValues values = new ContentValues();
          values.put(P_PRENOM, prenom);
          values.put(P_OBJECTIF, objectif);
+         values.put(P_MARGE, marge);
+         Log.d("ProfilSQL", String.format("Prenom: %s, Objectif: %d, Marge: %d", prenom, objectif, marge));
          if(db.update(TABLE_PROFILS, values, P_ID+"="+USER_ID, null) == 0) {
              values.put(P_ID, USER_ID);
              db.insert(TABLE_PROFILS, null, values);
          }
      }
 
-    public static String getObjectif(SQLiteDatabase db){
+    public static int getObjectif(SQLiteDatabase db){
         String requete = "SELECT "+P_OBJECTIF+" FROM "+TABLE_PROFILS+";";
         Cursor c = db.rawQuery(requete, null);
-        String obj = "";
+        int obj = 0;
         if(c.getCount() > 0) {
             c.moveToFirst();
-            obj = c.getString(c.getColumnIndex(P_OBJECTIF));
+            obj = c.getInt(c.getColumnIndex(P_OBJECTIF));
+        }
+        c.close();
+        return obj;
+    }
+
+    public static int getMarge(SQLiteDatabase db) {
+        String requete = "SELECT "+P_MARGE+" FROM "+TABLE_PROFILS+";";
+        Cursor c = db.rawQuery(requete, null);
+        int obj = 0;
+        if(c.getCount() > 0) {
+            c.moveToFirst();
+            obj = c.getInt(c.getColumnIndex(P_MARGE));
         }
         c.close();
         return obj;
@@ -346,6 +361,27 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         }
         db.insert(TABLE_LISTEPLATS, null, values);
+    }
+
+    /**
+     * Actualise la ligne de la table resultat correspondant a la dante courante.
+     * @param db un reference vers la database.
+     * @param objectif l'objectif a courrant en calories.
+     * @param ingerer calories ingerees.
+     * @param marge la marge d'erreur accepter pour l'objectif.
+     */
+    public static void updateTableResultat(SQLiteDatabase db, int objectif, int ingerer, int marge)
+    {
+        String date = getDateCourante();
+        ContentValues cv = new ContentValues();
+        cv.put(DBHelper.R_OBJECTIF_INIT, objectif);
+        cv.put(DBHelper.R_OBJECTIF_RES, ingerer);
+        cv.put(DBHelper.R_MARGE, marge);
+        if(db.update(DBHelper.TABLE_RESULTATS, cv, DBHelper.R_DATE+"='"+date+"'", null)==0) {
+            cv.put(DBHelper.R_USER_ID, DBHelper.USER_ID);
+            cv.put(DBHelper.R_DATE, date);
+            db.insert(DBHelper.TABLE_RESULTATS, null, cv);
+        }
     }
 
     @Override

@@ -62,6 +62,7 @@
             android:layout_gravity="center"
             android:gravity="center_horizontal">
             <ImageView
+                android:contentDescription="@string/menu_status_image_desc"
                 android:id="@+id/imageR"
                 android:layout_width="56dp"
                 android:layout_height="70dp"

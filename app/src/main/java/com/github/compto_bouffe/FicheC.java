@@ -78,12 +78,10 @@ public class FicheC extends Activity {
         btnModifyMenu = (Button)findViewById(R.id.modify);
     }
 
-    private void updateImage(String objectif, String ingeree ){
-        double calIngeree = Double.parseDouble(ingeree);
-        double  calObjectif= Double.parseDouble(objectif);
-        double marge= Math.abs((calObjectif-calIngeree)/calObjectif);
-
-        if(marge < 0.20){
+    private void updateImage(int calObjectif, int calIngeree ){
+        int ecart =100* Math.abs(calObjectif-calIngeree);
+        // 100*Math.abs(objInitial - resultat) <= objInitial*marge
+        if(ecart <= calObjectif*DBHelper.getMarge(db)){
             imageResultat.setImageResource(R.drawable.vert);
         }else{
             imageResultat.setImageResource(R.drawable.rouge);
@@ -132,10 +130,10 @@ public class FicheC extends Activity {
                 pageInfo = pageInfos;
                 updateTitle(pageInfo);
 
-                String objectif = pageInfo.listePages.getString(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_INIT));
-                String ingerer = pageInfo.listePages.getString(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_RES));
-                caloriesRestant.setText(String.format("%.0f", Double.parseDouble(objectif) - Double.parseDouble(ingerer)));
-                caloriesIngerer.setText(ingerer);
+                int objectif = pageInfo.listePages.getInt(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_INIT));
+                int ingerer = pageInfo.listePages.getInt(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_RES));
+                caloriesRestant.setText(String.valueOf(objectif - ingerer));
+                caloriesIngerer.setText(String.valueOf(ingerer));
                 if(!pageInfo.listePages.isFirst())
                     btnContainer.setVisibility(View.GONE);
                 if(adapter == null) {
@@ -143,6 +141,8 @@ public class FicheC extends Activity {
                     listePlats.setAdapter(adapter);
                 }
                 btnModifyMenu.setEnabled(pageInfo.page.getCount() != 0);
+                int image = 100*Math.abs(objectif - ingerer) <= objectif*pageInfo.listePages.getInt(pageInfo.listePages.getColumnIndex(DBHelper.R_MARGE)) ? R.drawable.vert: R.drawable.rouge;
+                imageResultat.setImageResource(image);
             }
         };
         task.execute(position);
@@ -168,7 +168,7 @@ public class FicheC extends Activity {
                             resultat += qte*Double.parseDouble(listePlatsDateCourante.getString(listePlatsDateCourante.getColumnIndex(DBHelper.L_CALORIES)).split(" ")[0]);
                         } while (listePlatsDateCourante.moveToNext());
                         ContentValues cv = new ContentValues();
-                        cv.put(DBHelper.R_OBJECTIF_RES, String.format("%.0f", resultat));
+                        cv.put(DBHelper.R_OBJECTIF_RES, (int)resultat);
                         db.update(DBHelper.TABLE_RESULTATS, cv, DBHelper.R_DATE + "='" + DBHelper.getDateCourante() + "'", null);
                     }
                     listePlatsDateCourante.close();
@@ -186,10 +186,10 @@ public class FicheC extends Activity {
                 super.onPostExecute(pageInfo);
                 updateTitle(pageInfo);
                 adapter.changeCursor(pageInfo.page);
-                String objectif = pageInfo.listePages.getString(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_INIT));
-                String ingerer = pageInfo.listePages.getString(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_RES));
-                caloriesRestant.setText(String.format("%.1f", Double.parseDouble(objectif) - Double.parseDouble(ingerer)));
-                caloriesIngerer.setText(ingerer);
+                int objectif = pageInfo.listePages.getInt(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_INIT));
+                int ingerer = pageInfo.listePages.getInt(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_RES));
+                caloriesRestant.setText(String.valueOf(objectif-ingerer));
+                caloriesIngerer.setText(String.valueOf(ingerer));
                 if(!pageInfo.listePages.isFirst())
                     btnContainer.setVisibility(View.GONE);
                 else
@@ -197,6 +197,7 @@ public class FicheC extends Activity {
                 btnModifyMenu.setEnabled(pageInfo.page.getCount() != 0);
                 updateActionBarBtn(pageInfo);
                 updateImage(objectif, ingerer);
+
             }
         };
     }

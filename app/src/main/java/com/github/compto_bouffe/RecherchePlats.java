@@ -50,6 +50,7 @@ public class RecherchePlats extends Activity {
 
     // Produit avec sa quantite.
     private ArrayList<ProductQty> myChoice;
+    private ArrayList<ProductQty> myNullChoice;
 
     // Les Adapters
     private SearchProductAdapter searchProductAdapter;
@@ -64,6 +65,7 @@ public class RecherchePlats extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recherche_plats);
         myChoice = new ArrayList<>();
+        myNullChoice = new ArrayList<>();
         listProducts = new ArrayList<>();
         dbM = DatabaseManager.getInstance();
         db = dbM.openConnection();
@@ -112,7 +114,6 @@ public class RecherchePlats extends Activity {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-
             }
 
             @Override
@@ -141,7 +142,14 @@ public class RecherchePlats extends Activity {
             @Override
             protected void onPostExecute(ArrayList<ProductQty> productQties) {
                 super.onPostExecute(productQties);
-                myChoice = productQties;
+
+                for(ProductQty p : productQties)
+                {
+                    if(p.getQte() == 0)
+                        myNullChoice.add(p);
+                    else
+                        myChoice.add(p);
+                }
                 myListAdapter.notifyDataSetChanged();
             }
         };
@@ -256,13 +264,24 @@ public class RecherchePlats extends Activity {
                         Log.d("BTN_ADD", "Add item " + i + " a mes choix");
                         if (i > -1) {
                             Product p = (Product)searchProductAdapter.getItem(i);
-                            for (ProductQty pty : myChoice) {
-                                if (pty.getProduct().equals(p)) {
-                                    pty.add();
+                            for (int j = 0; j < myNullChoice.size(); ++j)
+                            {
+                                if (myNullChoice.get(j).getProduct().equals(p)) {
+                                    myNullChoice.get(j).add();
+                                    myChoice.add(myNullChoice.get(j));
+                                    myNullChoice.remove(j);
                                     p = null;
                                     break;
                                 }
                             }
+                            if(p != null)
+                                for (ProductQty pty : myChoice) {
+                                    if (pty.getProduct().equals(p)) {
+                                        pty.add();
+                                        p = null;
+                                        break;
+                                    }
+                                }
                             if (p != null)
                                 myChoice.add(new ProductQty(p, 1));
                         }
@@ -272,9 +291,9 @@ public class RecherchePlats extends Activity {
                         i = myListAdapter.getSelectedIndex();
                         if (i > -1 && i < myChoice.size()) {
                             ProductQty pty = myChoice.get(i);
-                            if (pty.getQte() > 0)
-                                pty.sub();
-                            else {
+                            pty.sub();
+                            if(pty.getQte() == 0)
+                            {
                                 myListAdapter.setSelectedIndex(-1);
                             }
                         }
