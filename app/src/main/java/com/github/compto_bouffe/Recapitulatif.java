@@ -68,10 +68,10 @@ public class Recapitulatif extends Activity{
         String prenom = DBHelper.getPrenom(db);
         String obj = DBHelper.getObjectif(db);
         objectif = (TextView)findViewById(R.id.phrases);
-        objectif.setText(String.format("%s %s %s", prenom, getString(R.string.recapitulatif_objectif), obj, "cal"));
+        objectif.setText(String.format("%s %s %s", prenom, getString(R.string.recapitulatif_objectif), obj, " cal"));
         valider = (Button) findViewById(R.id.boutonPeriode);
 
-        dates = new ArrayList<DateInfos>();
+        //dates = new ArrayList<DateInfos>();
         editDate1 = (EditText)findViewById(R.id.editDate1);
         editDate2 = (EditText)findViewById(R.id.editDate2);
         editDate1.setOnClickListener(new View.OnClickListener() {

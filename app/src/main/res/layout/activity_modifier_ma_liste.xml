@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal"
-            android:background="@color/grisTitre">
+            android:background="@color/black">
 
             <TextView
                 android:id="@+id/titreDescription"
@@ -42,7 +42,8 @@
                 android:layout_weight="3"
                 android:layout_gravity="center_horizontal"
                 android:textStyle="bold"
-                android:paddingLeft="5dp" />
+                android:paddingLeft="5dp"
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/titreQuantité"
@@ -52,7 +53,8 @@
                 android:layout_weight="1.5"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
-                android:gravity="center" />
+                android:gravity="center"
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/titreSupprimer"
@@ -61,7 +63,8 @@
                 android:text="À supprimer"
                 android:layout_weight="1"
                 android:textStyle="bold"
-                android:gravity="center" />
+                android:gravity="center"
+                android:textColor="@color/white"/>
 
         </LinearLayout>
 

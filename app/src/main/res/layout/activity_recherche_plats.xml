@@ -16,11 +16,13 @@
             android:maxLines="1"
             android:layout_weight="3"
             android:hint="@string/search_hint_en"/>
+
         <Button android:id="@+id/search_btn"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="2"
             android:text="@string/send_request_btn_text"/>
+
     </LinearLayout>
     <LinearLayout
         android:baselineAligned="false"
@@ -54,7 +56,7 @@
                         android:padding="0dp"
                         android:text="@string/list_recents_header"
                         android:textColor="@color/white"
-                        android:textSize="25sp"
+                        android:textSize="15sp"
                         android:textAllCaps="false"/>
                     <Button
                         android:id="@+id/result_btn"
@@ -64,7 +66,7 @@
                         android:padding="0dp"
                         android:text="@string/list_resultats_header"
                         android:textColor="@color/white"
-                        android:textSize="25sp"
+                        android:textSize="15sp"
                         android:textAllCaps="false"/>
                 </LinearLayout>
                 <ListView
@@ -79,7 +81,8 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:weightSum="2">
 
                 <ImageButton
                     android:id="@+id/add_element_btn"
@@ -94,7 +97,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:contentDescription="@string/sub_selection_desc"
-                    android:src="@drawable/slider_prev" />
+                    android:src="@drawable/slider_prev"/>
 
         </LinearLayout>
         <RelativeLayout
@@ -116,8 +119,8 @@
                     android:gravity="center"
                     android:textSize="@dimen/liste_view_header_text_size"
                     android:background="@color/black"
-                    android:textColor="@color/white"
-                    />
+                    android:textColor="@color/white"/>
+
                 <ListView
                     android:id="@+id/my_list"
                     android:layout_width="wrap_content"
