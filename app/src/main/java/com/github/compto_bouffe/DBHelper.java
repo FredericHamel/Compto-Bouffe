@@ -75,7 +75,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 +L_UPC+" TEXT NOT NULL, "
                 +L_NOM+" TEXT NOT NULL, "
                 +L_SIZE+" TEXT, "
-                +L_DATEENTREE+" TEXT NOT NULL UNIQUE, "
+                +L_DATEENTREE+" TEXT NOT NULL, "
                 +L_CALORIES+" TEXT, "
                 +L_SUGARS+" TEXT, `"
                 +L_TOTALFAT+"` TEXT, "
