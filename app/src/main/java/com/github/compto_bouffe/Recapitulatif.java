@@ -135,10 +135,19 @@ public class Recapitulatif extends Activity{
         valider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                curseurValider = DBHelper.listeObjectifsPeriode(db, editDate1.toString(), editDate2.toString());
+                Log.d("EditTextContent", editDate1.getText().toString());
+                String a=editDate1.getText().toString();
+                String b=editDate2.getText().toString();
+                if(a.equals("") || b.equals("") || a.compareTo(b) > 0)
+                    Toast.makeText(getApplicationContext(), "Entrer une interval valide.", Toast.LENGTH_LONG).show();
+                else {
+                    curseurValider = DBHelper.listeObjectifsPeriode(db, a, b);
+                    adapter.changeCursor(curseurValider);
+                }
             }
         });
         Log.d("Recapitulatif", "CurseurValider est null?: " + (curseurValider == null));
+        curseurValider = DBHelper.listeObjectifs(db);
         adapter = new Fiche_f_myAdapter(this, curseurValider);
 
         listeView.setAdapter(adapter);
@@ -215,7 +224,7 @@ public class Recapitulatif extends Activity{
                 if(date.equals(DBHelper.getDateCourante()))
                     date = getString(R.string.today);
                 else
-                    date = String.format("%s %s %d", dayOfMonth, MONTH[(month + 1)%12 ], year);
+                    date = String.format("%s %s %d", dayOfMonth, MONTH[month], year);
             }catch (ParseException e) {
                 Log.d(getClass().getName() + ".DateParser", "Unable to parse " + date);
             }

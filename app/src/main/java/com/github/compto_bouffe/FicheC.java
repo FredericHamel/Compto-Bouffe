@@ -116,7 +116,7 @@ public class FicheC extends Activity {
 
                 String objectif = pageInfo.listePages.getString(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_INIT));
                 String ingerer = pageInfo.listePages.getString(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_RES));
-                caloriesRestant.setText(String.format("%.1f", Double.parseDouble(objectif) - Double.parseDouble(ingerer)));
+                caloriesRestant.setText(String.format("%.0f", Double.parseDouble(objectif) - Double.parseDouble(ingerer)));
                 caloriesIngerer.setText(ingerer);
                 if(!pageInfo.listePages.isFirst())
                     btnContainer.setVisibility(View.GONE);
@@ -150,7 +150,7 @@ public class FicheC extends Activity {
                             resultat += qte*Double.parseDouble(listePlatsDateCourante.getString(listePlatsDateCourante.getColumnIndex(DBHelper.L_CALORIES)).split(" ")[0]);
                         } while (listePlatsDateCourante.moveToNext());
                         ContentValues cv = new ContentValues();
-                        cv.put(DBHelper.R_OBJECTIF_RES, String.format("%.1f",resultat));
+                        cv.put(DBHelper.R_OBJECTIF_RES, String.format("%.0f", resultat));
                         db.update(DBHelper.TABLE_RESULTATS, cv, DBHelper.R_DATE + "='" + DBHelper.getDateCourante() + "'", null);
                     }
                     listePlatsDateCourante.close();

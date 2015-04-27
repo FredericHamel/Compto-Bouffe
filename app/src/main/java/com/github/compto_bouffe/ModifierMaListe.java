@@ -101,23 +101,6 @@ public class ModifierMaListe extends Activity {
         adapter.getCursor().close();
         dbM.close();
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_modifier_ma_liste, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     //Adapter de la listView
     public class MyAdapter extends CursorAdapter {

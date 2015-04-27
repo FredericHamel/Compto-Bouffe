@@ -102,7 +102,7 @@ public class DBHelper extends SQLiteOpenHelper {
     {
         Calendar mcurrentDate=Calendar.getInstance();
         int mYear = mcurrentDate.get(Calendar.YEAR);
-        int mMonth=mcurrentDate.get(Calendar.MONTH);
+        int mMonth=mcurrentDate.get(Calendar.MONTH)+1;
         int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
 
         return String.format("%04d-%02d-%02d", mYear, mMonth, mDay);
