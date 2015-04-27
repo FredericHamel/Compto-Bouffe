@@ -28,6 +28,7 @@
             android:inputType="textPersonName"
             android:hint="@string/profil_prenom_hint"
             android:ems="10"
+            android:selectAllOnFocus="true"
             android:layout_toEndOf="@+id/prenom"
             android:id="@+id/name"
             android:padding="10dp"/>
@@ -51,6 +52,7 @@
             android:inputType="number"
             android:hint="@string/profil_objectif_hint"
             android:ems="10"
+            android:selectAllOnFocus="true"
             android:layout_toEndOf="@+id/textView3"
             android:id="@+id/objectifs"
             android:padding="10dp"/>
