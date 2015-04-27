@@ -10,7 +10,7 @@
         android:id="@+id/imageResultat"
         android:src="@drawable/vert"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_height="50dp"
         android:layout_gravity="center_vertical"
         android:layout_weight="0.4"
         tools:ignore="ContentDescription,HardcodedText" />
@@ -49,7 +49,7 @@
         android:id="@+id/imageDetails"
         android:src="@drawable/arrow"
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="50dp"
         android:layout_gravity="center_vertical"
         android:layout_weight="0.4"
         tools:ignore="ContentDescription" />

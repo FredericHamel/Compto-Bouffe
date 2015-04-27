@@ -256,13 +256,13 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param dateFin la date au format YYYY-MM-DD de fin de periode
      * @return c le curseur
      */
-    /*public static Cursor listeObjectifs(SQLiteDatabase db, String dateDebut, String dateFin){
+    public static Cursor listeObjectifsPeriode(SQLiteDatabase db, String dateDebut, String dateFin){
         String requete = "SELECT "+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES
                 +" FROM "+TABLE_RESULTATS
                 +" WHERE "+R_DATE+">='"+dateDebut
                 +"' AND "+R_DATE+"<='"+dateFin+"';";
         return db.rawQuery(requete, null);
-    }*/
+    }
 
     /**
      * Methode qui permet de supprimer un plat de la liste de plat de la journee courante

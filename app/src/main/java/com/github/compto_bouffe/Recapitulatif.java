@@ -10,11 +10,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.DatePicker;
@@ -25,14 +22,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Locale;
 
 /**
  * Created by Sabrina Ouaret on 16/04/15.
@@ -51,6 +45,7 @@ public class Recapitulatif extends Activity{
     private CursorAdapter adapter;
     private ImageView imageRangee;
     private Button valider;
+    private Cursor curseurValider;
 
 
     private DatabaseManager dbM;
@@ -73,7 +68,8 @@ public class Recapitulatif extends Activity{
         String prenom = DBHelper.getPrenom(db);
         String obj = DBHelper.getObjectif(db);
         objectif = (TextView)findViewById(R.id.phrases);
-        objectif.setText(String.format("%s %s %s", prenom, getString(R.string.recapitulatif_objectif), obj));
+        objectif.setText(String.format("%s %s %s", prenom, getString(R.string.recapitulatif_objectif), obj, "cal"));
+        valider = (Button) findViewById(R.id.boutonPeriode);
 
         dates = new ArrayList<DateInfos>();
         editDate1 = (EditText)findViewById(R.id.editDate1);
@@ -136,18 +132,24 @@ public class Recapitulatif extends Activity{
 
         listeView = (ListView)findViewById(R.id.listViewPeriode);
 
-        Cursor c = DBHelper.listeObjectifs(db);
-        adapter = new Fiche_f_myAdapter(this, c);
+        valider.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                curseurValider = DBHelper.listeObjectifsPeriode(db, editDate1.toString(), editDate2.toString());
+            }
+        });
+        Log.d("Recapitulatif", "CurseurValider est null?: " + (curseurValider == null));
+        adapter = new Fiche_f_myAdapter(this, curseurValider);
 
         listeView.setAdapter(adapter);
     }
 
     /*
-        public ArrayList<DateInfos> getDatesInfos(){
+    public ArrayList<DateInfos> getDatesInfos(){
         Cursor curseur = DBHelper.listeObjectifs(db);
         return dates;
-    }
-    */
+    }*/
+
 
     private class Fiche_f_myAdapter extends CursorAdapter {
         private ViewHolder holder;
