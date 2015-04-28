@@ -65,6 +65,7 @@ public class FicheC extends Activity {
     // Initialise les reference sur les elements graphique et logique
     private void init()
     {
+        pageInfo = new PageInfo();
         dbM = DatabaseManager.getInstance();
         db = dbM.openConnection();
 
@@ -130,9 +131,11 @@ public class FicheC extends Activity {
             }
 
             @Override
-            protected void onPostExecute(PageInfo pageInfos) {
-                super.onPostExecute(pageInfos);
-                pageInfo = pageInfos;
+            protected void onPostExecute(PageInfo pageInfo) {
+                super.onPostExecute(pageInfo);
+                FicheC.this.pageInfo.page = pageInfo.page;
+                FicheC.this.pageInfo.position = pageInfo.position;
+                FicheC.this.pageInfo.listePages = pageInfo.listePages;
                 updateTitle(pageInfo);
 
                 int objectif = pageInfo.listePages.getInt(pageInfo.listePages.getColumnIndex(DBHelper.R_OBJECTIF_INIT));
@@ -272,15 +275,12 @@ public class FicheC extends Activity {
             case R.id.next:
                 if(pageInfo.position >= 1) {
                     pageInfo.position--;
-                    //item.setVisible(pageInfo.position > 0);
-                    Toast.makeText(getApplicationContext(), "Next: " + pageInfo.position, Toast.LENGTH_SHORT).show();
                     update();
                 }
                 break;
             case R.id.preview:
                 if(pageInfo.position < pageInfo.listePages.getCount()-1) {
                     pageInfo.position++;
-                    Toast.makeText(getApplicationContext(), "Preview: " + pageInfo.position, Toast.LENGTH_SHORT).show();
                     update();
                 }
                 break;
