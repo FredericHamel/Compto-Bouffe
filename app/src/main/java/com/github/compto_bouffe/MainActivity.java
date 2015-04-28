@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
         dBManager.close();
         Class<?> obj;
         if(i == 0)
-            obj = Profil.class; //FicheA.class;
+            obj = FicheProfil.class; //FicheA.class;
         else
             obj = MenuPrincipal.class;
 

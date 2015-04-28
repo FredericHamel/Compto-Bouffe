@@ -18,7 +18,7 @@ import android.widget.Toast;
  * La fiche A demande son nom et son objectif à l'utilisateur; les deux sont sauvegardés dans la
  * base de deonnées.
  */
-public class Profil extends Activity implements View.OnClickListener {
+public class FicheProfil extends Activity implements View.OnClickListener {
 
     private EditText ed_name;    // le nom du l'utilisateur
     private EditText ed_cal;     //le nombre de calories entrées

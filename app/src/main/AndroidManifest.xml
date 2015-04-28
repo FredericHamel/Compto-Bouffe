@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Profil"
+            android:name=".FicheProfil"
             android:label="@string/title_activity_profile"
             android:screenOrientation="landscape">
         </activity>

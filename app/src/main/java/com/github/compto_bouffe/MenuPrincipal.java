@@ -108,7 +108,7 @@ public class MenuPrincipal extends Activity implements View.OnClickListener {
                         startActivity(new Intent(getApplicationContext(), Recapitulatif.class));
                         break;
                     case R.id.btn_modify_profils:
-                        Intent intent = new Intent(getApplicationContext(), Profil.class);
+                        Intent intent = new Intent(getApplicationContext(), FicheProfil.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         break;
