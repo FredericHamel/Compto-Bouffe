@@ -7,8 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,6 +19,8 @@ public class FicheB extends Activity implements View.OnClickListener {
 
     private DatabaseManager dbM;
     private Button today, recapitulatif, modifyProfils;
+    private SQLiteDatabase db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +47,17 @@ public class FicheB extends Activity implements View.OnClickListener {
     {
         dbM = DatabaseManager.getInstance();
         SQLiteDatabase db = dbM.openConnection();
-        String nom = DBHelper.getPrenom(db);
+        String prenom = DBHelper.getPrenom(db);
         Cursor c = DBHelper.listeObjectifs(db);
         recapitulatif.setEnabled(c.getCount() > 0);
         c.close();
-        dbM.close();
 
-        TextView prenom = (TextView)findViewById(R.id.prenom);
-        prenom.setText(nom);
+        //Affichage texte prenom+objectif
+        int obj = DBHelper.getObjectif(db);
+        TextView objectif = (TextView) findViewById(R.id.prenomFicheB);
+        objectif.setText(String.format("%s %s %d %s", prenom, getString(R.string.recapitulatif_objectif), obj, "calories."));
+
+        dbM.close();
     }
 
     @Override

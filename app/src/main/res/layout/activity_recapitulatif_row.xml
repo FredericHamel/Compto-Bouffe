@@ -4,13 +4,14 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rowLayoutF">
+    android:id="@+id/rowLayoutF"
+    android:weightSum="4.4">
 
     <ImageView
         android:id="@+id/imageResultat"
         android:src="@drawable/vert"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:layout_gravity="center_vertical"
         android:layout_weight="0.4"
         tools:ignore="ContentDescription,HardcodedText" />
@@ -21,8 +22,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_weight="0.9"
-        android:gravity="center"
+        android:layout_weight="1.2"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -31,8 +31,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:gravity="center"
-        android:layout_weight="1"
+        android:layout_weight="1.2"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -40,9 +39,8 @@
         android:text="RESULTAT:1400kcal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_gravity="center_vertical"
-        android:layout_weight="1"
+        android:layout_weight="1.2"
         tools:ignore="HardcodedText" />
 
     <ImageButton

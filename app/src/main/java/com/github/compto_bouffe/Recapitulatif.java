@@ -25,7 +25,6 @@ import android.widget.Toast;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -62,11 +61,8 @@ public class Recapitulatif extends Activity{
         db = dbM.openConnection();
         String prenom = DBHelper.getPrenom(db);
         int obj = DBHelper.getObjectif(db);
-        TextView objectif = (TextView) findViewById(R.id.phrases);
-        objectif.setText(String.format("%s %s %d %s", prenom, getString(R.string.recapitulatif_objectif), obj, " cal"));
         Button valider = (Button) findViewById(R.id.boutonPeriode);
 
-        //dates = new ArrayList<DateInfos>();
         editDate1 = (EditText)findViewById(R.id.editDate1);
         editDate2 = (EditText)findViewById(R.id.editDate2);
         editDate1.setOnClickListener(new View.OnClickListener() {
@@ -221,12 +217,13 @@ public class Recapitulatif extends Activity{
             }
 
             holder.textDate.setText(date);
-            holder.textObjectif.setText(String.format("%d ± %d %%", objInitial, DBHelper.getMarge(db)));
-            holder.textResultat.setText(String.valueOf(resultat));
+            holder.textObjectif.setText(String.format("%s %d ±%d%%", "OBJECTIF:", objInitial, DBHelper.getMarge(db)));
+            holder.textResultat.setText(String.format("%s %s", "RESULTAT:", String.valueOf(resultat)));
             holder.imageResultat.setImageResource(image);
             holder.imageDetails.setTag(position);
-            int color = position % 2 == 1 ? R.color.grisRangee1 : R.color.grisRangee2;
+
             //Couleur alternative des rangées
+            int color = position % 2 == 1 ? R.color.grisRangee1 : R.color.grisRangee2;
             view.setBackgroundResource(color);
             return view;
         }

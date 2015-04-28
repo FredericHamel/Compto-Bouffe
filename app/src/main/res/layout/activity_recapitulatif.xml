@@ -19,15 +19,9 @@
         android:baselineAligned="false"
         android:padding="10dp"
         android:id="@+id/linearLayoutE3"
-
         android:focusable="false"
         android:weightSum="1">
 
-        <TextView
-            android:id="@+id/phrases"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -82,7 +76,8 @@
             android:id="@+id/listViewPeriode"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="5dp"></ListView>
+            android:layout_marginTop="5dp">
+        </ListView>
 
     </LinearLayout>
 
