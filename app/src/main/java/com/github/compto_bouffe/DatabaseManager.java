@@ -21,6 +21,7 @@ public class DatabaseManager {
      */
     public static void init(Context context)
     {
+        Log.d(DatabaseManager.class.getSimpleName(), "Initialise");
         if(instance == null) {
             instance = new DatabaseManager();
             dbH = new DBHelper(context);
@@ -64,7 +65,7 @@ public class DatabaseManager {
         ++nbConnection;
         if(nbConnection == 1) {
             // Open Database connection
-            Log.d("SQLite", "Open connection to DB.");
+            Log.d(DatabaseManager.class.getSimpleName(), "Open connection to DB.");
             String pragma = "PRAGMA foreign_keys=1;";
             db = dbH.getWritableDatabase();
             // Enable foreign keys.
@@ -83,8 +84,9 @@ public class DatabaseManager {
         if(nbConnection == 0)
         {
             // Close database connection
-            Log.d("SQLite", "Close connection to DB.");
+            Log.d(DatabaseManager.class.getSimpleName(), "Close connection to DB.");
             db.close();
+            db = null;
         }
     }
 }

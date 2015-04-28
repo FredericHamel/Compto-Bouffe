@@ -269,7 +269,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 +" FROM "+TABLE_RESULTATS
                 +" WHERE "+R_DATE+">='"+dateDebut
                 +"' AND "+R_DATE+"<='"+dateFin
-                +"' ORDER BY '"+R_DATE+"' DESC;";
+                +"' ORDER BY "+R_DATE+" DESC;";
         return db.rawQuery(requete, null);
     }
 
@@ -305,7 +305,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * Methode getter objectif
-     * @param db
+     * @param db la base de donnees
      * @return obj
      */
     public static int getObjectif(SQLiteDatabase db){
@@ -322,7 +322,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * Getter marge
-     * @param db
+     * @param db la base de donnees
      * @return marge
      */
     public static int getMarge(SQLiteDatabase db) {
@@ -380,27 +380,6 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         }
         db.insert(TABLE_LISTEPLATS, null, values);
-    }
-
-    /**
-     * Actualise la ligne de la table resultat correspondant a la dante courante.
-     * @param db un reference vers la database.
-     * @param objectif l'objectif a courrant en calories.
-     * @param ingerer calories ingerees.
-     * @param marge la marge d'erreur accepter pour l'objectif.
-     */
-    public static void updateTableResultat(SQLiteDatabase db, int objectif, int ingerer, int marge)
-    {
-        String date = getDateCourante();
-        ContentValues cv = new ContentValues();
-        cv.put(DBHelper.R_OBJECTIF_INIT, objectif);
-        cv.put(DBHelper.R_OBJECTIF_RES, ingerer);
-        cv.put(DBHelper.R_MARGE, marge);
-        if(db.update(DBHelper.TABLE_RESULTATS, cv, DBHelper.R_DATE+"='"+date+"'", null)==0) {
-            cv.put(DBHelper.R_USER_ID, DBHelper.USER_ID);
-            cv.put(DBHelper.R_DATE, date);
-            db.insert(DBHelper.TABLE_RESULTATS, null, cv);
-        }
     }
 
     @Override

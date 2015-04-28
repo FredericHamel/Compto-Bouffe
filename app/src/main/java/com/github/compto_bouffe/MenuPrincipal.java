@@ -21,7 +21,6 @@ public class MenuPrincipal extends Activity implements View.OnClickListener {
 
     private DatabaseManager dbM;
     private Button today, recapitulatif, modifyProfils;
-    private SQLiteDatabase db;
 
 
     @Override
