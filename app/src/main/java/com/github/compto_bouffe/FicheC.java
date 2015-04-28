@@ -21,7 +21,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -229,7 +228,7 @@ public class FicheC extends Activity {
                 int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
                 int year = calendar.get(Calendar.YEAR);
 
-                date = String.format("%s %s %d", dayOfMonth, MONTH[(month + 1)%12 ], year);
+                date = String.format("%s %s %d", dayOfMonth, MONTH[month], year);
             }catch (ParseException e)
             {
                 Log.d("Formater", "Invalid Date Format " + date);

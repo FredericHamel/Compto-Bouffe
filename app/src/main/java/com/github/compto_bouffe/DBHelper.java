@@ -268,7 +268,8 @@ public class DBHelper extends SQLiteOpenHelper {
         String requete = "SELECT "+R_ID+", "+R_DATE+", "+R_OBJECTIF_INIT+", "+R_OBJECTIF_RES+", "+R_MARGE
                 +" FROM "+TABLE_RESULTATS
                 +" WHERE "+R_DATE+">='"+dateDebut
-                +"' AND "+R_DATE+"<='"+dateFin+"';";
+                +"' AND "+R_DATE+"<='"+dateFin
+                +"' ORDER BY '"+R_DATE+"' DESC;";
         return db.rawQuery(requete, null);
     }
 
