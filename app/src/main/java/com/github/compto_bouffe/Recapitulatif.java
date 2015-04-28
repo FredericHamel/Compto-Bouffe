@@ -233,7 +233,7 @@ public class Recapitulatif extends Activity{
             }
 
             holder.textDate.setText(date);
-            holder.textObjectif.setText(String.format("%s %d ±%d%%", "OBJECTIF:", objInitial, DBHelper.getMarge(db)));
+            holder.textObjectif.setText(String.format("%s %d ±%d%%", "OBJECTIF:", objInitial, marge));
             holder.textResultat.setText(String.format("%s %s", "RESULTAT:", String.valueOf(resultat)));
             holder.imageResultat.setImageResource(image);
             holder.imageDetails.setTag(position);
