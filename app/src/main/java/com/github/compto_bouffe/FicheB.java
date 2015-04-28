@@ -11,10 +11,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-// La fiche B permet à l'usager, par trois boutons:
-// - d'accéder au menu du jour;
-// - d'accéder au récapitulatif des derniers jours;
-// - de modifier ses informations
+/**
+ * La fiche B permet à l'usager, par trois boutons:
+ * - d'accéder au menu du jour;
+ * - d'accéder au récapitulatif des derniers jours;
+ * - de modifier ses informations
+ */
 public class FicheB extends Activity implements View.OnClickListener {
 
     private DatabaseManager dbM;
@@ -43,6 +45,7 @@ public class FicheB extends Activity implements View.OnClickListener {
         updateData();
     }
 
+    // Actualise les elements graphiques.
     private void updateData()
     {
         dbM = DatabaseManager.getInstance();
@@ -112,7 +115,6 @@ public class FicheB extends Activity implements View.OnClickListener {
                 }
             }
         };
-
         task.execute();
     }
 }

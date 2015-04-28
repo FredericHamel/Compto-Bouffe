@@ -53,6 +53,10 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String R_DATE = "DateEntree";
 
 
+    /**
+     * Le constructeur de DBHelper
+     * @param context le context de l'application.
+     */
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -111,7 +115,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return String.format("%04d-%02d-%02d", mYear, mMonth, mDay);
     }
 
-    // SELECT Prenom FROM Profils;
+    /**
+     * Accesseur pour le Prenom dans la base de donnees.
+     * @param db la base de donnees
+     * @return le prenom
+     */
     public static String getPrenom(SQLiteDatabase db){
         String requete = "SELECT "+P_PRENOM+" FROM "+TABLE_PROFILS+";";
         Cursor c = db.rawQuery(requete, null);

@@ -14,8 +14,10 @@ import android.widget.Toast;
 
 
 
-// La fiche A demande son nom et son objectif à l'utilisateur; les deux sont sauvegardés dans la
-// base de deonnées.
+/**
+ * La fiche A demande son nom et son objectif à l'utilisateur; les deux sont sauvegardés dans la
+ * base de deonnées.
+ */
 public class FicheA extends Activity implements View.OnClickListener {
 
     private EditText ed_name;    // le nom du l'utilisateur
@@ -24,6 +26,7 @@ public class FicheA extends Activity implements View.OnClickListener {
 
     private Profil profil;
 
+    // Represente un struct pour le profil
     private class Profil {
         public String nom;
         public int objectif;
@@ -58,6 +61,7 @@ public class FicheA extends Activity implements View.OnClickListener {
         updateData();
     }
 
+    // Actualise les elements interface.
     private void updateData() {
         DatabaseManager dbM = DatabaseManager.getInstance();
         SQLiteDatabase db = dbM.openConnection();

@@ -31,6 +31,9 @@ import com.github.compto_bouffe.api.ProductQty;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+/**
+ * Activite permettant ajouter des nouveau plat au menu.
+ */
 public class RecherchePlats extends Activity {
 
     // Database
@@ -109,6 +112,7 @@ public class RecherchePlats extends Activity {
         myListAdapter = new MyListAdapter();
     }
 
+    // Initialise le contenu de la liste personnel.
     private void initMyListContent() {
         task = new AsyncTask<Cursor, Void, ArrayList<ProductQty>>() {
             @Override
@@ -174,6 +178,7 @@ public class RecherchePlats extends Activity {
         });
     }
 
+    // Initialise le bouton de confirmation.
     private void initConfirmButton()
     {
         confirm.setOnClickListener(new View.OnClickListener() {
@@ -229,6 +234,7 @@ public class RecherchePlats extends Activity {
         });
     }
 
+    // Initialise les bouttons Recents et Resultats
     public void initTabsBtn()
     {
         View.OnClickListener listener = new View.OnClickListener() {
@@ -252,6 +258,7 @@ public class RecherchePlats extends Activity {
         resultat.setOnClickListener(listener);
     }
 
+    // Initialise l'ecouteur d'evenements pour les boutton
     private void initClickListener() {
         btnClickListener = new View.OnClickListener() {
             @Override
@@ -303,6 +310,7 @@ public class RecherchePlats extends Activity {
         };
     }
 
+    // Initialise la l'ecouteur d'evenement dans la liste deroulante.
     private void initOnItemClickListener() {
         itemClickListener = new AdapterView.OnItemClickListener() {
 
@@ -338,6 +346,7 @@ public class RecherchePlats extends Activity {
         Log.d("SQLite", "NbConnection to SQLDatabase="+dbM.getNbConnection());
     }
 
+    // La classe permettent de rechercher les produit dans l'api.
     private class SearchProduct extends AsyncTask<String, Void, ArrayList<Product>> {
         @Override
         protected ArrayList<Product> doInBackground(String... strings) {
@@ -376,6 +385,7 @@ public class RecherchePlats extends Activity {
         }
     }
 
+    // L'adapteur content les elements Recent et les Resultats.
     private class SearchProductAdapter extends CursorAdapter {
         private LayoutInflater inflater;
         private int selectedIndex;
@@ -462,6 +472,7 @@ public class RecherchePlats extends Activity {
         }
     }
 
+    // L'adapteur contenant les element dans le menu.
     private class MyListAdapter extends BaseAdapter {
         private LayoutInflater inflater;
         private int selectedIndex;

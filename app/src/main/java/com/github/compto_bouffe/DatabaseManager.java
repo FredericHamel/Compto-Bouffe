@@ -6,6 +6,7 @@ import android.util.Log;
 
 /**
  * Created by adkuser on 4/22/15.
+ * Un classe pour gere les connection avec la db.
  */
 public class DatabaseManager {
     // Unique instance de Database Manager.

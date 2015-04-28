@@ -26,8 +26,9 @@ import android.widget.Toast;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
-// La fiche C permet à l'usager de consulter et de modifier son menu du jour.
+/**
+ * La fiche C permet à l'usager de consulter et de modifier son menu du jour.
+ */
 public class FicheC extends Activity {
 
     private DatabaseManager dbM;
@@ -61,6 +62,7 @@ public class FicheC extends Activity {
         initUpdater();
     }
 
+    // Initialise les reference sur les elements graphique et logique
     private void init()
     {
         dbM = DatabaseManager.getInstance();
@@ -78,6 +80,7 @@ public class FicheC extends Activity {
         btnModifyMenu = (Button)findViewById(R.id.modify);
     }
 
+    // Actualise l'image indiquant le status de l'objectif.
     private void updateImage(int calObjectif, int calIngeree ){
         int ecart =100* Math.abs(calObjectif-calIngeree);
         // 100*Math.abs(objInitial - resultat) <= objInitial*marge
@@ -89,6 +92,7 @@ public class FicheC extends Activity {
     }
 
 
+    // Initialise l'ecouteur d'evenements.
     private void initListener()
     {
         View.OnClickListener listener = new View.OnClickListener() {
@@ -108,6 +112,7 @@ public class FicheC extends Activity {
         btnModifyMenu.setOnClickListener(listener);
     }
 
+    // Initialise l'adapteur de la ListView.
     private void initAdapter(Bundle bundle)
     {
         final int position = bundle == null ? 0: bundle.getInt("position");
@@ -148,7 +153,9 @@ public class FicheC extends Activity {
         task.execute(position);
     }
 
-    // Called before updater.execute()
+    // Initialise le Asynctask utilise pour actualise les donnees
+    //  liees a la base de donnees.
+    // Doit etre appele avant updater.execute()
     private void initUpdater()
     {
         updater = new AsyncTask<PageInfo, Void, PageInfo>() {
@@ -202,6 +209,7 @@ public class FicheC extends Activity {
         };
     }
 
+    // Actualise le titre de la page selon la date du menu.
     private void updateTitle(PageInfo pageInfo)
     {
         if(pageInfo.position == 0)
@@ -227,6 +235,7 @@ public class FicheC extends Activity {
         }
     }
 
+    // Actualise les boutons de navigation inter-menu.
     private void updateActionBarBtn(PageInfo pageInfo)
     {
         next.setVisible(pageInfo.position != 0);
@@ -239,6 +248,7 @@ public class FicheC extends Activity {
         update();
     }
 
+    // Update l'interface.
     private void update() {
         initUpdater();
         updater.execute(pageInfo);
@@ -285,12 +295,14 @@ public class FicheC extends Activity {
         dbM.close();
     }
 
+    // Structure contenant les informations de la page courante.
     private class PageInfo {
         public int position;
         public Cursor listePages;
         public Cursor page;
     }
 
+    // L'adapter utilise pour remplir la liste deroulante.
     private class MyAdapter extends CursorAdapter {
         LayoutInflater inflater;
 
