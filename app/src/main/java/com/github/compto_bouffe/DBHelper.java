@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
- * Created by Sabrina Ouaret on 16/04/15.
- * La classe faisant les requete de
+ * Classe qui effectue des requetes dans la base de donnees
  */
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -302,6 +301,12 @@ public class DBHelper extends SQLiteOpenHelper {
          }
      }
 
+
+    /**
+     * Methode getter objectif
+     * @param db
+     * @return obj
+     */
     public static int getObjectif(SQLiteDatabase db){
         String requete = "SELECT "+P_OBJECTIF+" FROM "+TABLE_PROFILS+";";
         Cursor c = db.rawQuery(requete, null);
@@ -314,16 +319,21 @@ public class DBHelper extends SQLiteOpenHelper {
         return obj;
     }
 
+    /**
+     * Getter marge
+     * @param db
+     * @return marge
+     */
     public static int getMarge(SQLiteDatabase db) {
         String requete = "SELECT "+P_MARGE+" FROM "+TABLE_PROFILS+";";
         Cursor c = db.rawQuery(requete, null);
-        int obj = 0;
+        int marge = 0;
         if(c.getCount() > 0) {
             c.moveToFirst();
-            obj = c.getInt(c.getColumnIndex(P_MARGE));
+            marge = c.getInt(c.getColumnIndex(P_MARGE));
         }
         c.close();
-        return obj;
+        return marge;
     }
 
     /**

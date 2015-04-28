@@ -22,7 +22,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-// Cette classe permet à l'usager de modifier un menu élément par éléments.
+/**
+ * La classe permet à l'usager de modifier un menu élément par éléments.
+ */
 public class ModifierMaListe extends Activity {
 
     ListView listeView;
