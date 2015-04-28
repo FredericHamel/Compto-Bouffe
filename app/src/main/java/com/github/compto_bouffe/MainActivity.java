@@ -23,9 +23,9 @@ public class MainActivity extends Activity {
         dBManager.close();
         Class<?> obj;
         if(i == 0)
-            obj = FicheA.class; //FicheA.class;
+            obj = Profil.class; //FicheA.class;
         else
-            obj = FicheB.class;
+            obj = MenuPrincipal.class;
 
         Log.d(MainActivity.class.getName(), "Start " + obj.getName());
         startActivity(new Intent(this, obj));

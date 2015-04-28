@@ -27,15 +27,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-/**
- * Created by Sabrina Ouaret on 16/04/15.
- */
 // Le récapitulatif montre à l'usager, rangée par rangée, un triplet date, objectif, résultat,
 // l'objectif et le résultat étant en calories
 public class Recapitulatif extends Activity{
 
     private String[] MONTH;
-
     private EditText editDate1;
     private EditText editDate2;
     private CursorAdapter adapter;
@@ -56,24 +52,32 @@ public class Recapitulatif extends Activity{
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recapitulatif);
+
         MONTH = getResources().getStringArray(R.array.mois);
         dbM = DatabaseManager.getInstance();
         db = dbM.openConnection();
+
         String prenom = DBHelper.getPrenom(db);
         int obj = DBHelper.getObjectif(db);
         Button valider = (Button) findViewById(R.id.boutonPeriode);
 
         editDate1 = (EditText)findViewById(R.id.editDate1);
         editDate2 = (EditText)findViewById(R.id.editDate2);
+
+        /*EditText contenant la date de debut de periode
+        Lors du click, un calendrier s'affiche.*/
         editDate1.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+
+                //Date du jour
                 Calendar mcurrentDate=Calendar.getInstance();
                 int mYear = mcurrentDate.get(Calendar.YEAR);
                 int mMonth=mcurrentDate.get(Calendar.MONTH);
                 int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
 
+                //Recupere la date de debut de periode selectionnee par l'usager
                 DatePickerDialog mDatePicker= new DatePickerDialog(Recapitulatif.this, new DatePickerDialog.OnDateSetListener() {
 
                     public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
@@ -88,19 +92,25 @@ public class Recapitulatif extends Activity{
             }
         });
 
+        /*EditText contenant la date de fin de periode
+        Lors du click, un calendrier s'affiche.*/
         editDate2.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+
+                //Date du jour
                 Calendar mcurrentDate=Calendar.getInstance();
                 int mYear = mcurrentDate.get(Calendar.YEAR);
                 int mMonth=mcurrentDate.get(Calendar.MONTH);
                 int mDay=mcurrentDate.get(Calendar.DAY_OF_MONTH);
 
+                //S'il n'y a pas de date de debut de periode, on affiche un message d'erreur
                 if(anneeDebut == 0 || moisDebut == 0 || jourDebut == 0){
                     Toast.makeText(getApplicationContext(), "Veuillez sélectionner une date de début de période.", Toast.LENGTH_SHORT).show();
                 }else{
 
+                    //Recupere la date de debut de periode selectionnee par l'usager
                     DatePickerDialog mDatePicker = new DatePickerDialog(Recapitulatif.this, new DatePickerDialog.OnDateSetListener() {
 
                         public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
@@ -129,9 +139,11 @@ public class Recapitulatif extends Activity{
                 Log.d("EditTextContent", editDate1.getText().toString());
                 String a = editDate1.getText().toString();
                 String b = editDate2.getText().toString();
+
+                //Comparaison des chaines et affichage de messages d'erreur au besoin
                 if (a.equals("") || b.equals("") || a.compareTo(b) > 0)
-                    Toast.makeText(getApplicationContext(), "Entrer une intervale valide.", Toast.LENGTH_LONG).show();
-                else {
+                    Toast.makeText(getApplicationContext(), "Entrez un intervalle de temps valide.", Toast.LENGTH_LONG).show();
+                else {//Sinon appel de la fonction qui renvoit le curseur avec les informations de cette periode
                     curseurValider = DBHelper.listeObjectifsPeriode(db, a, b);
                     adapter.changeCursor(curseurValider);
                 }
@@ -139,18 +151,19 @@ public class Recapitulatif extends Activity{
         });
         Log.d("Recapitulatif", "CurseurValider est null?: " + (curseurValider == null));
         curseurValider = DBHelper.listeObjectifs(db);
-        adapter = new Fiche_f_myAdapter(this, curseurValider);
+        adapter = new ModifierListeAdaptor(this, curseurValider);
 
         listeView.setAdapter(adapter);
     }
 
-    private class Fiche_f_myAdapter extends CursorAdapter {
+    //Adapter de la fiche ModifierMaListe
+    private class ModifierListeAdaptor extends CursorAdapter {
         private ViewHolder holder;
         private LayoutInflater inflater;
         private DateFormat formater;
 
         @SuppressLint("SimpleDateFormat")
-        public Fiche_f_myAdapter(Context context, Cursor c) {
+        public ModifierListeAdaptor(Context context, Cursor c) {
             super(context, c, false);
             inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             formater = new SimpleDateFormat("yyyy-MM-dd");
@@ -158,15 +171,14 @@ public class Recapitulatif extends Activity{
 
         class ViewHolder{
             protected ImageView imageResultat;
-            protected TextView textDate;
-            protected TextView textObjectif;
-            protected TextView textResultat;
+            protected TextView textDate, textObjectif, textResultat;
             protected ImageButton imageDetails;
         }
 
+        //Methode qui renvoit la View selon une certaine position
         public View getView(final int position, View view, ViewGroup parent) {
 
-
+            //Si la view est null, on recupere les elements et les ajoutons au holderView
             if (view == null) {
 
                 view = inflater.inflate(R.layout.activity_recapitulatif_row, parent, false);
@@ -194,10 +206,14 @@ public class Recapitulatif extends Activity{
 
             Cursor c = getCursor();
             c.moveToPosition(position);
+
+            //On recupere date, objectif initial, resultat objectif, marge de la base de donnees selon la position du curseur
             String date = c.getString(c.getColumnIndex(DBHelper.R_DATE));
             int objInitial = c.getInt(c.getColumnIndex(DBHelper.R_OBJECTIF_INIT));
             int resultat =  c.getInt(c.getColumnIndex(DBHelper.R_OBJECTIF_RES));
             int marge = c.getInt(c.getColumnIndex(DBHelper.R_MARGE));
+
+            //On affiche l'image en consequence: rouge si resultat non atteint, vert sinon.
             int image = 100*Math.abs(objInitial - resultat) <= objInitial*marge ? R.drawable.vert : R.drawable.rouge;
 
 

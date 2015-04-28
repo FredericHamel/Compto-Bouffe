@@ -20,12 +20,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".FicheA"
+            android:name=".Profil"
             android:label="@string/title_activity_profile"
             android:screenOrientation="landscape">
         </activity>
         <activity
-            android:name=".FicheB"
+            android:name=".MenuPrincipal"
             android:label="Menu principal"
             android:screenOrientation="landscape" >
         </activity>

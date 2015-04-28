@@ -42,8 +42,6 @@ public class ModifierMaListe extends Activity {
         //Titre Description, Quantité et A supprimer
         titreLayout = (LinearLayout) findViewById(R.id.linearLayoutHeader);
 
-
-
         //Base de données + cursor contenant les plats de la liste d'aujourd'hui
         dbM = DatabaseManager.getInstance();
         db = dbM.openConnection();
@@ -58,7 +56,8 @@ public class ModifierMaListe extends Activity {
         valider = (Button) findViewById(R.id.boutonValider);
 
         @SuppressLint("ShowToast")
-        final Toast toast = Toast.makeText(getApplicationContext(), "Veuillez-patienter", Toast.LENGTH_LONG);
+        final Toast toast = Toast.makeText(getApplicationContext(), "Veuillez patienter", Toast.LENGTH_LONG);
+
         valider.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -106,7 +105,6 @@ public class ModifierMaListe extends Activity {
         private CompoundButton.OnCheckedChangeListener changeListener;
         private LayoutInflater myInflater;
         private ViewHolder holder;
-
         private ArrayList<Plats> plats;
 
         /**
@@ -116,13 +114,18 @@ public class ModifierMaListe extends Activity {
          */
         public MyAdapter(Context context, Cursor c) {
             super(context, c, false);
+
             this.myInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             this.plats = new ArrayList<>();
             initListener();
+
+            //Parcours du curseur s'il n'est pas vide
             if(c != null){
                 c.moveToFirst();
                 Log.d("adapterModifierListe","Count dans cursor:" + c.getCount());
 
+                /*On parcourt le curseur et on récupère nom, upc, qte de la base de donnees
+                pour creer un nouveau plat dans l'arrayList<Plat>*/
                 do {
                     String nom=c.getString(c.getColumnIndex(DBHelper.L_NOM));
                     int qte = c.getInt(c.getColumnIndex(DBHelper.L_QUANTITE));
@@ -142,9 +145,14 @@ public class ModifierMaListe extends Activity {
                 @Override
                 public void onClick(View view) {
                     ViewHolder holder_b = (ViewHolder) view.getTag(R.layout.activity_modifier_ma_liste_row);
+
+                    //Position de la view
                     int i = (int)view.getTag();
+                    //Quantite a cette position
                     int qte = Integer.parseInt(holder_b.textViewQte.getText().toString());
+                    //Plat a cette position
                     Plats p = plats.get(i);
+
                     switch (view.getId())
                     {
                         //Insertion de la position et nouvelle quantite dans le Map
@@ -173,6 +181,8 @@ public class ModifierMaListe extends Activity {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     //position de la checkbox
                     int position = (int) buttonView.getTag();
+
+                    //le plat est dans un etat selectionne
                     plats.get(position).setSelected(isChecked);
                     Log.d("adapterModifierListe","position ArrayList A Supprimer:" + position );
                 }
@@ -184,28 +194,30 @@ public class ModifierMaListe extends Activity {
         private class ViewHolder{
             protected TextView nom;
             protected CheckBox checkBoxView;
-            protected Button boutonPlus;
+            protected Button boutonPlus, boutonMoins;
             protected TextView textViewQte;
-            protected Button boutonMoins;
         }
 
+        //Methode d'update de la base de donnees
         public void updateDB()
         {
             DatabaseManager dbM = DatabaseManager.getInstance();
             SQLiteDatabase db = dbM.openConnection();
+
             for(Plats plat : plats)
             {
                 if(plat.isSelected()) {
                     Log.d("Modify", "Modify " + plat.getNom() + " 0");
-                    DBHelper.changerQuantite(db, plat.getUpc(), 0);
+                    DBHelper.changerQuantite(db, plat.getUpc(), 0); //Modification de la quantite a 0 dans la bdd selon l'upc
                 }else if(plat.isModified()) {
                     Log.d("Modify", "Modify " + plat.getNom() + " " + plat.getQte());
-                    DBHelper.changerQuantite(db, plat.getUpc(), plat.getQte());
+                    DBHelper.changerQuantite(db, plat.getUpc(), plat.getQte());//Modification de la quantite dans la bdd selon upc
                 }
             }
             dbM.close();
         }
 
+        //Methode qui renvoit la View selon une certaine position
         public View getView(final int position, View convertView,ViewGroup parent) {
 
             Log.d(MyAdapter.class.getSimpleName(), "Position: " + position);
@@ -213,10 +225,14 @@ public class ModifierMaListe extends Activity {
             Cursor cursor = getCursor();
             cursor.moveToPosition(position);
 
+            //Si la vue s'affiche pour la première fois
             if (viewRow == null) {
+                //On inflate la fiche XML correspondante
                 viewRow = myInflater.inflate(R.layout.activity_modifier_ma_liste_row, null);
+                //On cree notre ViewHolder
                 holder = new ViewHolder();
 
+                //On recupere les elements nom, checkBox, boutons et textView de chaque rangee de notre listeView
                 holder.nom = (TextView) viewRow.findViewById(R.id.textView1);
                 holder.checkBoxView = (CheckBox) viewRow.findViewById(R.id.checkBoxSupprimer);
                 holder.boutonPlus = (Button) viewRow.findViewById(R.id.boutonPlus);
@@ -229,7 +245,7 @@ public class ModifierMaListe extends Activity {
                 holder.boutonMoins.setOnClickListener(listener);
                 holder.checkBoxView.setOnCheckedChangeListener(changeListener);
 
-            } else {
+            } else {//Sinon le holder recupere la vue existante
                 holder = (ViewHolder) viewRow.getTag();
             }
 
@@ -237,7 +253,6 @@ public class ModifierMaListe extends Activity {
 
             holder.nom.setText(nomProduit);
             holder.textViewQte.setText(Integer.toString(plats.get(position).getQte()));
-
             holder.checkBoxView.setTag(position);
 
             //Modification de la quantite lors du click sur le bouton 'moins'
@@ -254,6 +269,7 @@ public class ModifierMaListe extends Activity {
             holder.checkBoxView.setChecked(plat.isSelected());
 
             Log.d("adapterModifierListe","itemChecked:" + plat.isSelected());
+
             //Couleur alternative des rangées
             if (position % 2 == 1) {
                 viewRow.setBackgroundResource(R.color.grisRangee1);

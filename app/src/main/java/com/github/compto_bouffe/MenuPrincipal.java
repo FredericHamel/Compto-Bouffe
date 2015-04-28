@@ -17,7 +17,7 @@ import android.widget.TextView;
  * - d'accéder au récapitulatif des derniers jours;
  * - de modifier ses informations
  */
-public class FicheB extends Activity implements View.OnClickListener {
+public class MenuPrincipal extends Activity implements View.OnClickListener {
 
     private DatabaseManager dbM;
     private Button today, recapitulatif, modifyProfils;
@@ -27,7 +27,7 @@ public class FicheB extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fiche_b);
+        setContentView(R.layout.activity_menu_principal);
         today = (Button)findViewById(R.id.btn_today);
         recapitulatif = (Button)findViewById(R.id.btn_recapitulatif);
         modifyProfils = (Button)findViewById(R.id.btn_modify_profils);
@@ -108,7 +108,7 @@ public class FicheB extends Activity implements View.OnClickListener {
                         startActivity(new Intent(getApplicationContext(), Recapitulatif.class));
                         break;
                     case R.id.btn_modify_profils:
-                        Intent intent = new Intent(getApplicationContext(), FicheA.class);
+                        Intent intent = new Intent(getApplicationContext(), Profil.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         break;
